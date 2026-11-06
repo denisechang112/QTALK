@@ -381,4 +381,20 @@ $("#reset").onclick=()=>{if(Date.now()-resetArm>2500){resetArm=Date.now();toast(
  SAVE={got:[],best:[-1,-1,-1]};persist();renderAlbum();toast("已清除")};
 renderTitle();
 </script>
+<script id="qt-lock">/* 手機上鎖住畫面：手指拖曳時，只讓真的能捲的區塊捲動，其他一律不讓整頁（或 App 內瀏覽器的視窗）跟著移動 */
+(function(){if(!("ontouchstart" in window))return;var sx=0,sy=0;
+function scrollable(el,axis){var cs=getComputedStyle(el),o=axis==="y"?cs.overflowY:cs.overflowX;
+  return /(auto|scroll)/.test(o)&&(axis==="y"?el.scrollHeight>el.clientHeight+1:el.scrollWidth>el.clientWidth+1)}
+document.addEventListener("touchstart",function(e){if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
+document.addEventListener("touchmove",function(e){if(e.touches.length>1){e.preventDefault();return}
+  var t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy,axis=Math.abs(dx)>Math.abs(dy)?"x":"y",el=e.target;
+  while(el&&el.nodeType===1&&el!==document.body&&el!==document.documentElement){
+    if(scrollable(el,axis)){
+      if(axis==="y"){if(dy>0&&el.scrollTop<=0){e.preventDefault()}else if(dy<0&&el.scrollTop+el.clientHeight>=el.scrollHeight-1){e.preventDefault()}}
+      return}
+    el=el.parentElement}
+  e.preventDefault()},{passive:false});
+document.addEventListener("gesturestart",function(e){e.preventDefault()},{passive:false});
+})();
+</script>
 </body></html>
