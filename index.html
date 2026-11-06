@@ -1,5 +1,24 @@
-<!doctype html><meta charset="utf-8">
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#15142a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="叫號說">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+</head>
+<body>
 <title>叫號說 APP</title>
+<script>/* 自動判斷：手機/平板打開 → 全螢幕 App 模式；電腦打開 → 模擬手機外框 */
+(function(){try{var u=navigator.userAgent,r=document.documentElement;
+var phone=/iPhone|iPod|iPad|Android|Windows Phone|Mobile/i.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1);
+if(phone)r.classList.add("is-phone");
+if((window.matchMedia&&matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches)||navigator.standalone)r.classList.add("is-app");}catch(e){}})();</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
@@ -416,6 +435,16 @@ details.more[open] summary::before{content:"－ "}
 .seats i.taken{background:var(--ink)}
 .seats i.mine{background:var(--yellow)}
 .note{font-size:12px;opacity:.8;text-align:center;margin:0}
+/* 手機 App 模式：滿版、畫面固定不跟著滑動（只有內容區可以捲） */
+html.is-phone,html.is-phone body{position:fixed;inset:0;width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:var(--ink);-webkit-tap-highlight-color:transparent}
+html.is-phone .outer{padding:0;min-height:0;height:100%;display:block}
+html.is-phone .phone{width:100%;height:100%;min-height:0;border:0;border-radius:0;box-shadow:none}
+html.is-phone .urlbar{display:none}
+html.is-phone .appTop{padding-top:env(safe-area-inset-top,0px)}
+html.is-phone .appBody{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+html.is-phone #gameview,html.is-phone #vplayer,html.is-phone #modal,html.is-phone #admin{overscroll-behavior:contain}
+html.is-phone #gameview{padding-top:env(safe-area-inset-top,0px)}
+html.is-phone .toast{top:calc(10px + env(safe-area-inset-top,0px))}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -1563,4 +1592,17 @@ function restartTick2(){clearInterval(tickTimer);tickTimer=setInterval(()=>tick(
 restartTick=restartTick2;
 
 reset();
+;/* 放在自己的網站（例如 GitHub Pages）時：可以「加到主畫面」變成全螢幕 App */
+(function(){const R=document.documentElement,own=!/claude|claudeusercontent/i.test(location.hostname)&&location.protocol==="https:";
+  if(!own)return;
+  try{if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
+  if(!R.classList.contains("is-phone")||R.classList.contains("is-app"))return;
+  let seen=null;try{seen=localStorage.getItem("qt-install")}catch(e){}
+  if(seen)return;
+  const ios=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+  setTimeout(()=>{toast("info","加到主畫面，像 App 一樣全螢幕使用",ios?"Safari 下方按「分享」→「加入主畫面」。":"按瀏覽器右上角「⋮」→「安裝應用程式」或「加到主畫面」。",9000);
+    try{localStorage.setItem("qt-install","1")}catch(e){}},2500)})();
 </script>
+
+</body>
+</html>
