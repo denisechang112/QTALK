@@ -388,11 +388,17 @@ function scrollable(el,axis){var cs=getComputedStyle(el),o=axis==="y"?cs.overflo
 document.addEventListener("touchstart",function(e){if(e.touches.length===1){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
 document.addEventListener("touchmove",function(e){if(e.touches.length>1){e.preventDefault();return}
   var t=e.touches[0],dx=t.clientX-sx,dy=t.clientY-sy,axis=Math.abs(dx)>Math.abs(dy)?"x":"y",el=e.target;
+  for(var a=el;a&&a.nodeType===1;a=a.parentElement){if(getComputedStyle(a).touchAction==="none"){e.preventDefault();return}}
   while(el&&el.nodeType===1&&el!==document.body&&el!==document.documentElement){
     if(scrollable(el,axis)){
       if(axis==="y"){if(dy>0&&el.scrollTop<=0){e.preventDefault()}else if(dy<0&&el.scrollTop+el.clientHeight>=el.scrollHeight-1){e.preventDefault()}}
       return}
     el=el.parentElement}
+  /* 整頁本身可以捲（例如遊戲選單）：照常捲，只擋住最上方往下拉、最下方往上推 */
+  var se=document.scrollingElement||document.documentElement,hb=getComputedStyle(document.body).overflowY,hh=getComputedStyle(document.documentElement).overflowY;
+  if(axis==="y"&&hb!=="hidden"&&hh!=="hidden"&&se.scrollHeight>window.innerHeight+1){
+    if(dy>0&&se.scrollTop<=0)e.preventDefault();else if(dy<0&&se.scrollTop+window.innerHeight>=se.scrollHeight-1)e.preventDefault();
+    return}
   e.preventDefault()},{passive:false});
 document.addEventListener("gesturestart",function(e){e.preventDefault()},{passive:false});
 })();
