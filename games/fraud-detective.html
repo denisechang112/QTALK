@@ -1,0 +1,384 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>防詐偵探</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#3a4fd6;--night:#1b2470;--ink:#15142a;--paper:#fffaf0;--cream:#fdf0d2;--orange:#f2711c;--yellow:#ffcf2e;--green:#3ec46d;--red:#e8402f;--lilac:#b9bff2;--muted:#5a5c78;--card:#fffaf0;--text:#15142a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky:#26338f;--night:#10153f;--card:#24244a;--text:#fffaf0;--muted:#c4c6e0;--cream:#33325c}}
+:root[data-theme="dark"]{--sky:#26338f;--night:#10153f;--card:#24244a;--text:#fffaf0;--muted:#c4c6e0;--cream:#33325c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--sky);color:var(--text);font-family:"Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.5;
+ background-image:radial-gradient(rgba(255,255,255,.09) 2px,transparent 2.5px);background-size:22px 22px;overflow-x:hidden}
+#app{max-width:480px;margin:0 auto;min-height:100%;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column}
+.scr{display:none;flex:1;flex-direction:column;animation:fin .35s ease}
+.scr.on{display:flex}
+@keyframes fin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;color:#fff}
+.icon-btn{border:3px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:12px;min-width:44px;height:44px;font-size:20px;box-shadow:3px 3px 0 var(--ink);cursor:pointer;font-family:inherit;font-weight:900;padding:0 10px}
+.icon-btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn{display:block;width:100%;border:4px solid var(--ink);border-radius:16px;padding:14px 16px;font:900 21px "Noto Sans TC",sans-serif;box-shadow:5px 5px 0 var(--ink);cursor:pointer;color:var(--ink);background:var(--yellow);letter-spacing:.04em}
+.btn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.btn.o{background:var(--orange);color:#fff}.btn.g{background:var(--green);color:#fff}.btn.r{background:var(--red);color:#fff}.btn.w{background:var(--paper)}
+.btn small{display:block;font-size:14px;font-weight:700;opacity:.9;letter-spacing:0}
+/* title */
+.logo{text-align:center;color:#fff;margin:6px 0 0}
+.shout{display:inline-block;background:var(--orange);color:#fff;border:4px solid var(--ink);padding:4px 14px;font:900 16px "Noto Sans TC";transform:rotate(-3deg);box-shadow:4px 4px 0 var(--ink);letter-spacing:.1em}
+.logo h1{font:900 54px/1.05 "Noto Sans TC";margin:14px 0 4px;color:var(--yellow);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:5px 5px 0 var(--ink);letter-spacing:.06em}
+.logo p{margin:0;font-weight:700;opacity:.95}
+.lineup{display:flex;justify-content:center;align-items:flex-end;margin:18px 0 6px;height:190px}
+.lineup .c{margin:0 -16px;animation:bob 2.4s ease-in-out infinite}
+.lineup .c:nth-child(2){animation-delay:.3s}.lineup .c:nth-child(3){animation-delay:.6s}.lineup .c:nth-child(4){animation-delay:.9s}.lineup .c:nth-child(5){animation-delay:1.2s}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.badge{display:inline-block;background:var(--ink);color:var(--yellow);border-radius:999px;padding:2px 12px;font-weight:900;font-size:14px}
+.stack{display:grid;gap:14px;margin-top:auto}
+.how{background:var(--card);border:4px solid var(--ink);border-radius:18px;padding:12px 16px;box-shadow:5px 5px 0 var(--ink);margin:10px 0 16px;font-weight:700}
+.how ol{margin:4px 0 0;padding-left:22px}.how li{margin:2px 0}
+/* chapter map */
+h2.head{color:#fff;font:900 28px "Noto Sans TC";margin:4px 0 12px;-webkit-text-stroke:1.5px var(--ink);paint-order:stroke fill;text-shadow:3px 3px 0 var(--ink)}
+.chap{display:flex;gap:12px;align-items:center;background:var(--card);border:4px solid var(--ink);border-radius:18px;padding:12px 14px;box-shadow:5px 5px 0 var(--ink);margin-bottom:14px;cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--text)}
+.chap:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+.chap .n{flex:none;width:54px;height:54px;border:4px solid var(--ink);border-radius:14px;display:grid;place-items:center;font:900 26px "Archivo Black";color:var(--ink)}
+.chap b{font-size:19px;display:block}.chap em{font-style:normal;color:var(--muted);font-size:15px;font-weight:700}
+.chap .st{margin-left:auto;font-size:20px;letter-spacing:-2px;white-space:nowrap}
+.chap.lock{opacity:.55;cursor:not-allowed}
+/* case */
+.hud{display:flex;align-items:center;gap:8px;color:#fff;font-weight:900}
+.prog{flex:1;display:flex;gap:6px}.prog i{flex:1;height:10px;border:2.5px solid var(--ink);border-radius:9px;background:rgba(255,255,255,.3)}
+.prog i.ok{background:var(--green)}.prog i.no{background:var(--red)}.prog i.cur{background:var(--yellow)}
+.file{background:var(--card);border:4px solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:12px 14px 14px;margin:10px 0 14px;position:relative}
+.file .tag{position:absolute;top:-16px;left:14px;background:var(--orange);color:#fff;border:3px solid var(--ink);padding:1px 12px;font-weight:900;font-size:15px;transform:rotate(-2deg)}
+.suspect{display:flex;align-items:flex-end;gap:6px;min-height:200px;margin-top:6px}
+.suspect .who{flex:none;width:118px;position:relative;animation:slide .5s cubic-bezier(.3,1.4,.6,1)}
+@keyframes slide{from{transform:translateX(-60px);opacity:0}}
+.who .bars{position:absolute;inset:-6px -6px 0;display:none;background:repeating-linear-gradient(90deg,transparent 0 14px,var(--ink) 14px 20px);border-top:7px solid var(--ink);border-bottom:7px solid var(--ink);opacity:.92;animation:drop .4s cubic-bezier(.4,1.6,.6,1)}
+@keyframes drop{from{transform:translateY(-120%)}}
+.who.jail .bars{display:block}
+.who .halo{position:absolute;left:50%;top:-10px;transform:translateX(-50%);font-size:28px;display:none}
+.who.good .halo{display:block;animation:bob 1.6s infinite}
+.msg{flex:1;min-width:0;margin-bottom:24px}
+.dev{border:3px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;color:#15142a;position:relative}
+.dev:before{content:"";position:absolute;left:-14px;bottom:18px;border:8px solid transparent;border-right:8px solid var(--ink)}
+.dev .bar{display:flex;align-items:center;gap:6px;padding:6px 10px;font-weight:900;font-size:14px;color:#fff;background:#5a5c78}
+.dev .bar .from{margin-left:auto;font-weight:700;opacity:.9;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dev .body{padding:10px 12px;font-weight:700;font-size:18px;line-height:1.55}
+.dev.sms .bar{background:#5a5c78}.dev.call .bar{background:#1b2470}.dev.line .bar{background:#06c755}.dev.shop .bar{background:#f2711c}.dev.job .bar{background:#9b6bd6}.dev.date .bar{background:#e85d8f}.dev.push .bar{background:#2fb3a6}
+.dev.call .body{background:#eef0ff}
+.dev .body .note{display:block;font-size:14px;color:#5a5c78;margin-top:4px;font-weight:700}
+mark{background:var(--yellow);color:inherit;padding:0 2px;border-radius:3px;box-shadow:0 0 0 2px var(--ink);animation:pulse 1s 2}
+@keyframes pulse{50%{background:#fff}}
+.q{font-weight:900;font-size:19px;text-align:center;margin:8px 0 2px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:auto}
+.hintrow{display:flex;justify-content:center;margin:0 0 14px}
+.link{background:none;border:none;color:#fff;font:700 16px "Noto Sans TC";text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:6px}
+/* verdict */
+.verdict{border:4px solid var(--ink);border-radius:18px;padding:12px 14px;box-shadow:5px 5px 0 var(--ink);margin-bottom:14px;background:var(--card);animation:pop .4s cubic-bezier(.3,1.6,.6,1)}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.stamp{display:inline-block;font:900 24px "Noto Sans TC";padding:2px 14px;border:4px solid currentColor;border-radius:10px;transform:rotate(-4deg);margin-bottom:6px}
+.stamp.ok{color:var(--green)}.stamp.no{color:var(--red)}
+.verdict .why{font-weight:700;margin:4px 0 8px}
+.tipbox{background:var(--yellow);color:var(--ink);border:3px solid var(--ink);border-radius:12px;padding:6px 10px;font-weight:900}
+.tipbox:before{content:"💡 記住：";}
+/* result */
+.big{font:900 70px "Archivo Black";color:var(--yellow);-webkit-text-stroke:3px var(--ink);paint-order:stroke fill;text-shadow:5px 5px 0 var(--ink);text-align:center;line-height:1;margin:6px 0}
+.stars{text-align:center;font-size:44px;letter-spacing:4px;margin:4px 0 8px}
+.stars span{display:inline-block;animation:pop .5s backwards}
+.stars span:nth-child(2){animation-delay:.2s}.stars span:nth-child(3){animation-delay:.4s}
+.newcards{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:8px 0 14px}
+.rank{background:var(--card);border:4px solid var(--ink);border-radius:18px;padding:14px;box-shadow:5px 5px 0 var(--ink);text-align:center;margin-bottom:14px}
+.rank b{font-size:26px;display:block}
+.hot{display:flex;align-items:center;gap:12px;background:var(--red);color:#fff;border:4px solid var(--ink);border-radius:18px;padding:10px 14px;box-shadow:5px 5px 0 var(--ink);margin-bottom:14px;text-decoration:none}
+.hot .num{font:900 40px "Archivo Black";line-height:1}
+.hot small{display:block;font-weight:700}
+/* album */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:3.5px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);padding:6px 4px 8px;text-align:center;cursor:pointer;font:inherit;color:var(--text);position:relative}
+.card .pic{height:104px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden}
+.card .nm{font-weight:900;font-size:14px;line-height:1.25;margin-top:4px}
+.card .kind{position:absolute;top:-9px;right:-6px;font-size:12px;font-weight:900;color:#fff;border:2.5px solid var(--ink);border-radius:8px;padding:0 6px}
+.kind.bad{background:var(--red)}.kind.ok{background:var(--green)}
+.card.locked .pic svg{filter:brightness(0);opacity:.35}
+.card.locked .nm{color:var(--muted)}
+.mini{width:82px}.mini .pic{height:90px}
+/* sheet */
+.sheet{position:fixed;inset:0;background:rgba(10,10,30,.55);display:none;align-items:flex-end;justify-content:center;z-index:9;padding:16px}
+.sheet.on{display:flex}
+.sheet .in{background:var(--card);color:var(--text);border:4px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);max-width:448px;width:100%;padding:16px;animation:fin .3s}
+.sheet .in .pic{display:flex;justify-content:center;margin:-4px 0 4px}
+.sheet h3{margin:0 0 4px;font-size:23px}
+.muted{color:var(--muted);font-weight:700;font-size:15px}
+.coupon{display:flex;align-items:center;gap:12px;background:var(--yellow);color:var(--ink);border:4px dashed var(--ink);border-radius:18px;padding:12px 14px;margin-bottom:14px;text-decoration:none;box-shadow:5px 5px 0 var(--ink);animation:pop .5s cubic-bezier(.3,1.6,.6,1)}
+.coupon .ic{font-size:38px;line-height:1}.coupon b{font-size:19px;display:block}.coupon small{font-weight:700;font-size:14px;display:block}.coupon .go{margin-left:auto;background:var(--ink);color:var(--yellow);border-radius:999px;padding:6px 12px;font-weight:900;white-space:nowrap}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:999px;font-weight:900;z-index:20;display:none}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<div id="app">
+ <!-- TITLE -->
+ <section class="scr on" id="s-title">
+  <div class="top"><span class="badge">反詐小遊戲</span><button class="icon-btn" id="snd" aria-label="音效開關">🔊</button></div>
+  <div class="logo">
+   <span class="shout">12 位嫌疑人等你抓！</span>
+   <h1>防詐偵探</h1>
+   <p>簡訊、電話、LINE…哪個是騙子？抓出來！</p>
+  </div>
+  <div class="lineup" id="lineup"></div>
+  <div class="how"><div>🕵️ 玩法</div><ol><li>看嫌疑人傳來的訊息</li><li>判斷：<b style="color:var(--red)">抓到詐騙</b> 還是 <b style="color:var(--green)">放行</b></li><li>答對就收進圖鑑，共 12 位</li></ol></div>
+  <div class="stack"><button class="btn o" id="go">開始辦案 ▶</button><button class="btn w" id="toAlbum">📒 嫌疑人圖鑑 <span id="albumCount"></span></button></div>
+ </section>
+
+ <!-- MAP -->
+ <section class="scr" id="s-map">
+  <div class="top"><button class="icon-btn" data-back="s-title" aria-label="返回">←</button><span class="badge" id="totStars"></span></div>
+  <h2 class="head">選擇案件</h2>
+  <div id="chaps"></div>
+  <p class="muted" style="color:#fff;text-align:center;margin-top:auto">不限時間，慢慢看、仔細想 🙂</p>
+ </section>
+
+ <!-- CASE -->
+ <section class="scr" id="s-case">
+  <div class="hud"><button class="icon-btn" id="quit" aria-label="離開">✕</button><div class="prog" id="prog"></div><span id="caseNo"></span></div>
+  <div class="file" id="file">
+   <span class="tag" id="ctag"></span>
+   <div class="suspect"><div class="who" id="who"></div><div class="msg" id="msg"></div></div>
+  </div>
+  <div id="ask">
+   <div class="q" style="color:#fff">這是詐騙嗎？</div>
+   <div class="hintrow"><button class="link" id="hint">🔍 給我一點線索</button></div>
+  </div>
+  <div id="verdict"></div>
+  <div class="choices" id="choices"><button class="btn r" id="bScam">🚨 抓到詐騙<small>這是騙子</small></button><button class="btn g" id="bSafe">✅ 放行<small>正常通知</small></button></div>
+  <button class="btn" id="next" style="display:none;margin-top:auto">下一案 ▶</button>
+ </section>
+
+ <!-- RESULT -->
+ <section class="scr" id="s-res">
+  <div class="top"><span></span><span class="badge" id="resChap"></span></div>
+  <div class="big" id="resScore"></div>
+  <div class="stars" id="resStars"></div>
+  <div class="rank" id="resRank"></div>
+  <div class="muted" style="color:#fff;text-align:center" id="newLbl"></div>
+  <div class="newcards" id="newCards"></div>
+  <div id="resCoupon"></div>
+  <div class="stack"><button class="btn o" id="resNext"></button><button class="btn w" id="resRetry">再玩一次這關</button></div>
+ </section>
+
+ <!-- ALBUM -->
+ <section class="scr" id="s-album">
+  <div class="top"><button class="icon-btn" data-back="s-title" aria-label="返回">←</button><span class="badge" id="albumTot"></span></div>
+  <h2 class="head">嫌疑人圖鑑</h2>
+  <div class="grid" id="grid"></div>
+  <div id="albumCoupon"></div>
+  <a class="hot" href="tel:165"><span class="num">165</span><span><b>反詐騙諮詢專線</b><small>覺得怪怪的，先掛斷，再打 165 問</small></span></a>
+  <button class="link" id="reset" style="margin:0 auto">清除收集紀錄</button>
+ </section>
+</div>
+
+<div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+function char(o={}){
+  const ink="#15142a",sw=6;
+  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#ffcf2e",shirtS=o.shirtS||"#d9a91c";
+  const wave=o.wave||0,bob=o.bob||0,blink=o.blink;
+  const S=`stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"`;
+  const eye=blink?`<rect x="62" y="124" width="16" height="5" fill="${ink}"/><rect x="104" y="124" width="16" height="5" fill="${ink}"/>`:`<rect x="64" y="114" width="12" height="20" rx="2" fill="${ink}"/><rect x="106" y="114" width="12" height="20" rx="2" fill="${ink}"/>`;
+  const glasses=o.glasses?`<rect x="52" y="106" width="34" height="34" rx="4" fill="none" stroke="${ink}" stroke-width="5"/><rect x="96" y="106" width="34" height="34" rx="4" fill="none" stroke="${ink}" stroke-width="5"/><path d="M86 120h10" stroke="${ink}" stroke-width="5"/>`:"";
+  const mouth=o.open?`<path d="M80 150 q11 16 22 0 z" fill="${ink}"/>`:`<path d="M80 152 q11 10 22 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>`;
+  let hairSvg="";
+  const st=o.style||"short";
+  if(st==="short"||st==="bob"||st==="long"){hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="28" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 ${st==="short"?92:150} L142 ${st==="short"?98:176} Z" fill="${hair}" ${S}/>`;
+    if(st!=="short")hairSvg+=`<rect x="22" y="70" width="18" height="${st==="bob"?90:120}" fill="${hair}" ${S}/>`;}
+  if(st==="bun")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="22" fill="${hair}" ${S}/><rect x="84" y="14" width="44" height="34" fill="${hair}" ${S}/>`;
+  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#e8402f" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#e8402f" ${S}/>`;
+  const TOP=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/>`;
+  if(st==="spiky")hairSvg=`<path d="M46 52 L60 18 L78 46 L94 14 L110 44 L128 16 L140 44 L162 24 L164 50 Z" fill="${hair}" ${S}/>`+TOP+`<path d="M30 96 L30 70 L142 70 L142 96 L128 84 L114 96 L100 84 L86 96 L72 84 L58 96 L44 84 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 88 L142 96 Z" fill="${hair}" ${S}/>`;
+  if(st==="ponytail")hairSvg=`<path d="M170 58 q34 24 14 84 q-14-34-14-48 z" fill="${hair}" ${S}/>`+TOP+`<rect x="30" y="70" width="112" height="24" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 100 L142 110 Z" fill="${hair}" ${S}/>`;
+  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#3a4fd6"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#ffcf2e" ${S}/>`;
+  if(st==="bald")hairSvg=`<rect x="30" y="96" width="10" height="34" fill="${hair}"/><path d="M142 96 L150 90 L150 124 L142 130 Z" fill="${hair}"/>`;
+  if(st==="side")hairSvg=TOP+`<path d="M30 70 L142 70 L142 88 Q90 80 60 110 L30 110 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 92 L142 98 Z" fill="${hair}" ${S}/>`;
+  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#ffcf2e" ${S}/>`:"");
+  const dots=`<pattern id="dt${o.id||0}" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1.8" fill="rgba(0,0,0,.18)"/></pattern>`;
+  const armR=`<g transform="rotate(${-wave} 140 200)"><rect x="140" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>${o.phone?`<rect x="146" y="246" width="22" height="34" rx="4" fill="${ink}"/><rect x="150" y="250" width="14" height="22" fill="#6dc7e6"/>`:""}</g>`;
+  return `<svg viewBox="0 0 200 310" width="${o.w||200}" height="${(o.w||200)*1.55}" style="overflow:visible"><defs>${dots}</defs><g transform="translate(0 ${bob})">
+   <rect x="58" y="262" width="24" height="36" fill="#2d2f4a" ${S}/><rect x="98" y="262" width="24" height="36" fill="#2d2f4a" ${S}/>
+   <rect x="52" y="292" width="36" height="14" rx="3" fill="#fff" ${S}/><rect x="92" y="292" width="36" height="14" rx="3" fill="#fff" ${S}/>
+   <rect x="32" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>
+   <path d="M118 194 L138 178 L138 248 L118 266 Z" fill="${shirtS}" ${S}/>
+   <rect x="52" y="194" width="66" height="72" fill="${shirt}" ${S}/>
+   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#e8402f" stroke="${ink}" stroke-width="3"/>`:""}
+   ${armR}
+   <path d="M142 70 L172 44 L172 152 L142 178 Z" fill="${skinS}" ${S}/><path d="M142 70 L172 44 L172 152 L142 178 Z" fill="url(#dt${o.id||0})"/>
+   <path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${skin}" ${S}/>
+   <rect x="30" y="70" width="112" height="108" fill="${skin}" ${S}/>
+   ${eye}${glasses}${mouth}
+   <circle cx="50" cy="150" r="9" fill="rgba(232,64,47,.35)"/><circle cx="124" cy="150" r="9" fill="rgba(232,64,47,.35)"/>
+   ${hairSvg}${ACC}
+  </g></svg>`;
+}
+
+const CASES=[
+ {src:"簡訊",dev:"sms",from:"+886 9xx-xxx-321",q:"「您的包裹地址有誤，請點以下連結補填並支付 25 元運費 hxxp://ezpay-tw.co」",clue:"點以下連結補填並支付 25 元運費",scam:true,
+  why:"物流不會用簡訊叫你付小額運費，陌生連結會騙走信用卡資料。直接到物流官方網站查詢。",tip:"物流不會叫你點連結付運費",
+  name:"假物流小哥",line:"包裹卡住了喔～點一下就好！",c:{style:"cap",shirt:"#f2711c",shirtS:"#c95a12",skin:"#e8c09a",skinS:"#c99f7c",phone:1,wave:30}},
+ {src:"來電",dev:"call",from:"未顯示號碼",q:"「我是購物網站客服，您的訂單被誤設成分期，請到 ATM 解除」",clue:"請到 ATM 解除",scam:true,
+  why:"ATM 沒有「解除分期」功能。直接掛斷，打 165 反詐騙專線確認。",tip:"ATM 沒有「解除分期」功能",
+  name:"假客服阿凱",line:"您好～這邊是客服中心喔",c:{style:"short",shirt:"#6dc7e6",shirtS:"#4ea6c4",phones:"#3ec46d",hair:"#5b3a29",hairT:"#7a5440"}},
+ {src:"簡訊",dev:"sms",from:"電信公司",q:"「您本期電信帳單已出帳，請自行到官方網站查看」",note:"（沒有附連結）",clue:"請自行到官方網站查看",scam:false,
+  why:"沒有叫你點陌生連結或給資料，比較像正常通知。最保險的做法是自己打開官方網站查。",tip:"沒附連結、不要資料，比較像正常通知",
+  name:"帳單小幫手",line:"帳單出來囉，記得自己去看～",c:{style:"bob",shirt:"#3ec46d",shirtS:"#2b9a52",glasses:1,hair:"#2a2f6b",hairT:"#454b8f"}},
+ {src:"LINE",dev:"line",from:"小明（新號碼）",q:"「我是你兒子，換新號碼了，先幫我轉 3 萬急用」",clue:"換新號碼了，先幫我轉 3 萬",scam:true,
+  why:"換號碼又急著要錢是典型手法。先用原本的號碼打給家人確認。",tip:"先用原本的號碼打給家人確認",
+  name:"冒牌兒子",line:"媽～是我啦！",c:{style:"spiky",shirt:"#e8402f",shirtS:"#b8301f",phone:1,open:1}},
+ {src:"簡訊",dev:"sms",from:"+886 9xx-xxx-007",q:"「您的銀行帳戶有異常登入，請點連結驗證身分，否則 24 小時內停用」",clue:"請點連結驗證身分，否則 24 小時內停用",scam:true,
+  why:"銀行不會用簡訊連結要你輸入帳號密碼。自己打開銀行 APP，或打卡片背面的客服電話確認。",tip:"銀行不會傳連結要你登入",
+  name:"假銀行專員",line:"為了您的安全，請馬上驗證",c:{style:"side",shirt:"#ffffff",shirtS:"#d8d8e4",tie:1,glasses:1}},
+ {src:"來電",dev:"call",from:"02-xxxx-xxxx",q:"「健保局通知，你的健保卡被盜用，現在幫你轉接檢察官」",clue:"現在幫你轉接檢察官",scam:true,
+  why:"公家機關不會幫你轉接檢警，也不會要你交出存款或監管帳戶。掛斷後撥 165 查證。",tip:"公家機關不會幫你轉接檢警",
+  name:"假檢察官",line:"這案子很嚴重，不能跟家人說！",c:{style:"short",shirt:"#2d2f4a",shirtS:"#1d1f36",tie:1,beard:1,hair:"#c9c9d6",hairT:"#e2e2ea",skin:"#f6e2cf",skinS:"#dcc4ae"}},
+ {src:"LINE",dev:"line",from:"財富自由群組（500 人）",q:"投資群組：「老師帶你操作，保證獲利、穩賺不賠」",clue:"保證獲利、穩賺不賠",scam:true,
+  why:"投資一定有風險，「保證獲利」就是詐騙的訊號。",tip:"「保證獲利」就是詐騙訊號",
+  name:"飆股老師",line:"跟著老師，翻倍不是夢！",c:{style:"side",shirt:"#ffcf2e",shirtS:"#d9a91c",glasses:1,wave:60,open:1,hair:"#8a4b2a",hairT:"#a8653f"}},
+ {src:"簡訊",dev:"sms",from:"電信公司",q:"「您的門號合約將於下月到期，可至門市或官方 APP 辦理續約」",note:"（沒有附連結）",clue:"可至門市或官方 APP 辦理",scam:false,
+  why:"沒有連結、也沒要你提供資料，比較像正常通知。要辦理時，自己打開官方 APP 或到門市最安心。",tip:"沒連結、沒要資料，比較像正常通知",
+  name:"續約提醒員",line:"合約快到期，有空再來辦就好",c:{style:"ponytail",shirt:"#b9bff2",shirtS:"#949ad6",hair:"#5b3a29",hairT:"#7a5440",skin:"#e8c09a",skinS:"#c99f7c"}},
+ {src:"網購",dev:"shop",from:"賣家 好物小舖",q:"「你的訂單被系統鎖住，要先到超商繳費才能解除」",clue:"要先到超商繳費才能解除",scam:true,
+  why:"解除訂單不需要你付錢，「超商代碼繳費」是常見的騙術。",tip:"解除訂單不需要你付錢",
+  name:"假賣家",line:"親～先繳費就幫你解鎖喔",c:{style:"beanie",shirt:"#9b6bd6",shirtS:"#7a50b3",hat:"#e8402f",hatT:"#b8301f",skin:"#c99a6e",skinS:"#a87c54"}},
+ {src:"徵才",dev:"job",from:"高薪居家工作",q:"「在家打字月入 5 萬，請先把存摺和提款卡寄給公司」",clue:"把存摺和提款卡寄給公司",scam:true,
+  why:"交出存摺、提款卡，帳戶可能變成人頭帳戶，自己也會吃上官司。",tip:"存摺、提款卡絕不交給別人",
+  name:"假老闆",line:"輕鬆賺，什麼都不用會！",c:{style:"bald",shirt:"#2fb3a6",shirtS:"#22887e",beard:1,tie:1,hair:"#5b3a29",skin:"#f3d6b8"}},
+ {src:"交友",dev:"date",from:"Kevin（美國工程師）",q:"網友說：「我從國外寄禮物給你，你先付關稅就能領」",clue:"你先付關稅就能領",scam:true,
+  why:"沒見過面的網友要你先付錢，幾乎都是詐騙。",tip:"要你先付錢的網友，要小心",
+  name:"假網友",line:"Honey～禮物在海關等你喔",c:{style:"long",shirt:"#ff8fb1",shirtS:"#d96f90",earring:1,hair:"#d9a91c",hairT:"#f0c64a"}},
+ {src:"推播",dev:"push",from:"信用卡 APP",q:"「刷卡通知：您剛剛消費 1,280 元」",note:"（你確實剛買完東西）",clue:"你確實剛買完東西",scam:false,
+  why:"跟你剛做的事對得上，就是正常通知。如果對不上，再打卡片背面的客服電話確認。",tip:"對得上自己剛做的事，就是正常通知",
+  name:"刷卡通知員",line:"叮！剛剛那筆是你喔～",c:{style:"bun",shirt:"#ffcf2e",shirtS:"#d9a91c",hair:"#1d1b2b",hairT:"#3a3850"}}
+];
+const DEV_ICON={sms:"💬 簡訊",call:"📞 來電中…",line:"LINE",shop:"🛒 網購聊聊",job:"💼 徵才廣告",date:"💕 交友 APP",push:"🔔 推播通知"};
+const CHAPS=[{t:"第一案　訊息陷阱",d:"包裹、客服、帳單…",ids:[0,1,2,3],col:"#ffcf2e"},{t:"第二案　冒名大隊",d:"銀行、檢察官、投資老師",ids:[4,5,6,7],col:"#3ec46d"},{t:"第三案　網路迷魂陣",d:"網購、打工、網友",ids:[8,9,10,11],col:"#ff8fb1"}];
+const $=s=>document.querySelector(s);
+const drawC=(i,w,ex={})=>char({...CASES[i].c,id:"c"+i+"_"+Math.random().toString(36).slice(2,6),w,...ex});
+
+/* storage (per viewer, optional) */
+const KEY="fraudDetective.v1";
+let SAVE={got:[],best:[-1,-1,-1]};
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&Array.isArray(s.got))SAVE=s}catch(e){}
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(SAVE))}catch(e){}};
+
+/* sound */
+let AC=null,SND=true;
+function tone(seq){if(!SND)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime;
+ seq.forEach(([f,d,st,type])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"square";o.frequency.value=f;g.gain.setValueAtTime(.0001,t0+st);g.gain.exponentialRampToValueAtTime(.12,t0+st+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+st+d);o.connect(g).connect(AC.destination);o.start(t0+st);o.stop(t0+st+d+.02)})}catch(e){}}
+const SFX={tap:()=>tone([[660,.06,0]]),ok:()=>tone([[523,.1,0],[659,.1,.1],[784,.18,.2]]),no:()=>tone([[220,.18,0,"sawtooth"],[165,.25,.16,"sawtooth"]]),jail:()=>tone([[120,.1,0,"triangle"],[90,.2,.08,"triangle"]]),win:()=>tone([[523,.1,0],[659,.1,.1],[784,.1,.2],[1047,.3,.3]])};
+$("#snd").onclick=()=>{SND=!SND;$("#snd").textContent=SND?"🔊":"🔇";SFX.tap()};
+
+function show(id){document.querySelectorAll(".scr").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0)}
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{SFX.tap();if(b.dataset.back==="s-title")renderTitle();show(b.dataset.back)});
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1400)}
+
+/* title */
+function renderTitle(){
+ $("#lineup").innerHTML=[0,3,6,9,11].map((i,k)=>`<div class="c">${drawC(i,k===2?120:100,{wave:k===2?40:0})}</div>`).join("");
+ $("#albumCount").textContent=`${SAVE.got.length}/12`;
+}
+$("#go").onclick=()=>{SFX.tap();renderMap();show("s-map")};
+$("#toAlbum").onclick=()=>{SFX.tap();renderAlbum();show("s-album")};
+
+/* map */
+const starStr=n=>"★".repeat(n)+"☆".repeat(3-n);
+const starsFor=c=>c>=4?3:c>=3?2:c>=1?1:0;
+function renderMap(){
+ $("#chaps").innerHTML=CHAPS.map((c,k)=>{const lock=k>0&&SAVE.best[k-1]<0;
+  return `<button class="chap${lock?" lock":""}" data-k="${k}"><span class="n" style="background:${c.col}">${k+1}</span><span class="tx"><b>${c.t}</b><em>${lock?"🔒 先完成上一案":c.d}</em></span><span class="st" style="color:var(--orange)">${starStr(starsFor(SAVE.best[k]))}</span></button>`}).join("");
+ document.querySelectorAll(".chap").forEach(b=>b.onclick=()=>{if(b.classList.contains("lock")){toast("先完成上一案喔");return}SFX.tap();start(+b.dataset.k)});
+ $("#totStars").textContent="★ "+SAVE.best.reduce((a,b)=>a+starsFor(b),0)+" / 9";
+}
+
+/* case flow */
+let G=null;
+function start(k){G={k,i:0,res:[],newGot:[]};renderCase();show("s-case")}
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function renderCase(){
+ const id=CHAPS[G.k].ids[G.i],C=CASES[id];G.id=id;G.hinted=false;
+ $("#prog").innerHTML=CHAPS[G.k].ids.map((_,j)=>`<i class="${j<G.i?(G.res[j]?"ok":"no"):j===G.i?"cur":""}"></i>`).join("");
+ $("#caseNo").textContent=`${G.i+1}/4`;
+ $("#ctag").textContent=`案件 #${String(id+1).padStart(2,"0")}・${C.src}`;
+ $("#who").className="who";$("#who").innerHTML=drawC(id,118)+`<div class="bars"></div><div class="halo">😇</div>`;
+ const body=`${esc(C.q)}${C.note?`<span class="note">${C.note}</span>`:""}`;
+ $("#msg").innerHTML=`<div class="dev ${C.dev}"><div class="bar"><span>${DEV_ICON[C.dev]}</span><span class="from">${esc(C.from)}</span></div><div class="body" id="mbody">${body}</div></div>`;
+ $("#ask").style.display="";$("#hint").style.display="";$("#verdict").innerHTML="";
+ $("#choices").style.display="";$("#next").style.display="none";
+ const w=$("#who");w.style.animation="none";w.offsetWidth;w.style.animation="";
+}
+$("#hint").onclick=()=>{SFX.tap();const C=CASES[G.id];const b=$("#mbody");
+ const all=(C.q+(C.note||""));b.innerHTML=b.innerHTML.replace(esc(C.clue),`<mark>${esc(C.clue)}</mark>`);
+ if(!b.querySelector("mark"))b.innerHTML+=`<span class="note"><mark>${esc(C.clue)}</mark></span>`;
+ G.hinted=true;$("#hint").style.display="none";toast("注意畫黃線的地方 👀")};
+function answer(sayScam){
+ const C=CASES[G.id],ok=sayScam===C.scam;G.res.push(ok);
+ if(ok&&!SAVE.got.includes(G.id)){SAVE.got.push(G.id);G.newGot.push(G.id);persist()}
+ const w=$("#who");
+ if(C.scam&&sayScam){w.classList.add("jail");SFX.jail();setTimeout(SFX.ok,250)}
+ else if(!C.scam&&!sayScam){w.classList.add("good");SFX.ok()}
+ else{SFX.no();$("#file").classList.remove("shake");void $("#file").offsetWidth;$("#file").classList.add("shake");if(!C.scam)w.classList.add("good")}
+ w.innerHTML=drawC(G.id,118,{open:1,blink:ok&&!C.scam})+`<div class="bars"></div><div class="halo">😇</div>`;
+ const stamp=ok?(C.scam?"抓到了！":"放行正確！"):(C.scam?"差點被騙！":"誤會好人了！");
+ const who=C.scam?`🚨 這是詐騙：<b>${C.name}</b>`:`✅ 這是正常通知：<b>${C.name}</b>`;
+ $("#verdict").innerHTML=`<div class="verdict"><span class="stamp ${ok?"ok":"no"}">${stamp}</span><div>${who}</div><div class="why">${C.why}</div><div class="tipbox">${C.tip}</div></div>`;
+ $("#ask").style.display="none";$("#choices").style.display="none";
+ const last=G.i===3;$("#next").textContent=last?"看結果 ▶":"下一案 ▶";$("#next").style.display="";
+ $("#prog").children[G.i].className=ok?"ok":"no";
+}
+$("#bScam").onclick=()=>answer(true);
+$("#bSafe").onclick=()=>answer(false);
+$("#next").onclick=()=>{SFX.tap();if(G.i<3){G.i++;renderCase()}else result()};
+$("#quit").onclick=()=>{SFX.tap();renderMap();show("s-map")};
+show("s-title");
+
+const COUPON_URL="https://www.taiwanmobile.com/cs/public/coupon/couponList.htm";
+const couponOK=()=>[0,1,2,3].every(i=>SAVE.got.includes(i));
+const couponHTML=()=>couponOK()?`<a class="coupon" href="${COUPON_URL}" target="_blank" rel="noopener"><span class="ic">🎟️</span><span><b>恭喜！可以領一張優惠券</b><small>會開啟台灣大哥大官網優惠券頁面</small></span><span class="go">領優惠券 ↗</span></a>`:`<p class="muted" style="color:#fff;text-align:center;margin:0 0 14px">🎟️ 第一案 4 位嫌疑人全部收進圖鑑，就能領優惠券</p>`;
+const RANKS=[[12,"防詐大師","騙子看到你都繞路走！"],[9,"防詐高手","再差一點點就是大師了"],[5,"防詐小達人","已經抓到很多騙子囉"],[0,"見習偵探","多玩幾次，越玩越厲害"]];
+function result(){
+ const c=G.res.filter(Boolean).length,k=G.k;SAVE.best[k]=Math.max(SAVE.best[k]||0,c);persist();
+ const s=starsFor(c);(c>=3?SFX.win:SFX.ok)();
+ $("#resChap").textContent=CHAPS[k].t.replace("　"," ");
+ $("#resScore").textContent=`${c}/4`;
+ $("#resStars").innerHTML=[0,1,2].map(j=>`<span style="color:${j<s?"var(--yellow)":"rgba(255,255,255,.35)"};-webkit-text-stroke:2px var(--ink)">★</span>`).join("");
+ const tot=SAVE.got.length,r=RANKS.find(x=>tot>=x[0]);
+ $("#resRank").innerHTML=`<div class="muted">目前稱號（圖鑑 ${tot}/12）</div><b>${r[1]}</b><div>${r[2]}</div>`;
+ $("#newLbl").textContent=G.newGot.length?`🎉 新收進圖鑑 ${G.newGot.length} 位`:"";
+ $("#newCards").innerHTML=G.newGot.map(i=>cardHTML(i,true,"mini")).join("");
+ $("#newCards").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCard(+b.dataset.i));
+ $("#resCoupon").innerHTML=couponHTML();
+ const nx=k<2?k+1:null;
+ $("#resNext").textContent=nx!==null?`前往${CHAPS[nx].t.split("　")[0]} ▶`:"查看圖鑑 📒";
+ $("#resNext").onclick=()=>{SFX.tap();if(nx!==null)start(nx);else{renderAlbum();show("s-album")}};
+ $("#resRetry").onclick=()=>{SFX.tap();start(k)};
+ show("s-res");
+}
+
+/* album */
+function cardHTML(i,got,cls=""){const C=CASES[i];
+ return `<button class="card ${cls} ${got?"":"locked"}" data-i="${i}"><span class="kind ${C.scam?"bad":"ok"}" style="${got?"":"display:none"}">${C.scam?"詐騙":"好人"}</span><div class="pic">${drawC(i,cls?64:80)}</div><div class="nm">${got?C.name:"？？？"}</div></button>`}
+function renderAlbum(){
+ $("#grid").innerHTML=CASES.map((_,i)=>cardHTML(i,SAVE.got.includes(i))).join("");
+ $("#grid").querySelectorAll(".card").forEach(b=>b.onclick=()=>openCard(+b.dataset.i));
+ $("#albumTot").textContent=`收集 ${SAVE.got.length}/12`;
+ $("#albumCoupon").innerHTML=couponHTML();
+}
+function openCard(i){SFX.tap();const C=CASES[i],got=SAVE.got.includes(i);
+ $("#sheetIn").innerHTML=got?`<div class="pic">${drawC(i,120,{wave:C.c.wave||20})}</div><span class="badge" style="background:${C.scam?"var(--red)":"var(--green)"};color:#fff">${C.scam?"🚨 詐騙":"✅ 正常通知"}・${C.src}</span><h3>${C.name}</h3><div class="muted">口頭禪：「${C.line}」</div><div class="tipbox" style="margin:10px 0 14px">${C.tip}</div><button class="btn w" id="shClose">關閉</button>`
+ :`<div class="pic" style="filter:brightness(0);opacity:.35">${drawC(i,120)}</div><h3>？？？</h3><div class="muted" style="margin-bottom:14px">在案件中答對，就能看清楚他的真面目。</div><button class="btn w" id="shClose">關閉</button>`;
+ $("#sheet").classList.add("on");$("#shClose").onclick=()=>$("#sheet").classList.remove("on")}
+$("#sheet").onclick=e=>{if(e.target.id==="sheet")$("#sheet").classList.remove("on")};
+let resetArm=0;
+$("#reset").onclick=()=>{if(Date.now()-resetArm>2500){resetArm=Date.now();toast("再按一次確認清除");return}
+ SAVE={got:[],best:[-1,-1,-1]};persist();renderAlbum();toast("已清除")};
+renderTitle();
+</script>
+</body></html>

@@ -1,0 +1,1566 @@
+<!doctype html><meta charset="utf-8">
+<title>叫號說 APP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
+<style>
+/* Layout: mobile web page (not an app) in the comic blue world. One column; on desktop it sits in a phone-sized browser frame. 3 tabs: 排隊 / 我的號碼 / 小教室. A 3D cube-head mascot guides at the moment of need. */
+:root{
+  color-scheme:light;
+  --sky:#3a4fd6; --sky-deep:#2a3ab0; --night:#1b2470;
+  --ink:#15142a; --paper:#fffaf0; --cream:#fdf0d2;
+  --orange:#f2711c; --yellow:#ffcf2e; --green:#3ec46d; --green-deep:#25964f;
+  --red:#e8402f; --lilac:#b9bff2; --muted:#5a5c78; --street:#6a6f8f;
+  --f-body:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
+  --f-num:"Archivo Black","Noto Sans TC",Impact,sans-serif;
+  --line:3px solid var(--ink); --shadow:4px 4px 0 var(--ink);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--night);color:var(--paper);font-family:var(--f-body);font-size:15px;line-height:1.6}
+button{font:inherit;cursor:pointer;color:inherit}
+a{color:inherit}
+button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.outer{min-height:100%;display:grid;justify-items:center;align-content:start;padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (max-width:480px){.outer{padding:0}}
+
+/* phone-sized browser frame */
+.phone{position:relative;transition:transform .55s cubic-bezier(.3,1.2,.5,1);width:min(100%,420px);height:min(880px,calc(100dvh - 28px));min-height:600px;background:var(--sky);border:var(--line);border-radius:30px;box-shadow:6px 6px 0 #000;overflow:hidden;display:flex;flex-direction:column}
+@media (max-width:480px){.phone{border:0;border-radius:0;box-shadow:none;height:100dvh;min-height:0}}
+.urlbar{background:#e9eaf3;color:#3b3d55;font-size:12px;padding:8px 12px 6px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #c9cbe0}
+.urlbar .u{flex:1;min-width:0;background:#fff;border-radius:999px;padding:3px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urlbar .u b{color:var(--ink)}
+.appTop{background:var(--ink)}
+.appTop .title{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px 6px;font-weight:900;font-size:17px}
+.storebtn{background:none;border:0;padding:0;color:var(--yellow);font-weight:900;font-size:13px;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+.storepick .cities{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.storepick .cities button{flex:none;border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:12px;font-weight:900;padding:2px 10px}
+.storepick .cities button[aria-pressed="true"]{background:var(--yellow)}
+.storepick .slist{max-height:46vh;overflow:auto;display:grid;gap:6px;margin-top:8px}
+.storepick .slist button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:8px 10px;font-weight:900;font-size:14px}
+.storepick .slist button[aria-pressed="true"]{background:var(--yellow)}
+.storepick .slist .addr{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-top:2px;white-space:normal}
+.storepick .slist small{font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
+.storepick input{width:100%}
+.appTop .store{font-weight:900;color:var(--yellow);font-size:13px;display:flex;align-items:center;gap:8px}
+.aa{height:28px;padding:0 9px;border-radius:999px;border:2px solid var(--yellow);background:var(--yellow);color:var(--ink);font-weight:900;font-size:14px;line-height:1;flex:none}
+.phone.big .aa{background:#fff}
+.phone.big .appBody{zoom:1.16}
+.billboard .to span{white-space:nowrap}
+.phone.big .billboard{padding:6px 10px}
+.phone.big .billboard .now{font-size:38px}
+.phone.big .billboard .to{font-size:17px}
+.phone.big .billboard .to b{font-size:54px}
+.phone.big .appTop .title{font-size:19px}
+.phone.big .muted,.phone.big .opt small,.phone.big .prep{color:#3d3b55!important}
+.phone.big .tabbar button{font-size:15px}
+.setrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border-top:2px dashed #d8d4c8;padding-top:12px}
+.setrow b{display:block;font-size:17px}.setrow small{display:block;font-size:13px;color:var(--muted);font-weight:700}
+.sw{position:relative;width:54px;height:30px;flex:none}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.sw i{position:absolute;inset:0;border:var(--line);border-radius:999px;background:#ddd;pointer-events:none;transition:background .2s}
+.sw i::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;border:2px solid var(--ink);transition:transform .2s}
+.sw input:checked+i{background:var(--green)}.sw input:checked+i::after{transform:translateX(24px)}
+.sw input:focus-visible+i{outline:3px solid var(--yellow);outline-offset:2px}
+.langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.langs button{border:var(--line);border-radius:12px;background:#fff;font-weight:900;font-size:15px;padding:8px;color:var(--ink)}
+.langs button[aria-pressed="true"]{background:var(--yellow)}
+.help{width:28px;height:28px;border-radius:50%;border:2px solid var(--yellow);background:none;color:var(--yellow);font-weight:900;font-size:14px;line-height:1}
+.mq{display:flex;background:var(--yellow);color:var(--ink);border-top:var(--line);border-bottom:var(--line)}
+.mq .pin{flex:none;background:var(--orange);color:#fff;font-weight:900;font-size:13px;padding:5px 10px;border-right:var(--line);white-space:nowrap}
+.mq .pin b{font-family:var(--f-num);font-size:15px}
+.mq .run{overflow:hidden;white-space:nowrap;flex:1;min-width:0;display:flex;align-items:center}
+.mqlink{color:var(--ink);text-decoration:underline;text-underline-offset:3px;font-weight:900}
+.mq .run .track{display:inline-flex;white-space:nowrap;will-change:transform}
+.mq .run .seg{flex:none;font-weight:700;font-size:13px;line-height:1.6;padding-right:2em;-webkit-text-size-adjust:100%}
+.appBody{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 14px 28px;display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-content:start}
+.appBody>*{min-width:0}
+.tabbar{display:grid;grid-template-columns:repeat(3,1fr);background:var(--paper);border-top:var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar button{border:0;background:none;color:var(--muted);font-weight:900;font-size:13px;padding:7px 0 9px;display:grid;justify-items:center;position:relative}
+.tabbar svg{width:25px;height:25px}
+.tabbar button[aria-current="page"]{color:var(--sky-deep)}
+.tabbar button[aria-current="page"]::before{content:"";position:absolute;top:-3px;left:30%;right:30%;height:5px;background:var(--orange);border-radius:0 0 4px 4px}
+.tabbar .dot{position:absolute;top:4px;left:calc(50% + 7px);min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;line-height:18px;padding:0 4px;font-family:var(--f-num);border:2px solid var(--paper)}
+
+/* toast (SMS / notice) */
+.toast{position:absolute;left:10px;right:10px;top:10px;z-index:48;border:var(--line);border-radius:16px;box-shadow:var(--shadow);padding:10px 12px;color:var(--ink);background:var(--paper);display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;animation:drop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes drop{from{transform:translateY(-140%)}}
+.toast.sms{background:#eafbef}
+.toast.promo{background:var(--cream)}
+.toast .ic{width:38px;height:38px;border-radius:10px;border:2px solid var(--ink);display:grid;place-items:center;font-weight:900;font-size:12px;background:var(--green);color:var(--ink)}
+.toast.info .ic{background:var(--yellow)}
+.toast.promo .ic{background:var(--lilac)}
+.toast small{display:block;font-size:11px;font-weight:900;color:var(--muted)}
+.toast b{font-size:15px;display:block;line-height:1.35}
+.toast p{margin:2px 0 0;font-size:13px;line-height:1.45}
+
+/* modal */
+.modal{position:absolute;inset:0;z-index:40;background:rgba(13,18,64,.74);display:grid;place-items:center;padding:18px;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{width:100%;max-height:100%;overflow:auto;background:var(--paper);color:var(--ink);border:var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--ink);padding:18px;display:grid;gap:12px}
+.sheet.alert{background:var(--yellow);text-align:center;animation:shake .5s 2}
+.sheet.called{background:var(--orange);color:#fff;text-align:center;animation:shake .5s 2}
+@keyframes shake{20%{transform:rotate(-2deg)}40%{transform:rotate(2deg)}60%{transform:rotate(-1deg)}80%{transform:rotate(1deg)}}
+.sheet h3{margin:0;font-size:22px;font-weight:900;line-height:1.3}
+.sheet p{margin:0;font-weight:700}
+.sheet .big{font-family:var(--f-num);font-size:64px;line-height:1}
+.sheet .desk{font-family:var(--f-num);font-size:84px;line-height:1;color:var(--yellow);text-shadow:4px 4px 0 var(--ink)}
+.sheet .acts{display:grid;gap:8px}
+.sheet label{font-weight:900;font-size:14px;display:grid;gap:4px;text-align:left}
+.sheet input[type=text],.sheet input[type=tel]{font:inherit;border:var(--line);border-radius:11px;padding:8px 10px;background:#fff;color:var(--ink)}
+.sheet .err{color:var(--red);font-size:13px;font-weight:700;min-height:1.2em;text-align:left}
+.sheet .fine{font-size:12px;color:var(--muted);font-weight:500;text-align:left}
+
+/* guide mascot */
+.guide{position:absolute;left:10px;right:10px;bottom:74px;z-index:25;display:grid;grid-template-columns:72px minmax(0,1fr);gap:6px;align-items:end;animation:rise .4s cubic-bezier(.2,1.4,.4,1);pointer-events:none}
+@keyframes rise{from{transform:translateY(30px);opacity:0}}
+.guide .av{width:72px;height:72px;border:var(--line);border-radius:50%;background:var(--orange);overflow:hidden;display:grid;place-items:center;pointer-events:auto}
+.guide .av img,.guide .av svg{width:100%;height:100%;object-fit:cover}
+.guide .say{position:relative;background:var(--paper);color:var(--ink);border:var(--line);border-radius:16px;box-shadow:var(--shadow);padding:10px 12px;font-weight:700;font-size:14px;line-height:1.5;pointer-events:auto;display:grid;gap:8px}
+.guide .say::before{content:"";position:absolute;left:-12px;bottom:14px;width:14px;height:14px;background:var(--paper);border-left:var(--line);border-bottom:var(--line);transform:rotate(45deg)}
+.guide .say .row{justify-content:flex-end}
+
+/* shared */
+.tagc{display:inline-block;font-size:12px;font-weight:900;padding:1px 8px;border-radius:6px;border:2px solid var(--ink);background:var(--yellow);color:var(--ink);white-space:nowrap}
+.tagc.blue{background:var(--sky);color:#fff}.tagc.red{background:var(--red);color:#fff}.tagc.green{background:var(--green)}.tagc.lilac{background:var(--lilac)}.tagc.white{background:#fff}
+.h2{display:flex;align-items:center;gap:8px;margin:0;flex-wrap:wrap}
+.h2 span{background:var(--orange);color:#fff;border:var(--line);border-radius:9px;box-shadow:2px 2px 0 var(--ink);padding:0 9px;font-weight:900;font-size:12px}
+.h2 h2,.h2 h3{margin:0;font-size:19px;font-weight:900;text-shadow:2px 2px 0 var(--ink);text-wrap:balance}
+.box{background:var(--paper);color:var(--ink);border:var(--line);border-radius:16px;box-shadow:var(--shadow);padding:14px;display:grid;gap:10px}
+.box h4{margin:0;font-size:16px;font-weight:900;line-height:1.4}
+.box p{margin:0}
+.muted{color:var(--muted);font-size:13px}
+.cta{display:block;width:100%;background:var(--yellow);color:var(--ink);border:var(--line);border-radius:14px;box-shadow:var(--shadow);font-size:20px;font-weight:900;padding:12px;letter-spacing:.04em;text-align:center;text-decoration:none}
+.cta:active,.btn:active,.cat:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.cta:disabled{opacity:.5;cursor:not-allowed}
+.btn{border:var(--line);background:#fff;color:var(--ink);font-weight:900;padding:8px 14px;border-radius:11px;box-shadow:3px 3px 0 var(--ink);font-size:15px;text-decoration:none;display:inline-block;text-align:center}
+.btn.dark{background:var(--ink);color:var(--yellow)}
+.btn.blue{background:var(--sky);color:#fff}
+.btn.sm{font-size:13px;padding:4px 10px}
+.btn.wide{width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.linkbtn{border:0;background:none;text-decoration:underline;font-weight:700;padding:0}
+.meter{height:12px;border:2px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--green);transition:width .6s}
+.meter i.orange{background:var(--orange)}
+
+/* scene (3D) */
+.shout{position:relative;background:var(--orange);border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:10px 16px 12px;color:#fff}
+.shout::after{content:"";position:absolute;left:36px;bottom:-18px;width:24px;height:20px;background:var(--orange);border-right:var(--line);border-bottom:var(--line);transform:skewX(-35deg)}
+.shout h3{margin:0;font-size:28px;font-weight:900;line-height:1.15;text-shadow:3px 3px 0 var(--ink)}
+.shout p{margin:4px 0 0;font-weight:700;font-size:14px}
+.scene{position:relative;border:var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;background:linear-gradient(var(--sky-deep),var(--sky) 70%);height:320px;touch-action:pan-y}
+.scene canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;cursor:grab}
+.billboard{position:absolute;z-index:3;left:50%;top:10px;transform:translateX(-50%);width:90%;background:var(--cream);color:var(--ink);border:var(--line);border-radius:8px;box-shadow:var(--shadow);padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;pointer-events:none}
+.billboard small{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:900;color:var(--red)}
+.billboard small::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+.billboard .now{font-family:var(--f-num);font-size:44px;line-height:1}
+.billboard .now.flip{animation:flipin .45s}
+@keyframes flipin{from{transform:rotateX(90deg)}}
+.billboard .to{font-weight:900;font-size:20px;text-align:right;line-height:1.1;display:flex;align-items:center;gap:6px}
+.billboard .to b{font-family:var(--f-num);font-size:64px;color:var(--orange);line-height:1;-webkit-text-stroke:1.5px var(--ink)}
+.scene .hint{position:absolute;z-index:3;right:8px;bottom:8px;font-size:11px;font-weight:700;background:var(--ink);padding:1px 8px;border-radius:6px;pointer-events:none}
+.bubble{position:absolute;z-index:4;left:50%;top:88px;transform:translateX(-50%);width:90%;background:var(--paper);color:var(--ink);border:var(--line);border-radius:12px;box-shadow:var(--shadow);padding:8px 10px;font-size:13px;font-weight:700;animation:pop .3s}
+.bubble .row{margin-bottom:3px}
+.flat{position:absolute;left:0;right:0;bottom:0;height:150px;background:var(--street);border-top:var(--line);overflow-x:auto}
+.flat .line{display:flex;align-items:flex-end;gap:2px;padding:30px 12px 6px;width:max-content}
+.flat button{border:0;background:none;padding:0;display:grid;justify-items:center}
+.flat svg{width:54px;height:84px}
+.flat .clerk{display:grid;justify-items:center;margin-right:8px;padding-right:8px;border-right:3px dashed rgba(255,255,255,.5)}
+.flat .no{font-family:var(--f-num);font-size:10px;background:var(--ink);color:#fff;padding:0 5px;border-radius:4px}
+
+/* take */
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat{border:var(--line);background:#fff;color:var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:10px 10px 8px;display:grid;gap:2px;text-align:left;font-weight:900;font-size:15px;line-height:1.3}
+.cat small{font-weight:700;font-size:12px;color:var(--muted)}
+.cat small b{font-family:var(--f-num);color:var(--orange);font-size:14px}
+.cat[aria-pressed="true"]{background:var(--sky);color:#fff}
+.cat[aria-pressed="true"] small{color:#dfe2ff}
+.cat[aria-pressed="true"] small b{color:var(--yellow)}
+.step{display:grid;gap:8px}
+.step .lbl{display:flex;align-items:center;gap:8px;font-weight:900}
+.step .lbl i{font-style:normal;font-family:var(--f-num);width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--yellow);display:grid;place-items:center;font-size:13px}
+.step .lbl em{font-style:normal;font-weight:700;font-size:12px;color:var(--muted)}
+textarea,input[type=tel]{width:100%;font:inherit;border:var(--line);border-radius:11px;padding:8px 10px;background:#fff;color:var(--ink)}
+textarea{resize:none;min-height:72px}
+.starters{display:flex;gap:6px;flex-wrap:wrap}
+.starters button{border:2px dashed var(--ink);background:none;border-radius:999px;font-size:13px;font-weight:700;padding:3px 10px;color:var(--ink)}
+.starters button[aria-pressed="true"]{border-style:solid;background:var(--yellow);font-weight:900}
+.chipgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.chipgrid button{width:100%;text-align:left;padding:6px 12px;border-radius:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chiplbl{font-size:12px;font-weight:900;color:var(--muted);margin-top:2px}
+.interest{flex:none;cursor:pointer;margin-left:2px;position:relative}
+.interest input{position:absolute;left:0;top:0;opacity:0;width:1px;height:1px;margin:0}
+.interest span{display:inline-block;border:2px solid #fff;border-radius:999px;padding:0 8px;font-size:11px;font-weight:900;line-height:18px;color:#fff;white-space:nowrap}
+.interest input:checked+span{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.interest input:focus-visible+span{outline:2px solid var(--yellow);outline-offset:2px}
+.picked-say{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
+.picked-say .linkbtn{color:var(--sky-deep);font-size:14px}
+.count{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.count span{font-family:var(--f-num);font-size:12px;color:var(--muted)}
+.suggest{font-size:13px;font-weight:700;color:var(--sky-deep)}
+.notice{background:#e3f7ea;border:2px solid var(--ink);border-radius:12px;padding:10px;font-size:13px;font-weight:700;display:grid;gap:8px}
+.notice b{font-size:15px}
+.quickgo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.quickgo .btn{font-size:13px;padding:8px 4px;line-height:1.3}
+details.more{border-top:2px dashed #c9cbe0;padding-top:8px}
+details.more summary{cursor:pointer;font-weight:900;font-size:14px;color:var(--sky-deep);list-style:none}
+details.more summary::before{content:"＋ "}
+details.more[open] summary::before{content:"－ "}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:14px;font-weight:700;margin-top:8px}
+.opt input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--sky)}
+.opt.prio{background:#fff3e6;border:2px solid var(--orange);border-radius:12px;padding:8px 10px}
+.opt small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.stores{display:flex;gap:6px;overflow-x:auto;margin:8px 0 10px;padding-bottom:4px;scrollbar-width:none}
+.store-opt{flex:none;text-align:left;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:4px 10px;line-height:1.3}
+.store-opt b{display:block;font-size:13px}.store-opt small{font-size:11px;color:var(--muted);font-weight:700}
+.store-opt[aria-pressed="true"]{background:var(--yellow);box-shadow:2px 2px 0 var(--ink)}
+.peak{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;align-items:end;height:76px}
+.peak button{display:block;border:2px solid var(--ink);border-bottom:0;border-radius:4px 4px 0 0;background:var(--lilac);padding:0}
+.peak button.now{background:var(--orange)}
+.peak button[aria-pressed="true"]{background:var(--sky)}
+.peakx{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;font-size:10px;text-align:center;color:var(--muted);font-family:var(--f-num)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{border:var(--line);border-radius:12px;padding:6px;background:#fff;color:var(--ink);font-weight:900;display:grid;justify-items:center;line-height:1.2}
+.slot small{font-weight:700;font-size:11px;color:var(--muted)}
+.slot[aria-pressed="true"]{background:var(--sky);color:#fff}
+.slot[aria-pressed="true"] small{color:#dfe2ff}
+.slot:disabled{opacity:.4}
+.resv{background:var(--lilac)}
+.resv .t{font-family:var(--f-num);font-size:30px;line-height:1}
+
+/* my number */
+.ticket{background:linear-gradient(135deg,#d8dcf7,#b9bff2 40%,#e9ebfb 60%,#a9afe8);border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;color:var(--ink);display:grid;gap:10px}
+.ticket.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.85) rotate(-3deg);opacity:0}}
+.ticket .top{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:10px;align-items:center}
+.ticket .lab{display:inline-block;background:var(--ink);color:var(--yellow);font-family:var(--f-num);font-size:10px;padding:0 8px;transform:skewX(-12deg)}
+.ticket .no{font-family:var(--f-num);font-size:56px;line-height:1;margin-top:4px}
+.ticket .pt{width:96px;height:96px;border:var(--line);border-radius:14px;background:var(--orange);overflow:hidden}
+.ticket .pt img,.ticket .pt svg{width:100%;height:100%;object-fit:cover;display:block}
+.ticket .stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ticket .stat div{background:var(--ink);color:#fff;border-radius:12px;padding:6px 10px;display:grid}
+.ticket .stat small{font-size:11px;font-weight:700;color:var(--lilac)}
+.ticket .stat b{font-family:var(--f-num);font-size:26px;color:var(--yellow);line-height:1.15}
+.ticket .stat b span{font-family:var(--f-body);font-size:13px;color:#fff;margin-left:3px}
+.ticket .say{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:8px 10px;font-weight:700;overflow-wrap:anywhere}
+.ticket .say small{display:block;font-size:11px;color:var(--muted)}
+.nearbox{background:var(--yellow)}
+.nearbox h4{font-size:20px}
+.docsnear{box-shadow:6px 6px 0 var(--ink),0 0 0 5px var(--orange)}
+.docsnear .doc{font-size:17px;padding:12px}
+.scn{display:flex;align-items:center;gap:8px;font-size:14px}
+.fam{font-size:13px;font-weight:700;background:rgba(255,255,255,.6);border-radius:8px;padding:4px 8px}
+.called{background:var(--orange);color:#fff;border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;text-align:center;display:grid;gap:6px;animation:pop .45s}
+.called .desk{font-family:var(--f-num);font-size:90px;line-height:1;color:var(--yellow);text-shadow:4px 4px 0 var(--ink)}
+.called h3{margin:0;font-size:22px;font-weight:900}
+.docs{display:grid;gap:8px}
+.doc{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 10px;font-weight:700;text-align:left;color:var(--ink)}
+.doc .bx{width:24px;height:24px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;background:#fff;font-weight:900}
+.doc[aria-pressed="true"]{background:#e3f7ea}
+.doc[aria-pressed="true"] .bx{background:var(--green)}
+.away{font-size:19px}
+.away.on{background:var(--green)}
+.rate{display:grid;gap:12px}
+.rate .q{display:grid;gap:6px}
+.rate .q b{font-size:15px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale button{border:var(--line);border-radius:10px;background:#fff;color:var(--ink);font-family:var(--f-num);font-size:20px;padding:4px 0}
+.scale button[aria-pressed="true"]{background:var(--yellow);box-shadow:2px 2px 0 var(--ink)}
+.scale-l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700}
+.faces{display:flex;gap:12px;justify-content:center}
+.faces button{font-size:32px;width:64px;height:64px;border:var(--line);border-radius:50%;background:#fff;box-shadow:3px 3px 0 var(--ink)}
+
+/* video */
+.vids{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:14px;scrollbar-width:none;margin:0 -14px;padding:2px 14px 8px 14px}
+.vids::-webkit-scrollbar{display:none}
+.vid{flex:0 0 86%;scroll-snap-align:start}
+.vwrap{position:relative;min-width:0}
+.varrow{width:32px;height:32px;border-radius:50%;border:3px solid var(--ink);background:var(--yellow);color:var(--ink);font-weight:900;font-size:18px;line-height:1;box-shadow:2px 2px 0 var(--ink);display:grid;place-items:center;padding:0;flex:none}
+.vnav{display:flex;align-items:center;justify-content:center;gap:14px}
+.varrow:disabled{opacity:.3;cursor:default}
+.vdots{display:flex;gap:6px;justify-content:center}
+.vdots i{width:8px;height:8px;border-radius:50%;background:var(--lilac);opacity:.5}
+.vdots i.on{background:var(--yellow);opacity:1}
+.vnote-unused{font-size:12px;font-weight:700;background:var(--cream);color:var(--ink);border:2px solid var(--ink);border-radius:10px;padding:6px 10px;margin-bottom:8px}
+.vid.solo{flex:none;margin:0}
+.vframe{position:relative;aspect-ratio:16/9;max-width:100%;border:var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;background:linear-gradient(135deg,var(--night),var(--sky));display:block;width:100%;padding:0;color:#fff;text-decoration:none;text-align:left}
+.vframe video{position:absolute;inset:0;width:100%;height:100%;background:#000;object-fit:contain}
+.vframe.tall video{background:linear-gradient(180deg,#3d54d6,#2c3fbf)}
+.vmax{position:absolute;right:6px;top:6px;z-index:2;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);border-radius:7px;box-shadow:1px 1px 0 var(--ink);font-size:10px;font-weight:900;line-height:1.4;padding:0 5px}
+#vplayer{position:absolute;inset:0;z-index:35;background:#05071c;overflow:hidden}
+#gameview{position:absolute;inset:0;z-index:37;background:#3a4fd6;display:flex;flex-direction:column}
+#gameview[hidden]{display:none}
+#gameview .gbar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--ink);color:#fff;font-weight:900;font-size:13px;flex:none}
+#gameview .gbar button{border:2px solid #fff;background:transparent;color:#fff;border-radius:999px;padding:4px 10px;font:inherit;cursor:pointer;white-space:nowrap}
+#gameview .gbar .st{margin-left:auto;background:var(--yellow);color:var(--ink);border-radius:999px;padding:3px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gameview .gbar.near .st{background:var(--red);color:#fff;animation:gpulse 1s infinite}
+@keyframes gpulse{50%{transform:scale(1.06)}}
+#gameview iframe{flex:1;border:0;width:100%;min-height:0;background:#3a4fd6;display:none}
+#gameview iframe.on{display:block}
+.gamecard{background:linear-gradient(135deg,#fff7d6,#ffe9c7)}
+.gamecard .gbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gbtn{display:grid;justify-items:center;gap:2px;text-align:center;border:var(--line);border-radius:14px;background:#fff;padding:10px 6px;box-shadow:3px 3px 0 var(--ink);cursor:pointer;font:inherit;color:var(--ink)}
+.gbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.gbtn .gi{font-size:30px;line-height:1}.gbtn b{font-size:16px}.gbtn small{font-size:11.5px;font-weight:700;opacity:.75;line-height:1.3}
+#vplayer .stage{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;transform-origin:center}
+#vplayer video{flex:1;min-height:0;width:100%;background:#000;object-fit:contain}
+#vplayer .vbar{flex:none;display:flex;align-items:center;gap:8px;padding:8px 10px;color:#fff;font-weight:900;font-size:13px}
+#vplayer .vbar span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#vplayer .vbar button{flex:none;background:var(--yellow);color:var(--ink);border:3px solid var(--ink);border-radius:10px;font-weight:900;font-size:13px;padding:3px 10px}
+#vplayer .vbar button.ghost{background:#fff}
+.privacy{margin:4px 0 0;font-size:11px;font-weight:700;color:var(--muted)}
+#admin{position:absolute;inset:0;z-index:45;background:#eef0fb;color:var(--ink);overflow:auto;-webkit-overflow-scrolling:touch}
+#admin .ahd{position:sticky;top:0;z-index:2;background:var(--ink);color:#fff;padding:12px 14px;display:flex;align-items:center;gap:10px}
+#admin .ahd h3{margin:0;font-size:16px;flex:1;min-width:0}
+#admin .ahd small{display:block;font-size:11px;color:var(--lilac);font-weight:700}
+#admin .ahd button{background:var(--yellow);border:3px solid #fff;border-radius:10px;font-weight:900;font-size:13px;padding:3px 10px;color:var(--ink)}
+#admin .staff{background:var(--red);color:#fff;font-size:11px;font-weight:900;text-align:center;padding:3px}
+#admin .ab{padding:12px;display:grid;gap:12px}
+#admin .card{background:#fff;border:3px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:12px}
+#admin .card h4{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}
+#admin .card h4 em{font-style:normal;font-size:11px;color:var(--muted);font-weight:700;margin-left:auto}
+#admin .kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#admin .kpi div{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px;text-align:center;box-shadow:3px 3px 0 var(--ink)}
+#admin .kpi b{display:block;font-size:22px;font-family:var(--f-num)}
+#admin .kpi span{font-size:11px;font-weight:700;color:var(--muted)}
+#admin .kpi .warn b{color:var(--red)}
+#admin .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center;font-size:13px;font-weight:700;margin-top:8px}
+#admin .bar i{grid-column:1/-1;height:7px;border-radius:4px;background:#e2e5f7;overflow:hidden;display:block}
+#admin .bar i::before{content:"";display:block;height:100%;width:var(--w);background:var(--sky)}
+#admin .bar small{font-size:11px;color:var(--muted)}
+#admin .up{color:var(--red);font-weight:900}
+#admin .q{border-top:2px dashed #d6d9ee;padding-top:10px;margin-top:10px}
+#admin .q:first-of-type{border-top:0;margin-top:0;padding-top:0}
+#admin .raw{font-size:12px;color:var(--muted);font-weight:700}
+#admin .geo{font-size:14px;font-weight:900;margin:3px 0 6px}
+#admin .st{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--ink);border-radius:999px;padding:0 8px;margin-right:4px}
+#admin .st.gap{background:#ffd9d3}#admin .st.ok{background:#d6f5df}#admin .st.ch{background:#e2e5f7}
+#admin .flow{display:grid;gap:6px}
+#admin .flow div{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;font-size:13px;font-weight:700;line-height:1.45}
+#admin .flow b{width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;border:2px solid var(--ink);font-size:12px}
+#admin .flow small{display:block;color:var(--muted);font-weight:700}
+#admin .desk{display:grid;grid-template-columns:44px minmax(0,1fr);gap:8px;align-items:start;border-top:2px dashed #d6d9ee;padding-top:8px;margin-top:8px}
+#admin .desk:first-of-type{border-top:0;margin-top:0;padding-top:0}
+#admin .desk .dn{width:44px;height:44px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:900;font-size:12px;line-height:1.1;text-align:center}
+#admin .desk .dn b{font-size:18px;font-family:var(--f-num)}
+#admin .desk.idle .dn{background:#c9cce3}
+#admin .qn{font-family:var(--f-num);font-weight:900;font-size:16px;margin-right:6px}
+#admin .said{font-size:13px;font-weight:700;margin:3px 0;background:#f4f5fc;border-radius:8px;padding:4px 8px}
+#admin .said.none{color:var(--muted);font-weight:500;background:none;padding:0}
+#admin .prep{font-size:11px;color:var(--muted);font-weight:700}
+#admin .mini{display:inline-block;font-size:10px;font-weight:900;border:2px solid var(--ink);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:1px}
+#admin .catsum{display:flex;flex-wrap:wrap;gap:6px}
+#admin .catsum span{font-size:12px;font-weight:900;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:1px 8px}
+#admin .dtabs{display:grid;grid-template-columns:1fr 1fr;background:var(--ink);padding:0 12px 10px;gap:6px;position:sticky;top:56px;z-index:2}
+#admin .dtabs button{border:2px solid #fff;border-radius:10px;background:none;color:#fff;font-weight:900;font-size:13px;padding:4px}
+#admin .dtabs button[aria-selected="true"]{background:var(--yellow);color:var(--ink);border-color:var(--yellow)}
+#admin .ctab{width:100%;border-collapse:collapse;font-size:12px;color:var(--ink)}
+#admin .ctab td,#admin .ctab th{color:var(--ink);opacity:1}
+#admin .ctab th{text-align:left;font-size:11px;color:var(--muted);border-bottom:2px solid var(--ink);padding:4px 2px}
+#admin .ctab td{padding:5px 2px;border-bottom:1px solid #e2e5f7;font-weight:700;vertical-align:bottom}
+#admin .ctab td:nth-child(2),#admin .ctab td:nth-child(3),#admin .ctab th:nth-child(2),#admin .ctab th:nth-child(3){text-align:center;font-family:var(--f-num)}
+#admin .ctab tr.grp td{border-top:2px solid #c9cce3}
+#admin .ctab td small{display:block;font-size:10px;color:var(--muted)}
+#admin .cmp{font-size:10px;font-weight:900;border-radius:999px;padding:0 6px;white-space:nowrap}
+#admin .cmp.ok{background:#d6f5df}#admin .cmp.bad{background:#ffd9d3;color:#a3200f}#admin .cmp.na{background:#eef0fb;color:var(--muted)}
+#admin .outs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#admin .outs button{border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:12px;font-weight:900;padding:2px 10px;color:var(--ink)}
+#admin .outs button[aria-pressed="true"]{background:var(--yellow)}
+#admin .nextbtn{margin-top:8px;width:100%}
+#admin .nextbtn:disabled{opacity:.45}
+#admin .flash{background:#d6f5df;border:2px solid var(--ink);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:900;animation:pop .3s}
+#admin .note{font-size:11px;color:var(--muted);font-weight:700;text-align:center}
+.vframe .bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.vframe .lbl{position:absolute;left:10px;right:60px;bottom:10px;font-weight:900;font-size:15px;line-height:1.35;text-shadow:2px 2px 0 var(--ink)}
+.vframe .yt{position:absolute;left:8px;top:8px;background:#fff;color:var(--ink);font-size:11px;font-weight:900;border:2px solid var(--ink);border-radius:6px;padding:0 6px;display:flex;align-items:center;gap:4px}
+.vframe .yt i{width:14px;height:10px;background:var(--red);border-radius:3px;display:inline-block;position:relative}
+.vframe .yt i::after{content:"";position:absolute;left:5px;top:2px;border-left:5px solid #fff;border-top:3px solid transparent;border-bottom:3px solid transparent}
+.vframe .play{position:absolute;right:10px;bottom:10px;width:46px;height:46px;border-radius:50%;background:var(--yellow);border:var(--line);display:grid;place-items:center}
+.vcap{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;margin-top:6px}
+.vcap span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vcap a{white-space:nowrap}
+
+/* learn */
+.cls{border-left:6px solid var(--red)}
+.quizq{background:var(--ink);color:#fff;border-radius:10px;padding:10px 12px;font-weight:700;font-size:14px}
+.quizq small{display:block;color:var(--lilac);font-size:11px}
+.ans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ans button{border:var(--line);border-radius:11px;padding:8px;font-weight:900;font-size:16px;background:#fff;color:var(--ink)}
+.ans button.ok{background:var(--green)}.ans button.bad{background:var(--red);color:#fff}
+.explain{font-size:14px;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 10px}
+.rounds{display:flex;gap:6px;flex-wrap:wrap}
+.rounds span{font-size:12px;font-weight:900;border:2px solid var(--ink);border-radius:999px;padding:0 10px;background:#fff;color:var(--muted)}
+.rounds span.cur{background:var(--yellow);color:var(--ink)}
+.rounds span.done{background:var(--green);color:var(--ink)}
+.vcar{display:grid;gap:8px;min-width:0}
+.cls .vids{margin:0 -14px}
+.stamps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stamp{aspect-ratio:1;max-width:100%;border:2px dashed var(--ink);border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:900;color:var(--muted);text-align:center;line-height:1.15}
+.stamp.got{border-style:solid;background:var(--red);color:#fff;transform:rotate(-12deg);animation:stampin .35s}
+@keyframes stampin{from{transform:scale(1.8) rotate(-30deg);opacity:0}}
+.reward{background:var(--yellow);border:var(--line);border-radius:14px;padding:12px;text-align:center;display:grid;gap:6px;animation:pop .45s}
+.reward b{font-size:18px}
+.reward .code{font-family:var(--f-num);font-size:26px;letter-spacing:.08em;background:#fff;border:2px dashed var(--ink);border-radius:10px;padding:2px 10px;justify-self:center}
+.course{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.course .time{font-family:var(--f-num);font-size:18px;background:var(--ink);color:var(--yellow);border-radius:8px;padding:4px 8px;text-align:center;line-height:1.1}
+.course .time small{display:block;font-family:var(--f-body);font-size:10px;color:#fff;font-weight:700}
+.course .act{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.feature{background:var(--red);color:#fff}
+.feature .muted{color:#ffe0dc}
+.feature h4{font-size:20px}
+.seats{display:flex;gap:3px;flex-wrap:wrap}
+.seats i{width:14px;height:14px;border-radius:4px;border:2px solid var(--ink);background:#fff}
+.seats i.taken{background:var(--ink)}
+.seats i.mine{background:var(--yellow)}
+.note{font-size:12px;opacity:.8;text-align:center;margin:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="outer">
+  <div class="phone" id="phone">
+    <div class="urlbar" aria-hidden="true"><span>🔒</span><span class="u" id="url">qtalk.demo/<b>台北文創門市</b></span></div>
+    <div id="toast"></div>
+    <div id="modal"></div>
+    <div id="vplayer" hidden></div>
+    <div id="gameview" hidden><div class="gbar" id="gbar"><button type="button" id="gback">← 回到號碼</button><span id="gname"></span><span class="st" id="gst"></span></div></div>
+    <div id="admin" hidden></div>
+    <div id="guide"></div>
+    <div class="appTop">
+      <div class="title"><span id="logo">叫號說</span><span class="store"><button type="button" class="storebtn" id="storeBtn" aria-label="切換門市，目前：台北文創門市"><span id="storeName">台北文創門市</span> ▾</button><button type="button" class="aa" id="aaBtn" aria-label="大字、語音叫號、語言設定">Aa</button><button class="help" id="help" aria-label="這頁怎麼用">?</button></span></div>
+      <div class="mq"><div class="pin" id="pin" aria-live="polite"></div><div class="run"><div class="track" id="mqText"><span class="seg"></span><span class="seg" aria-hidden="true"></span></div></div></div>
+    </div>
+    <div class="appBody" id="appBody"></div>
+    <nav class="tabbar" id="tabbar" aria-label="頁面"></nav>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* videos are stored with the page itself, so they play in every view */
+const KNOW_VIDEOS=[
+  {src:"/_blob/b0f96a4a4ba5ae8acf022f6544938347",poster:"/_blob/3f6ec18ea20719b7cfbe8dc4d188cf86",label:"SIM卡轉eSIM教學",ask:"SIM卡轉eSIM",short:"SIM卡轉eSIM",cat:"異動/諮詢/維修",dur:"1:00"},
+  {src:"/_blob/c5cb77234ede413d1f64ef3564f10c3b",poster:"/_blob/f973b9f9d537cbbf787665dbad7fb243",label:"60 秒看懂：我適合哪種 5G 方案？",ask:"5G 方案怎麼選",short:"5G 方案怎麼選",cat:"續約/換約/新申辦",dur:"1:00"},
+  {src:"/_blob/e00f9a538a1c1f89efb7cbc98aa1f1cb",poster:"/_blob/d143247437e298aa7b25a4ef1aeb6af9",label:"30 秒看懂：出國上網怎麼選？",ask:"出國上網怎麼選",short:"出國上網怎麼選",cat:"異動/諮詢/維修",dur:"0:34"},
+  {src:"/_blob/dd4b6e2c56fd25f93f9dfb295bacd239",poster:"/_blob/454a617c82102db72fb7bc4c985629b1",label:"1 分鐘認識：好速成双",ask:"好速成双",short:"好速成双",cat:"續約/換約/新申辦",dur:"0:55"},
+  {src:"/_blob/446892a619d9c43e8ea5ffe8212d4b97",poster:"/_blob/b629e6a793b5d92ef721206df099a5f3",label:"1 分鐘認識：OP響樂生活",ask:"OP響樂生活",short:"OP響樂生活",cat:"續約/換約/新申辦",dur:"0:55"},
+  {src:"/_blob/68447baf50b8984d610041c4b191e86a",poster:"/_blob/331a6ad0f2b88c1cce9e2a17d680ec54",label:"1 分鐘認識：智慧移動網",ask:"智慧移動網",short:"智慧移動網",cat:"異動/諮詢/維修",dur:"0:55"}
+];
+const PROMO_VIDEOS=[
+  {src:"/_blob/333eed8fcf0c267f876d010ea7868a37",poster:"/_blob/a5e196ff1d521565b34cbf1b2265971d",label:"Apple 生態圈",dur:"14:12"},
+  {src:"/_blob/15409ad68ae73556abdc7b4396f3156a",poster:"/_blob/29bf668cdaf7356a128170931ffd25bd",label:"全能超 5G",dur:"0:30"},
+  {src:"/_blob/db2a901f4cfecd7bf5fd63f9c493b210",poster:"/_blob/dbec8104481dbc9a12f7a2742eb60086",label:"多元影音平台組合任你選",dur:"0:17"},
+  {src:"/_blob/57f5ef6afc3c3f78639d31384b4a41f5",poster:"/_blob/8e3b4aacdd98e296e7ec8ca5794878d0",label:"抬頭世代正式來臨",dur:"12:23"},
+  {src:"/_blob/9ebfbf1c45c2c7cffeda121311d97380",poster:"/_blob/de8567337bfcdae43f9a301cc466bfc5",label:"mo幣月月發",dur:"0:30"}
+];
+const FRAUD={src:"/_blob/e09277949ab9be52ca045004c4c36f25",poster:"/_blob/1bad53fa2ebc114c0de2bb8f40b983d6",label:"台灣大哥大 反詐戰警",dur:"1:00"};
+const CATS={
+  "繳費/儲值":{t:4,w:.35,c:"green",docs:["門號或帳單"],promo:"設定自動扣繳，送 50 元購物金",quick:true},
+  "續約/換約/新申辦":{t:18,w:1.15,c:"",docs:["身分證","第二證件（健保卡或駕照）","原門號 SIM 卡（續約時）"],promo:"續約加購藍牙耳機 5 折"},
+  "異動/諮詢/維修":{t:10,w:.85,c:"blue",docs:["身分證","要維修的手機（維修時）"],promo:"維修期間免費借用備用機"},
+  "網路取貨/預約取件":{t:5,w:.45,c:"lilac",docs:["身分證","取貨簡訊或訂單編號"],promo:"新機保護貼現場貼 8 折"}
+};
+const GUESS=[["繳費/儲值",/繳費|儲值|繳帳單|帳單/],["網路取貨/預約取件",/取貨|取件|網路訂|訂單|預購/],["異動/諮詢/維修",/壞|破|維修|故障|摔|改|異動|諮詢|問|斷線/],["續約/換約/新申辦",/續約|換約|到期|合約|新辦|申辦|方案|門號|攜碼/]];
+const STARTERS=["合約快到期了","想問家庭方案","手機摔壞了","來取網路訂的手機","幫爸媽辦"];
+const SEED=[["續約/換約/新申辦","合約下個月到期，想看看有沒有比較便宜的 5G 方案"],["繳費/儲值",""],["異動/諮詢/維修","螢幕摔破了，想問維修大概要多久"],["續約/換約/新申辦","想把家裡三個門號一起轉過來，有家庭方案嗎"],["網路取貨/預約取件","上週網路訂的手機，訂單編號在簡訊裡"],["異動/諮詢/維修","網路在捷運上一直斷線，想問是不是設定問題"],["續約/換約/新申辦","幫爸爸續約，他眼睛不好想換大字手機"],["異動/諮詢/維修","接到自稱客服的電話說要解除分期，不知道是不是真的"],["網路取貨/預約取件",""]];
+const QUIZ=[
+  {src:"簡訊",q:"「您的包裹地址有誤，請點以下連結補填並支付 25 元運費」",scam:true,why:"物流不會用簡訊叫你付小額運費，陌生連結會騙走信用卡資料。直接到物流官方網站查詢。",tip:"物流不會叫你點連結付運費"},
+  {src:"來電",q:"「我是購物網站客服，您的訂單被誤設成分期，請到 ATM 解除」",scam:true,why:"ATM 沒有「解除分期」功能。直接掛斷，打 165 反詐騙專線確認。",tip:"ATM 沒有「解除分期」功能"},
+  {src:"簡訊",q:"「您本期電信帳單已出帳，請自行到官方網站查看」（沒有附連結）",scam:false,why:"沒有叫你點陌生連結或給資料，比較像正常通知。最保險的做法是自己打開官方網站查。",tip:"沒附連結、不要資料，比較像正常通知"},
+  {src:"LINE",q:"「我是你兒子，換新號碼了，先幫我轉 3 萬急用」",scam:true,why:"換號碼又急著要錢是典型手法。先用原本的號碼打給家人確認。",tip:"先用原本的號碼打給家人確認"},
+  {src:"簡訊",q:"「您的銀行帳戶有異常登入，請點連結驗證身分，否則 24 小時內停用」",scam:true,why:"銀行不會用簡訊連結要你輸入帳號密碼。自己打開銀行 APP，或打卡片背面的客服電話確認。",tip:"銀行不會傳連結要你登入"},
+  {src:"來電",q:"「健保局通知，你的健保卡被盜用，現在幫你轉接檢察官」",scam:true,why:"公家機關不會幫你轉接檢警，也不會要你交出存款或監管帳戶。掛斷後撥 165 查證。",tip:"公家機關不會幫你轉接檢警"},
+  {src:"LINE",q:"投資群組：「老師帶你操作，保證獲利、穩賺不賠」",scam:true,why:"投資一定有風險，「保證獲利」就是詐騙的訊號。",tip:"「保證獲利」就是詐騙訊號"},
+  {src:"簡訊",q:"「您的門號合約將於下月到期，可至門市或官方 APP 辦理續約」（沒有附連結）",scam:false,why:"沒有連結、也沒要你提供資料，比較像正常通知。要辦理時，自己打開官方 APP 或到門市最安心。",tip:"沒連結、沒要資料，比較像正常通知"},
+  {src:"網購",q:"賣家說：「你的訂單被系統鎖住，要先到超商繳費才能解除」",scam:true,why:"解除訂單不需要你付錢，「超商代碼繳費」是常見的騙術。",tip:"解除訂單不需要你付錢"},
+  {src:"徵才",q:"「在家打字月入 5 萬，請先把存摺和提款卡寄給公司」",scam:true,why:"交出存摺、提款卡，帳戶可能變成人頭帳戶，自己也會吃上官司。",tip:"存摺、提款卡絕不交給別人"},
+  {src:"交友",q:"網友說：「我從國外寄禮物給你，你先付關稅就能領」",scam:true,why:"沒見過面的網友要你先付錢，幾乎都是詐騙。",tip:"要你先付錢的網友，要小心"},
+  {src:"推播",q:"「刷卡通知：您剛剛消費 1,280 元」（你確實剛買完東西）",scam:false,why:"跟你剛做的事對得上，就是正常通知。如果對不上，再打卡片背面的客服電話確認。",tip:"對得上自己剛做的事，就是正常通知"}
+];
+const ROUND=4,ROUNDS=3;
+const COURSES=[
+  {id:"fraud",when:"today",name:"這通電話是詐騙嗎？",tag:"防詐",mins:20,startsIn:12,clock:"15:00",left:5,seats:12,feature:true,desc:"看懂最新詐騙簡訊和來電，現場練習分辨。適合長輩和陪同家人。"},
+  {id:"move",when:"today",name:"新機搬家教學",tag:"新機",mins:20,startsIn:25,clock:"15:15",left:3,seats:8,desc:"照片、LINE 對話、聯絡人怎麼搬到新手機。"},
+  {id:"senior",when:"weekend",day:"週六",date:"10/17",name:"長輩手機入門",tag:"長輩",mins:60,clock:"10:30",left:8,seats:10,desc:"放大字體、視訊通話、存聯絡人，一次學會。"},
+  {id:"kids",when:"weekend",day:"週六",date:"10/17",name:"親子手機安全設定",tag:"親子",mins:60,clock:"14:00",left:6,seats:12,desc:"幫孩子設定上網時間、過濾不當內容，家長一起學。"},
+  {id:"ai",when:"weekend",day:"週日",date:"10/18",name:"AI 工具入門",tag:"科技",mins:90,clock:"14:00",left:10,seats:15,desc:"用手機上的 AI 助理查資料、寫訊息、翻譯。"},
+  {id:"photo",when:"weekend",day:"週日",date:"10/18",name:"手機拍照小技巧",tag:"生活",mins:60,clock:"16:00",left:4,seats:12,desc:"構圖、人像、夜景，用手機就能拍出好照片。"}
+];
+const ALL_STORES={"基隆市": ["基隆安樂門市"], "台北市": ["台北文創門市", "台北永吉門市", "台北西門町門市", "台北莊敬門市", "台北忠孝東門市", "台北後山埤門市", "台北新站前門市", "台北三創門市", "台北南京東門市", "台北大直門市", "台北林森北門市", "台北民權東門市", "台北農安門市", "台北西湖門市", "台北內湖門市", "內湖湖光門市", "內湖光電門市", "台北通化門市", "台北東湖門市", "文山景中門市", "台北天母門市", "北投中央北門市"], "新北市": ["板橋重慶門市", "新莊佳瑪門市", "重陽正義門市", "中和環球門市", "永和樂華門市", "土城學府門市", "新店七張門市", "蘆洲復興門市"], "桃園市": ["新桃園中山門市", "中壢新生門市", "平鎮民族門市", "桃園八德門市", "龜山中興門市"], "新竹": ["竹北三民門市", "竹東長春門市", "新竹巨城門市"], "苗栗縣": ["苗栗頭份門市"], "台中市": ["文心山西門市", "台中黎明門市", "台中青海門市", "大里益民門市", "太平樹孝門市", "豐原站前門市"], "彰化縣": ["曉陽民族門市", "員林大同門市"], "南投縣": ["南投復興門市"], "雲林縣": ["斗六鎮北門市"], "嘉義": ["興業仁愛門市", "嘉義民雄門市"], "台南市": ["永康中華二門市", "台南安中本淵門市", "台南中華東門市", "台南公園門市"], "高雄市": ["鳳山五甲門市", "高雄大昌門市", "高雄自由二門市", "高雄後昌門市", "高雄一心門市"], "屏東縣": ["屏東自由門市", "屏東潮州門市"], "宜蘭縣": ["宜蘭神農門市"], "花蓮縣": ["花蓮林森門市", "花蓮舊站門市", "吉安中華門市"], "台東縣": ["台東新生門市"], "澎湖縣": ["澎湖馬公門市"], "金門縣": ["金門金城門市"]};
+const STORE_ADDR={"台北文創門市": "台北市信義區菸廠路80號", "台北永吉門市": "台北市信義區松隆路76號1樓", "台北西門町門市": "台北市萬華區西寧南路165號1樓", "台北莊敬門市": "台北市信義區莊敬路467號1樓", "台北忠孝東門市": "台北市信義區忠孝東路5段659、661號", "台北後山埤門市": "台北市信義區中坡南路22巷2號1樓", "台北新站前門市": "台北市中正區南陽街1號", "台北三創門市": "台北市中正區市民大道3段2號", "台北南京東門市": "台北市中山區南京東路2段20號1樓", "台北大直門市": "台北市中山區北安路548號1樓", "台北林森北門市": "台北市中山區林森北路263號之1-2", "台北民權東門市": "台北市中山區民權東路3段51號1樓", "台北農安門市": "台北市中山區農安街19號", "台北西湖門市": "台北市內湖區內湖路1段277號1樓", "台北內湖門市": "台北市內湖區內湖路1段717號1樓", "內湖湖光門市": "台北市內湖區成功路4段54號", "內湖光電門市": "台北市內湖區瑞光路498號", "基隆安樂門市": "基隆市安樂區安樂路二段137號", "台北通化門市": "台北市大安區通化街16號", "台北東湖門市": "台北市內湖區東湖路129號", "文山景中門市": "台北市文山區景中街39號", "台北天母門市": "台北市士林區天母西路47號", "北投中央北門市": "台北市北投區中央北路一段8號", "板橋重慶門市": "新北市板橋區重慶路246號", "新莊佳瑪門市": "新北市新莊區幸福路690號", "重陽正義門市": "新北市三重區正義北路325號", "中和環球門市": "新北市中和區中山路三段143號", "永和樂華門市": "新北市永和區永和路一段162號", "土城學府門市": "新北市土城區學府路一段76號", "新店七張門市": "新北市新店區北新路二段165號", "蘆洲復興門市": "新北市蘆洲區復興路110號1樓", "新桃園中山門市": "桃園市桃園區中山路790號", "中壢新生門市": "桃園市中壢區新生路132號", "平鎮民族門市": "桃園市平鎮區民族路二段113號", "桃園八德門市": "桃園市八德區介壽路一段807號", "龜山中興門市": "桃園市龜山區中興路431之1號", "竹北三民門市": "新竹縣竹北市三民路320號", "竹東長春門市": "新竹縣竹東鎮長春路三段116號", "新竹巨城門市": "新竹市東區民權路171號1樓", "苗栗頭份門市": "苗栗縣頭份市中正路183號", "文心山西門市": "台中市北屯區山西路二段229號1樓", "台中黎明門市": "台中市南屯區黎明路二段436號", "台中青海門市": "台中市西屯區青海路一段106號", "大里益民門市": "台中市大里區益民路二段270號", "太平樹孝門市": "台中市太平區樹孝路8之3號", "豐原站前門市": "台中市豐原區中正路2之1號", "曉陽民族門市": "彰化縣彰化市曉陽路94號", "員林大同門市": "彰化縣員林市育英路589之3、4號", "南投復興門市": "南投縣南投市復興路207號1樓", "斗六鎮北門市": "雲林縣斗六市鎮北路10、12號", "興業仁愛門市": "嘉義市西區興業西路147號", "嘉義民雄門市": "嘉義縣民雄鄉文化路60-7號1樓", "永康中華二門市": "台南市永康區中華路138之1號", "台南安中本淵門市": "台南市安南區安中路三段389、391號", "台南中華東門市": "台南市東區中華東路三段196號", "台南公園門市": "台南市北區公園路591之44號", "鳳山五甲門市": "高雄市鳳山區五甲二路563之1號", "高雄大昌門市": "高雄市三民區大昌二路252號", "高雄自由二門市": "高雄市左營區自由二路212號", "高雄後昌門市": "高雄市楠梓區後昌路778及780號", "高雄一心門市": "高雄市前鎮區一心二路43號", "屏東自由門市": "屏東縣屏東市自由路586之3號1樓", "屏東潮州門市": "屏東縣東港鎮中山路32號", "宜蘭神農門市": "宜蘭縣宜蘭市神農路一段192號", "花蓮林森門市": "花蓮縣花蓮市林森路157號1樓", "花蓮舊站門市": "花蓮縣花蓮市中山路157號1樓", "吉安中華門市": "花蓮縣吉安鄉中華路二段13號1樓", "台東新生門市": "台東縣台東市新生路257號", "澎湖馬公門市": "澎湖縣馬公市復國路27號1樓", "金門金城門市": "金門縣金城鎮民生路51號1樓"};
+const KNOWN_PEAK={"台北文創門市":[3,5,6,4,5,7,9,10,8,6,7,5],"台北永吉門市":[2,3,4,3,3,4,5,6,5,4,4,3],"台北西門町門市":[4,6,7,5,6,8,9,9,7,6,6,4],"台北莊敬門市":[2,2,3,3,2,3,4,5,4,3,3,2]};
+const NEAR={"台北文創門市":["約 1 公里","約 1.5 公里","約 2 公里"]};
+function hashN(t){let h=7;for(const c of t)h=(h*31+c.charCodeAt(0))%9973;return h}
+function peakOf(n){if(KNOWN_PEAK[n])return KNOWN_PEAK[n];const h=hashN(n),base=[3,4,5,4,4,6,7,8,7,5,5,4];return base.map((v,i)=>Math.max(1,Math.min(10,v+((h>>(i%5))%3)-1)))}
+function cityOf(n){return Object.keys(ALL_STORES).find(c=>ALL_STORES[c].includes(n))}
+function storeWait(n){return peakOf(n)[5]*3}
+let HOME="台北文創門市",STORES=[];
+function buildStores(){const others=ALL_STORES[cityOf(HOME)].filter(n=>n!==HOME).slice(0,3),D=NEAR[HOME]||["同縣市","同縣市","同縣市"];
+  STORES=[HOME,...others].map((n,i)=>({name:n,dist:i?D[i-1]:"你在這裡",peak:peakOf(n)}))}
+buildStores();
+let PEAK=STORES[0].peak;const NOW_IDX=5,TICK_MS=6000;
+let ONDUTY=3,scIdx=0;
+const effDesks=()=>Math.max(1,ONDUTY-(S&&S.pauseLeft>0?1:0));
+const TIPS={
+  first:"選你要辦的事，取號後可以先去逛。快輪到你時，我會傳簡訊叫你。",
+  took:"不想在這邊乾等？按「我先離開一下」，前面剩 3 組時我會叫你回來。",
+  learn:"答對一題蓋一個章，集滿第 1 輪 4 個章就能領優惠券，還有第 2、3 輪可以挑戰。",
+  done:"幫這次的服務打個分數吧！點 3 下就完成，不用 10 秒。",
+  resv:"選一個人少的時段，到店掃門口的 QR code 報到，報到後會優先叫號。"
+};
+
+/* ================= state ================= */
+let S,U,toastTimer,tickTimer;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tag=c=>`<span class="tagc ${CATS[c].c}">${c}</span>`;
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
+const maskPhone=p=>p.replace(/\D/g,"").replace(/^(\d{4})\d{3}(\d{3})$/,"$1-***-$2");
+
+function reset(){
+  ONDUTY=3;
+  S={pauseDesk:-1,pauseLeft:0,next:101+Math.floor(Math.random()*20),rnext:1,pnext:1,queue:[],serving:[null,null,null],me:null,lastDesk:0,total:186,courses:COURSES.map(c=>({...c})),enrolled:new Set()};
+  U={tab:"queue",bubble:null,picked:null,draft:"",phone:"0912345678",consent:false,family:null,familyOn:false,more:false,
+     resvOpen:false,peakSel:NOW_IDX,slot:null,resv:null,quizIdx:0,quizAns:null,stamps:new Set(),streak:0,round:0,roundEnd:false,
+     docs:new Set(),out:false,done:null,rating:{},contact:null,tipsSeen:new Set(JSON.parse(store.get("qt-tips")||"[]")),guide:null,playing:{}};
+  SEED.forEach(([c,t])=>enqueue(c,t,{}));
+  for(let i=0;i<ONDUTY;i++)S.serving[i]=S.queue.shift();
+  applyBig();renderApp();restartTick();if(PREF.lang!=="zh")setLang();
+  setTimeout(()=>tip("first"),700);
+}
+function enqueue(cat,text,o){
+  const t={no:(o.prefix||"A")+(o.prefix==="R"?String(S.rnext++).padStart(3,"0"):o.prefix==="P"?String(S.pnext++).padStart(3,"0"):S.next++),cat,text,me:!!o.me,family:o.family||null,prio:!!o.prio};
+  if(o.front)S.queue.unshift(t);
+  else if(o.prio){const k=S.queue.findIndex(x=>!x.prio&&x.no[0]!=="R");if(k<0)S.queue.push(t);else S.queue.splice(k,0,t)}
+  else S.queue.push(t);
+  S.total++;return t;
+}
+const guess=t=>{for(const[c,re]of GUESS)if(re.test(t))return c;return null};
+const baseWait=()=>S.queue.reduce((s,x)=>s+CATS[x.cat].t,0)/effDesks()+3;
+const catWait=c=>Math.max(2,Math.round(baseWait()*CATS[c].w));
+function waitFor(t){const i=S.queue.indexOf(t),a=S.queue.slice(0,i);return{ahead:a.length,mins:Math.max(1,Math.round(a.reduce((s,x)=>s+CATS[x.cat].t,0)/effDesks()+2))}}
+function meState(){const t=S.me;if(!t)return"none";if(S.serving.includes(t))return"called";if(S.queue.includes(t))return"waiting";return"done"}
+
+/* ================= toast / modal / guide ================= */
+function toast(kind,title,body,ms){
+  const lab={sms:["簡訊","簡訊・叫號說"],info:["提醒",HOME],promo:["優惠","門市優惠・你已同意接收"]}[kind];
+  $("#toast").innerHTML=`<div class="toast ${kind}" role="status"><div class="ic">${lab[0]}</div><div><small>${lab[1]}</small><b>${esc(title)}</b>${body?`<p>${esc(body)}</p>`:""}</div></div>`;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").innerHTML="",ms||5200);
+  $("#toast").firstChild.onclick=()=>{clearTimeout(toastTimer);$("#toast").innerHTML=""};
+}
+function closeModal(){$("#modal").innerHTML=""}
+function modal(html,bind){$("#modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;bind&&bind($("#modal"));const f=$("#modal").querySelector("input,button");f&&f.focus()}
+function tip(key,force){
+  if(!force&&U.tipsSeen.has(key))return;
+  U.guide=key;renderGuide();
+}
+function renderGuide(){
+  const g=$("#guide");if(!U.guide){g.innerHTML="";return}
+  g.innerHTML=`<div class="guide" role="note"><div class="av">${portrait("GUIDE")}</div><div class="say">${TIPS[U.guide]}<div class="row"><button class="btn sm dark" id="gotit">知道了</button></div></div></div>`;
+  $("#gotit").onclick=()=>{U.tipsSeen.add(U.guide);store.set("qt-tips",JSON.stringify([...U.tipsSeen]));U.guide=null;renderGuide()};
+}
+$("#help").onclick=()=>{
+  const st=meState();
+  const k=U.tab==="learn"?"learn":U.tab==="mine"?(st==="done"?"done":"took"):(U.resvOpen?"resv":"first");
+  tip(k,true);
+};
+
+/* ================= scenarios: every new ticket plays out differently ================= */
+const SCENARIOS=[
+  {key:"noshow",name:"前面有人過號",
+    at:2,fire(){const i=S.queue.indexOf(S.me);if(i<1)return;const x=S.queue.splice(0,1)[0];
+      toast("info",`${x.no} 叫了沒到，已過號`,"你往前一組，等候時間縮短。");logMe(`${x.no} 過號未到，你往前一組`)}},
+  {key:"pause",name:"櫃台暫停服務",
+    at:1,fire(){S.pauseDesk=1;S.pauseLeft=3;
+      toast("info","2 號櫃台暫停服務約 5 分鐘","等候時間會稍微增加，恢復時會再通知你。");logMe("2 號櫃台暫停服務，等候時間稍微增加")}},
+  {key:"extra",name:"人多，加開櫃台",
+    at:2,fire(){if(ONDUTY>=4)return;ONDUTY=4;S.serving.push(S.queue.shift()||null);
+      toast("info","人比較多，加開 4 號櫃台","等候時間縮短了。");logMe("加開 4 號櫃台，等候時間縮短")}},
+  {key:"resv",name:"預約顧客報到",
+    at:2,fire(){const c=Object.keys(CATS)[1];const r=enqueue(c,"",{prefix:"R",front:true});const add=CATS[c].t;
+      toast("info",`預約顧客 ${r.no} 已報到`,`預約的顧客會優先辦理，你的等候約增加 ${Math.round(add/effDesks())} 分鐘。`);logMe(`預約顧客 ${r.no} 報到，優先辦理`)}},
+  {key:"quiet",name:"現在人很少",
+    before(){S.queue=S.queue.slice(0,1)},
+    after(){toast("info","現在人很少","前面只剩 1 組，很快就輪到你，不用離開喔。")}},
+  {key:"rush",name:"尖峰時段",
+    before(){for(let i=0;i<6;i++){const sd=SEED[(i*3)%SEED.length];enqueue(sd[0],i%2?sd[1]:"",{})}},
+    after(){const w=waitFor(S.me);toast("info",`現在是尖峰時段，前面 ${w.ahead} 組`,"可以按「我先離開一下」去附近逛逛，快到了會叫你。")}}
+];
+function logMe(msg){if(S.me){(S.me.log=S.me.log||[]).unshift(msg)}}
+function pickScenario(){const sc=SCENARIOS[scIdx%SCENARIOS.length];scIdx++;return sc}
+function runScenario(){const t=S.me,sc=t&&t.sc;if(!sc||!sc.fire)return;t.ticks=(t.ticks||0)+1;if(!t.fired&&t.ticks>=sc.at){t.fired=true;sc.fire()}}
+
+/* ================= queue engine ================= */
+function tick(){
+  if($("#modal").innerHTML)return;
+  const cand=[...Array(ONDUTY).keys()].filter(i=>!(S.pauseLeft>0&&i===S.pauseDesk));
+  const free=cand.find(i=>!S.serving[i]);let d=free;
+  if(d===undefined){const k=cand.indexOf(S.lastDesk);d=cand[(k+1)%cand.length]}
+  S.serving[d]=S.queue.shift()||null;S.lastDesk=d;if(S.serving[d])S.lastCalled={no:S.serving[d].no,desk:d};
+  if(S.pauseLeft>0&&--S.pauseLeft===0){toast("info",`${S.pauseDesk+1} 號櫃台恢復服務`,"等候時間會再縮短一些。");logMe(`${S.pauseDesk+1} 號櫃台恢復服務`)}
+  if(Math.random()<.6){const sd=SEED[Math.floor(Math.random()*SEED.length)];enqueue(sd[0],Math.random()<.5?sd[1]:"",{})}
+  if(S.me){
+    const st=meState();
+    if(S.serving[d]===S.me){calledAlert()}
+    else if(st==="waiting"){runScenario();const w=waitFor(S.me);
+      if(w.ahead<=3&&!S.me.n3){S.me.n3=true;
+        smsNear(w);
+        if(U.out)nearAlert();
+      }}
+  }
+  renderApp(true);Q3.sync();
+}
+function restartTick(){clearInterval(tickTimer);tickTimer=setInterval(tick,TICK_MS)}
+function smsNear(w){
+  const fam=S.me.family?`，也已通知${S.me.family.name}`:"";
+  toast("sms",`${S.me.no} 前面剩 ${w.ahead} 組${fam}`,`約 ${w.mins} 分鐘後叫號，請回到${HOME}。`);buzz([150,80,150]);
+}
+function nearAlert(){
+  const t=S.me,w=waitFor(t);say(nearLine(w.ahead));
+  modal(`<div class="sheet alert" role="alertdialog" aria-labelledby="mh"><div class="big">${w.ahead}</div><h3 id="mh">快輪到你了！前面剩 ${w.ahead} 組</h3>
+    <p>約 ${w.mins} 分鐘後叫到 ${t.no}，請回到門市。</p>
+    <div class="acts"><button class="btn dark wide" data-m="back">我回到門市了</button><button class="btn wide" data-m="go">我在路上</button>${!t.held?`<button class="btn wide" data-m="hold">來不及，往後延 2 組</button>`:""}</div></div>`,m=>{
+    m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const a=b.dataset.m;
+      if(a==="back")U.out=false;
+      if(a==="go")toast("info","好，路上小心","輪到你時會再提醒一次。");
+      if(a==="hold")holdMe();
+      closeModal();renderApp();});
+  });
+}
+function calledAlert(){closePlayer();closeGame();
+  const t=S.me,d=S.serving.indexOf(t);
+  buzz([250,100,250,100,250]);say(callLine(t.no,d+1));
+  if(t.family)toast("sms",`輪到 ${t.no} 了，請到 ${d+1} 號櫃台`,`也已通知${t.family.name}。`);
+  modal(`<div class="sheet called" role="alertdialog" aria-labelledby="mh"><p>輪到你了！${t.no}</p><div class="desk">${d+1}</div><h3 id="mh">請到 ${d+1} 號櫃台</h3>
+    <p>${U.out?"你還沒回到門市，可以保留一次。":"櫃台已經看過你寫的需求，正在等你。"}</p>
+    <div class="acts"><button class="btn wide" data-m="ok">我到了</button>${!t.held&&U.out?`<button class="btn dark wide" data-m="hold">我還要 5 分鐘</button>`:""}</div></div>`,m=>{
+    m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{clearTimeout(calledT1);if(b.dataset.m==="hold"){clearTimeout(calledT2);holdMe()}else U.out=false;closeModal();go("mine")});
+  });
+  /* demo pacing: the call screen stays briefly, then the counter finishes and the rating appears */
+  clearTimeout(calledT1);clearTimeout(calledT2);
+  calledT1=setTimeout(()=>{if($("#modal").innerHTML){U.out=false;closeModal();go("mine")}},3000);
+  calledT2=setTimeout(finishMe,8000);
+}
+let calledT1,calledT2;
+function finishMe(){
+  if(!S.me||meState()!=="called"||$("#modal").innerHTML)return;
+  const d=S.serving.indexOf(S.me);S.serving[d]=S.queue.shift()||null;S.lastDesk=d;if(S.serving[d])S.lastCalled={no:S.serving[d].no,desk:d};
+  U.tab="mine";fullRender();renderTabs();Q3.sync();
+}
+function holdMe(){
+  const t=S.me;t.held=true;const d=S.serving.indexOf(t);let pos=2;
+  if(d>=0){S.serving[d]=S.queue.shift()||null;S.lastDesk=d}else{const i=S.queue.indexOf(t);S.queue.splice(i,1);pos=i+2}
+  S.queue.splice(Math.min(S.queue.length,pos),0,t);t.n3=false;
+  toast("info","已幫你往後延 2 組","保留只能用一次。");Q3.sync();
+}
+
+/* ================= marquee ================= */
+let lastMq="";
+function renderMarquee(){
+  const st=meState(),pin=$("#pin");
+  if(st==="waiting"){const w=waitFor(S.me);pin.innerHTML=`你前面 <b>${w.ahead}</b> 組・約 <b>${w.mins}</b> 分`}
+  else if(st==="called")pin.innerHTML=`輪到你了！<b>${S.serving.indexOf(S.me)+1}</b> 號櫃台`;
+  else pin.innerHTML=`現在取號 等約 <b>${Math.round(baseWait())}</b> 分`;
+  const parts=[...Object.keys(CATS).map(c=>`${c} 約 ${catWait(c)} 分`),`15:00 防詐小教室剩 ${S.courses[0].left} 位`,`<a class="mqlink" href="https://www.youtube.com/channel/UCq1T8bXVAEOzQ3VkXbo8L-w" target="_blank" rel="noopener">到台灣大哥大 YouTube 頻道看更多精彩影片 ↗</a>`];
+  const txt=parts.join("　★　");
+  if(txt!==lastMq){document.querySelectorAll("#mqText .seg").forEach(e=>e.innerHTML=txt);lastMq=txt;startMq()}
+}
+
+/* ticker: constant, readable speed; two copies loop seamlessly with no blank gap */
+let mqX=0,mqLast=0,mqOn=false;const MQ_SPEED=50; // px per second
+function startMq(){if(mqOn)return;mqOn=true;requestAnimationFrame(mqStep)}
+function mqStep(ts){
+  const tr=$("#mqText"),seg=tr&&tr.firstElementChild;
+  if(seg){const dt=mqLast?Math.min(.05,(ts-mqLast)/1000):0;mqLast=ts;
+    const w=seg.offsetWidth;if(!matchMedia("(prefers-reduced-motion: reduce)").matches)mqX-=MQ_SPEED*dt;
+    if(w&&-mqX>=w)mqX+=w;tr.style.transform=`translateX(${mqX}px)`}
+  requestAnimationFrame(mqStep);
+}
+
+/* ================= tabs ================= */
+const ICONS={queue:'<path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/>',mine:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 6v12" stroke-dasharray="2 2"/>',learn:'<path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v5c3 2 7 2 10 0v-5"/>'};
+function renderTabs(){
+  const st=meState(),w=st==="waiting"?waitFor(S.me).ahead:null;
+  $("#tabbar").innerHTML=[["queue","排隊"],["mine","我的號碼"],["learn","小教室"]].map(([k,n])=>`<button data-t="${k}" ${U.tab===k?'aria-current="page"':""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">${ICONS[k]}</svg>${n}${k==="mine"&&st==="called"?'<span class="dot">!</span>':k==="mine"&&w!==null?`<span class="dot">${w}</span>`:""}</button>`).join("");
+  $("#tabbar").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.t));
+  $("#url").innerHTML=S.me&&st!=="done"?`qtalk.demo/<b>${S.me.no}</b>`:`qtalk.demo/<b>${HOME}</b>`;
+}
+function go(t){U.tab=t;U.bubble=null;U.carReset=true;renderApp();$("#appBody").scrollTop=0;if(t==="learn")setTimeout(()=>tip("learn"),400)}
+let lastNow=null;
+function renderApp(fromTick){gameStatus();
+  renderTabs();renderMarquee();
+  const b=$("#appBody");
+  if(fromTick){ // light updates only, so typing and playing videos are never interrupted
+    const live=b.querySelector("[data-live]");
+    if(live){live.outerHTML=liveHTML();bindLive()}
+    updateBillboard();
+    if(U.tab==="mine"&&meState()==="waiting"&&(waitFor(S.me).ahead<=3)!==!!U.wasNear){fullRender();return}
+    if(U.tab==="mine"){const tk=b.querySelector("#ticketWrap");if(tk){tk.innerHTML=ticketInner();}const cw=b.querySelector("#calledWrap");if(cw)cw.innerHTML=calledInner();if(meState()==="done"&&!b.querySelector("#rateBox")){fullRender()}}
+    return;
+  }
+  fullRender();
+}
+function fullRender(){
+  const b=$("#appBody"),y=b.scrollTop;
+  const pv=[...b.querySelectorAll("video")].find(v=>!v.paused),keep=pv?{src:pv.getAttribute("src"),t:pv.currentTime}:null;
+  const vx=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
+  b.innerHTML=({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();
+  ({queue:bindQueue,mine:bindMine,learn:bindLearn})[U.tab]();
+  const reset=U.carReset;U.carReset=false;b.scrollTop=y;if(!reset)document.querySelectorAll(".vids").forEach((v,k)=>{if(vx[k])v.scrollLeft=vx[k]});else document.querySelectorAll(".vids").forEach(v=>{v.scrollLeft=0;v.dispatchEvent(new Event("scroll"))});
+  if(keep){const v=b.querySelector(`video[src="${keep.src}"]`);if(v){v.preload="auto";v.currentTime=keep.t;v.play().catch(()=>{})}}
+}
+
+/* ================= video blocks ================= */
+function videoCard(v,solo){
+  return `<div class="vid ${solo?"solo":""}"><div class="vframe${v.tall?" tall":""}"><button class="vmax" type="button" aria-label="放大觀看：${esc(v.label)}">⛶ 放大</button><video src="${v.src}" poster="${v.poster}" controls controlslist="nofullscreen" disablepictureinpicture playsinline preload="none" aria-label="${esc(v.label)}"></video></div>
+    <div class="vcap"><span>${esc(v.label)}</span><span>${v.dur}</span>${v.ask&&!(S.me&&["waiting","called"].includes(meState()))?`<label class="interest" title="取號時一起問"><input type="checkbox" data-ask="${v.ask}" ${(U.chips||[]).includes(v.ask)?"checked":""}><span>${(U.chips||[]).includes(v.ask)?"✓ 已加入":"＋ 有興趣"}</span></label>`:""}</div></div>`;
+}
+function carousel(list,key){return `<div class="vcar" data-car="${key}"><div class="vwrap"><div class="vids">${list.map(v=>videoCard(v)).join("")}</div></div><div class="vnav"><button class="varrow" data-vs="-1" aria-label="上一支影片" disabled>‹</button><div class="vdots">${list.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div><button class="varrow" data-vs="1" aria-label="下一支影片">›</button></div></div>`}
+function videosHTML(list=PROMO_VIDEOS,title="排隊時先看一下"){return `<div class="h2"><span>影片</span><h3>${title}</h3></div>${carousel(list,"main")}`}
+
+/* ---- 員工後台：問題洞察（連點標題 3 下） ---- */
+const INSIGHT={week:"10/14–10/20",kpi:[["412","收到的顧客問題"],["38","AI 歸納成"],["9","官網還缺答案",1]],
+  top:[["合約到期怎麼續約最划算",86,"+12%"],["iPhone Duo 怎麼把 SIM 卡轉成 eSIM",64,"+310%"],["出國上網要選漫遊還是 eSIM",51,"+8%"],["家庭方案怎麼算、可以幾人",47,"−3%"],["接到自稱客服的電話該怎麼辦",33,"+41%"]],
+  geo:[
+    {raw:"「新手機沒有卡槽，我的門號要怎麼搬？」",q:"iPhone Duo 沒有 SIM 卡槽，台灣大哥大門號怎麼轉 eSIM？",st:["gap","官網未有答案"],ch:"官網 FAQ・YouTube 教學影片"},
+    {raw:"「合約快到了，續約跟攜碼哪個划算？」",q:"台灣大哥大合約到期前多久可以續約？續約和攜碼差在哪？",st:["ok","官網已有，需改寫成問答"],ch:"官網 FAQ・門市商家檔案問答"},
+    {raw:"「接到電話說要解除分期，是真的嗎？」",q:"接到「客服要你到 ATM 解除分期」的電話，是詐騙嗎？",st:["gap","官網未有答案"],ch:"官網防詐專區・165 宣導合作"},
+    {raw:"「下個月去日本，網路怎麼用最省？」",q:"去日本旅遊，台灣大哥大漫遊和 eSIM 上網卡怎麼選？",st:["ok","已發佈"],ch:"官網 FAQ・旅遊上網專頁"}]};
+function openAdmin(){const a=$("#admin");a.hidden=false;const I=INSIGHT,mx=Math.max(...I.top.map(t=>t[1]));
+  a.innerHTML=`<div class="ahd"><h3>問題洞察後台<small>${HOME}・${I.week}</small></h3><button type="button" id="adClose">✕ 關閉</button></div>
+  <div class="staff">員工專用・顧客看不到這一頁（示意數據）</div>
+  <div class="ab">
+   <div class="kpi">${I.kpi.map(k=>`<div class="${k[2]?"warn":""}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("").replace("<span>AI 歸納成</span>","<span>AI 歸納成題</span>")}</div>
+   <div class="card"><h4>本週熱門問題<em>次數・較上週</em></h4>${I.top.map(t=>`<div class="bar"><span>${t[0]}</span><small>${t[1]} 次 <span class="${/^\+/.test(t[2])&&parseInt(t[2].slice(1))>=40?"up":""}">${t[2]}</span></small><i style="--w:${Math.round(t[1]/mx*100)}%"></i></div>`).join("")}</div>
+   <div class="card"><h4>GEO 建議問句<em>顧客原話 → AI 搜尋問法</em></h4>${I.geo.map(g=>`<div class="q"><div class="raw">顧客原話：${g.raw}</div><div class="geo">${g.q}</div><span class="st ${g.st[0]}">${g.st[1]}</span><span class="st ch">發佈到：${g.ch}</span></div>`).join("")}</div>
+   <div class="card"><h4>怎麼讓 AI 搜得到？</h4><div class="flow">
+     <div><b>1</b><span>門市問題去識別化、AI 歸納成題<small>顧客原話只留在系統內，不公開</small></span></div>
+     <div><b>2</b><span>把答案發佈到公開頁面<small>官網 FAQ（加上 FAQ 結構化資料）、YouTube 影片標題與說明、Google 商家檔案問答</small></span></div>
+     <div><b>3</b><span>AI 搜尋引用官網答案<small>顧客問 ChatGPT、Gemini、Google 時，看到台灣大哥大的答案</small></span></div>
+     <div><b>4</b><span>每月追蹤 AI 有沒有引用<small>沒被引用的題目，回頭改寫內容</small></span></div></div></div>
+   <p class="note">叫號系統本身是封閉的，AI 搜不到也不該搜到；公開的是整理後的答案。</p>
+  </div>`;
+  $("#adClose").onclick=()=>{a.hidden=true;a.innerHTML=""};a.scrollTop=0;clearInterval(deskTimer)}
+(()=>{let n=0,tm;document.addEventListener("click",e=>{if(!e.target.closest("#logo"))return;n++;clearTimeout(tm);tm=setTimeout(()=>n=0,700);if(n>=3){n=0;openAdmin()}})})();
+
+function setHome(n){HOME=n;buildStores();U.store=0;PEAK=STORES[0].peak;U.slot=null;
+  $("#storeName").textContent=n;$("#storeBtn").setAttribute("aria-label","切換門市，目前："+n);
+  if(!(S.me&&meState()!=="done"))$("#url").innerHTML=`qtalk.demo/<b>${n}</b>`}
+function openStorePick(){
+  if(S.me&&["waiting","called"].includes(meState())){toast("info",`你正在${HOME}排隊`,"辦完這次的號碼，才能換別的門市。");return}
+  let city=cityOf(HOME),q="";
+  const list=()=>{const names=q?Object.values(ALL_STORES).flat().filter(n=>n.includes(q)||(STORE_ADDR[n]||"").includes(q)):ALL_STORES[city];
+    return names.length?names.map(n=>`<button type="button" data-home="${n}" aria-pressed="${n===HOME}"><span>${n}${n===HOME?"・目前":""}<small class="addr">${STORE_ADDR[n]||""}</small></span><small>${q?cityOf(n)+"・":""}現在約 ${storeWait(n)} 分</small></button>`).join(""):`<p class="muted">找不到「${esc(q)}」，換個關鍵字試試。</p>`};
+  modal(`<div class="sheet storepick" aria-labelledby="sph"><h3 id="sph">選擇門市</h3>
+    <div class="cities" role="group" aria-label="縣市">${Object.keys(ALL_STORES).map(c=>`<button type="button" data-city="${c}" aria-pressed="${c===city}">${c}</button>`).join("")}</div>
+    <input type="search" id="spq" placeholder="或搜尋門市或地址，例如：內湖、中壢" aria-label="搜尋門市" style="margin-top:8px">
+    <div class="slist" id="slist">${list()}</div>
+    <div class="acts"><button class="btn wide" type="button" id="spClose">取消</button></div>
+    <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
+    const bind=()=>{m.querySelectorAll("[data-home]").forEach(b=>b.onclick=()=>{const n=b.dataset.home;closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}})};
+    const re=()=>{$("#slist").innerHTML=list();m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
+    $("#spq").oninput=e=>{q=e.target.value.trim();re()};
+    $("#spClose").onclick=closeModal;bind();
+    const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
+    });
+}
+document.addEventListener("click",e=>{if(e.target.closest("#storeBtn"))openStorePick()});
+
+/* ---- 員工後台：櫃台看板（在「門市，先聽我說」或叫號看板連點 3 下） ---- */
+let deskTimer=null,DESK_TAB="live",DESK_PICK=[],DESK_FLASH="",CLOSED={};
+const OUTCOMES={"續約/換約/新申辦":["新申辦","續約","換約（換機）","攜碼"],"繳費/儲值":["繳費","儲值"],"異動/諮詢/維修":["異動（過戶、改資費）","諮詢","維修"],"網路取貨/預約取件":["取貨"]};
+function serveNext(i){const t=S.serving[i];
+  S.serving[i]=S.queue.shift()||null;S.lastDesk=i;if(S.serving[i])S.lastCalled={no:S.serving[i].no,desk:i};
+  if(t&&t===S.me){U.tab="mine";fullRender();renderTabs()}
+  else if(S.serving[i]&&S.serving[i]===S.me){calledAlert()}
+  renderApp(true);Q3.sync()}
+const CLOSE_DAY={date:"10/22（四）",hours:"10:00–21:30",
+  kpi:[["186","取號總數"],["171","完成服務"],["15","過號未到"]],
+  kpi2:[["14 分","平均等候"],["23","預約報到"],["4.6","滿意度"]],
+  rows:[["續約/換約/新申辦","新申辦",14,14],["","續約",31,30],["","換約（換機）",17,17],["","攜碼",8,8],
+        ["繳費/儲值","繳費",22,22],["","儲值",9,9],
+        ["異動/諮詢/維修","異動（過戶、改資費）",19,19],["","諮詢",21,null],["","維修",11,11],
+        ["網路取貨/預約取件","取貨",19,19]],
+  extra:[["影片有興趣","SIM卡轉eSIM 27、5G 方案 18、出國上網 12"],["防詐小測驗","完成 64 人，領優惠券 41 張"],["課程報名","今日 2 堂共 18 人，週末 4 堂共 26 人"],["低分回電","3 件，已回電 2 件、待回電 1 件"],["提前線上分流","繳費/儲值顧客 17 人改用線上辦"]]};
+function closeHTML(tabs){const D=CLOSE_DAY;let tot=0,sys=0,diff=0;const live=Object.values(CLOSED).reduce((a,b)=>a+b,0);
+  const rows=D.rows.map(r0=>{const k=CLOSED[r0[1]]||0,r=[r0[0],r0[1],r0[2]+k,r0[3]==null?null:r0[3]+k];tot+=r[2];if(r[3]!=null){sys+=r[3];if(r[3]!==r[2])diff++}
+    const st=r[3]==null?'<span class="cmp na">不需比對</span>':r[3]===r[2]?'<span class="cmp ok">✓ 相符</span>':`<span class="cmp bad">差 ${r[2]-r[3]} 筆</span>`;
+    return `<tr${r[0]?' class="grp"':""}><td>${r[0]?`<small>${r[0]}</small>`:""}${r[1]}</td><td>${r[2]}</td><td>${r[3]??"—"}</td><td>${st}</td></tr>`}).join("");
+  return `<div class="ahd"><h3>關帳總結<small>${HOME}・${D.date} ${D.hours}</small></h3><button type="button" id="adClose">✕ 關閉</button></div>
+  <div class="staff">員工專用・每天關帳後自動產出（示意數據）</div>${tabs}
+  <div class="ab">
+   <div class="kpi">${D.kpi.map((k,j)=>`<div><b>${j===1?(+k[0]+live):k[0]}</b><span>${k[1]}</span></div>`).join("")}</div>
+   ${live?`<p class="prep" style="margin:0;text-align:center">含今天櫃台剛點選結案的 ${live} 筆，已即時併入下方統計</p>`:""}
+   <div class="kpi">${D.kpi2.map(k=>`<div><b>${k[0]}</b><span>${k[1]}</span></div>`).join("")}</div>
+   <div class="card"><h4>業務彙整・與營運系統比對<em>${diff?`<span style="color:var(--red)">${diff} 項不符</span>`:"全部相符"}</em></h4>
+    <table class="ctab"><thead><tr><th>業務</th><th>叫號說</th><th>營運系統</th><th>比對</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="prep" style="margin:8px 0 0">細項由櫃台結案時點選；「諮詢」不會產生交易單，不需比對。</p></div>
+   ${diff?`<div class="card" style="border-color:var(--red)"><h4>⚠ 請確認</h4><div class="prep" style="font-size:13px;color:var(--ink)">「續約」叫號說 31 筆、營運系統 30 筆。可能是顧客辦到一半取消，或櫃台漏建單，請在 22:00 前確認。</div></div>`:""}
+   <div class="card"><h4>其他今日數據</h4>${D.extra.map(e=>`<div class="bar" style="margin-top:6px"><span>${e[0]}</span><small style="text-align:right;color:var(--ink);font-weight:700">${e[1]}</small></div>`).join("")}</div>
+   <button class="btn dark wide" type="button" id="csvBtn">下載彙整表（CSV）</button>
+  </div>`}
+function bindDesk(){document.querySelectorAll("[data-dtab]").forEach(b=>b.onclick=()=>{DESK_TAB=b.dataset.dtab;openDesk()});
+  const c=$("#csvBtn");if(c)c.onclick=()=>{const lines=[["業務類別","細項","叫號說","營運系統"].join(",")];let g="";CLOSE_DAY.rows.forEach(r=>{if(r[0])g=r[0];const k=CLOSED[r[1]]||0;lines.push([g,r[1],r[2]+k,r[3]==null?"":r[3]+k].join(","))});
+    (async()=>{const dl=window.claude&&claude.use?await claude.use("downloads"):null;
+      if(!dl){toast("info","這個檢視無法下載檔案","",2200);return}
+      try{await dl.save({filename:`${HOME}_關帳總結_1022.csv`,data:"\ufeff"+lines.join("\n")});toast("info","已下載彙整表","",1800)}
+      catch(e){if(e&&e.code==="declined")return;toast("info",e&&e.code==="rate_limited"?"請稍候再試一次":"這個檢視無法下載檔案","",2200)}})()}}
+function deskHTML(){const vids=KNOW_VIDEOS.map(v=>v.ask);
+  const said=t=>t.text?`<div class="said">「${esc(t.text)}」</div>`:`<div class="said none">（沒有留言，請當面詢問）</div>`;
+  const marks=t=>`${t.no[0]==="R"?'<span class="mini">預約</span>':""}${t.prio?'<span class="mini" style="background:#ffd9d3">優先</span>':""}${t.family?'<span class="mini">幫家人</span>':""}${t.me?'<span class="mini" style="background:var(--yellow)">你</span>':""}${vids.some(a=>(t.text||"").includes(a))?'<span class="mini">看過影片</span>':""}`;
+  const counts={};S.queue.forEach(t=>counts[t.cat]=(counts[t.cat]||0)+1);
+  const tabs=`<div class="dtabs" role="tablist"><button type="button" role="tab" data-dtab="live" aria-selected="${DESK_TAB==="live"}">即時看板</button><button type="button" role="tab" data-dtab="close" aria-selected="${DESK_TAB==="close"}">關帳總結</button></div>`;
+  if(DESK_TAB==="close")return closeHTML(tabs);
+  return `<div class="ahd"><h3>櫃台看板<small>${HOME}・即時更新</small></h3><button type="button" id="adClose">✕ 關閉</button></div>
+  <div class="staff">員工專用・顧客看不到這一頁（示意）</div>${tabs}
+  <div class="ab">
+   ${DESK_FLASH?`<div class="flash">${DESK_FLASH}</div>`:""}
+   <div class="kpi"><div><b>${S.serving.filter(Boolean).length}</b><span>服務中</span></div><div><b>${S.queue.length}</b><span>等候中</span></div><div><b>${S.queue.filter(t=>t.text).length}</b><span>有先留言</span></div></div>
+   <div class="card"><h4>服務中<em>先看需求再開口</em></h4>${S.serving.map((t,i)=>t?`<div class="desk"><div class="dn"><b>${i+1}</b>號櫃台</div><div><span class="qn">${t.no}</span>${tag(t.cat)}${marks(t)}${said(t)}<div class="prep">請準備：${CATS[t.cat].docs.join("、")}</div>
+     <div class="outs" role="group" aria-label="這筆實際辦了什麼">${(OUTCOMES[t.cat]||[]).map(o=>`<button type="button" data-out="${i}|${o}" aria-pressed="${DESK_PICK[i]===o}">${o}</button>`).join("")}</div>
+     <button type="button" class="btn sm dark nextbtn" data-next="${i}" ${DESK_PICK[i]?"":"disabled"}>${DESK_PICK[i]?`結案（${DESK_PICK[i]}），叫下一號`:"先點選辦了什麼，再結案"}</button></div></div>`:`<div class="desk idle"><div class="dn"><b>${i+1}</b>號櫃台</div><div class="prep" style="padding-top:12px">${S.pauseLeft>0&&S.pauseDesk===i?"暫停服務中":"空檔，等待叫號"}</div></div>`).join("")}</div>
+   <div class="card"><h4>等候中<em>依叫號順序</em></h4><div class="catsum">${Object.entries(counts).map(([c,n])=>`<span>${c} ${n}</span>`).join("")||"<span>目前沒有人排隊</span>"}</div>
+    ${S.queue.map(t=>{const w=waitFor(t);return `<div class="desk"><div class="dn" style="background:#fff;color:var(--ink);border:2px solid var(--ink)"><b>${w.ahead+1}</b>順位</div><div><span class="qn">${t.no}</span>${tag(t.cat)}${marks(t)}<span class="prep" style="margin-left:6px">約 ${w.mins} 分</span>${said(t)}</div></div>`}).join("")}</div>
+   <p class="note">顧客寫的內容只在櫃台看板顯示，不會出現在顧客的畫面上。</p>
+  </div>`}
+function openDesk(){const a=$("#admin");a.hidden=false;let sig="";
+  const draw=force=>{const ns=JSON.stringify([DESK_TAB,DESK_PICK,DESK_FLASH,S.serving.map(t=>t&&t.no),S.queue.map(t=>t.no),S.pauseLeft,CLOSED]);if(!force&&ns===sig)return;sig=ns;
+    const y=a.scrollTop;a.innerHTML=deskHTML();a.scrollTop=y;$("#adClose").onclick=()=>{clearInterval(deskTimer);a.hidden=true;a.innerHTML="";DESK_TAB="live";DESK_FLASH=""};bindDesk();
+    a.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>{const[i,o]=b.dataset.out.split("|");DESK_PICK[+i]=DESK_PICK[+i]===o?null:o;draw()});
+    a.querySelectorAll("[data-next]").forEach(b=>b.onclick=()=>{const i=+b.dataset.next,o=DESK_PICK[i],t=S.serving[i];if(!o||!t)return;
+      CLOSED[o]=(CLOSED[o]||0)+1;DESK_PICK[i]=null;DESK_FLASH=`✓ ${t.no} 已結案（${o}），${i+1} 號櫃台叫下一號`;serveNext(i);draw()})};
+  draw(true);a.scrollTop=0;clearInterval(deskTimer);if(DESK_TAB==="live")deskTimer=setInterval(()=>{if(a.hidden){clearInterval(deskTimer);return}draw()},1000)}
+(()=>{let n=0,tm;const onBoard=e=>{const bb=document.querySelector(".billboard");if(!bb)return false;const r=bb.getBoundingClientRect();return e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom};
+  document.addEventListener("click",e=>{if(!e.target.closest("#appBody .shout")&&!onBoard(e))return;n++;clearTimeout(tm);tm=setTimeout(()=>n=0,700);if(n>=3){n=0;openDesk()}})})();
+
+/* ---- 長輩模式・語音叫號・語言 ---- */
+const PREF={big:store.get("qt-big")==="1",voice:store.get("qt-voice")!=="0",lang:["zh","en","ja","ko","vi","id"].includes(store.get("qt-lang"))?store.get("qt-lang"):"zh"};
+function applyBig(){$("#phone").classList.toggle("big",PREF.big)}
+const TTS_LANG={zh:"zh-TW",en:"en-US",ja:"ja-JP",ko:"ko-KR",vi:"vi-VN",id:"id-ID"};
+/* 挑語音：Mac / iPhone 的語音清單裡有一堆搞笑音效聲（Albert、Eddy、Grandpa、Bubbles⋯），排在前面會被選到，聽起來很怪。排除它們，優先用系統預設與高品質語音 */
+const ODD_VOICE=/\b(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley|Deranged|Hysterical|Pipe Organ)\b/i;
+const GOOD_VOICE=/Premium|Enhanced|Natural|Neural|Online|Google|Samantha|Kyoko|Otoya|Yuna|Mei-?Jia|Meijia|Linh|Damayanti|HoaiMy|NamMinh|Gadis|Ardi|Nanami|Keita|SunHi|InJoon|HsiaoChen|HsiaoYu|YunJhe/i;
+function pickVoice(lang){try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_VOICE.test(v.name)),l=lang.toLowerCase(),norm=v=>v.lang.toLowerCase().replace("_","-");
+  const exact=vs.filter(v=>norm(v)===l),near=vs.filter(v=>norm(v).startsWith(l.slice(0,2)));
+  for(const L of [exact,near]){if(!L.length)continue;const loc=L.filter(v=>v.localService!==false);return loc.find(v=>v.default)||loc.find(v=>GOOD_VOICE.test(v.name))||loc[0]||L.find(v=>GOOD_VOICE.test(v.name))||L[0]}
+  return null}catch(e){return null}}
+/* 預錄叫號語音：電腦（Windows/Mac）的語音常常沒有或不對（例如沒有日文語音，就用中/英文聲音硬唸）。
+   電腦上中、英、日、越、印尼文一律播預錄語音；韓文的預錄品質較差，電腦有本機韓語語音就用它，沒有才播預錄；手機有該語言的本機語音就用手機自己的，沒有才播預錄 */
+const CLIP_LANGS=["zh","en","ja","ko","vi","id"];
+const IS_MOBILE=/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+function hasVoice(lang){const v=pickVoice(lang);return !!(v&&v.localService!==false&&v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))}
+function wantClips(l){if(!CLIP_LANGS.includes(l))return false;return (IS_MOBILE||l==="ko")?!hasVoice(TTS_LANG[l]):true}
+const CLIP_RX={zh:[/^([A-Z]) (\d+) 號，請到 (\d+) 號櫃台/,/^前面剩 (\d+) 組/],en:[/^Number ([A-Z]\d+), please go to counter (\d+)\./,/^(\d+) groups ahead/],
+  ja:[/^([A-Z]\d+) 番の方、(\d+) 番窓口/,/^あと (\d+) 組/],ko:[/^([A-Z]\d+)번 고객님, (\d+)번 창구/,/^앞에 (\d+)팀/],
+  vi:[/^Mời khách hàng số ([A-Z]\d+), đến quầy số (\d+)\./,/^Còn (\d+) nhóm/],id:[/^Nomor antrean ([A-Z]\d+), silakan ke loket (\d+)\./,/^Tinggal (\d+) grup/]};
+function clipKeys(l,text){const R=CLIP_RX[l];if(!R)return null;let m=text.match(R[0]);if(m){const a=m.length>3?[m[1]+m[2],"q"+m[3]]:[m[1],"q"+m[2]];return a.concat(a)}m=text.match(R[1]);return m?["n"+m[1]]:null}
+/* Web Audio：第一次點畫面時解鎖，之後叫號（不是點按觸發的）也能播 */
+let actx=null,clipSeq=0,clipSrcs=[];const clipIdx={},clipBuf={};
+function getCtx(){try{if(!actx){const C=window.AudioContext||window.webkitAudioContext;if(C)actx=new C()}}catch(e){}return actx}
+async function clipIndex(l){if(clipIdx[l])return clipIdx[l];const r=await fetch("audio/"+l+"/index.json");if(!r.ok)throw new Error("index");return clipIdx[l]=await r.json()}
+function clipChunk(l,ch){const key=l+"/"+ch;if(!clipBuf[key])clipBuf[key]=(async()=>{const r=await fetch("audio/"+key+".mp3");if(!r.ok)throw new Error("chunk");const ab=await r.arrayBuffer();
+    return await new Promise((res,rej)=>{const p=getCtx().decodeAudioData(ab,res,rej);if(p&&p.catch)p.catch(rej)})})().catch(e=>{delete clipBuf[key];throw e});return clipBuf[key]}
+function clipPrefetch(l){clipIndex(l).then(()=>clipChunk(l,"x")).catch(()=>{})}
+document.addEventListener("pointerdown",()=>{if(!wantClips(PREF.lang))return;const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{});clipPrefetch(PREF.lang)},true);
+function clipStop(){clipSrcs.forEach(s=>{try{s.stop()}catch(e){}});clipSrcs=[]}
+async function playClips(l,keys,force,text){const my=++clipSeq;clipStop();
+  try{const c=getCtx();if(!c)throw new Error("no audio");if(c.state!=="running")await c.resume();
+    const idx=await clipIndex(l);if(!keys.every(k=>idx[k]))throw new Error("range");
+    const bufs=await Promise.all(keys.map(k=>clipChunk(l,idx[k][0])));if(my!==clipSeq)return;if(c.state!=="running")throw new Error("locked");
+    let t=c.currentTime+.06;keys.forEach((k,i)=>{const st=idx[k][1],du=idx[k][2],s=c.createBufferSource();s.buffer=bufs[i];s.connect(c.destination);
+      s.start(t,Math.max(0,st-.04),du+.12);clipSrcs.push(s);t+=du+.12+(k[0]==="q"?.45:.05)})
+  }catch(e){if(my===clipSeq)say(text,force,true)}}
+function say(text,force,noClip){if(!PREF.voice&&!force)return;
+  if(!noClip&&wantClips(PREF.lang)){const k=clipKeys(PREF.lang,text);if(k){try{speechSynthesis.cancel()}catch(e){}playClips(PREF.lang,k,force,text);return}}
+  if(!("speechSynthesis" in window)||typeof SpeechSynthesisUtterance==="undefined"){if(force)toast("info","這個瀏覽器不支援語音","請改用手機的 Safari 或 Chrome 直接開啟這個網頁。",4200);return}
+  try{const ss=window.speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();if(ss.paused)ss.resume();
+    const u=new SpeechSynthesisUtterance(text);u.lang=TTS_LANG[PREF.lang]||"zh-TW";const v=pickVoice(u.lang);if(v)u.voice=v;u.rate=PREF.lang==="en"?.95:.92;u.volume=1;
+    let started=false;u.onstart=()=>{started=true};
+    u.onerror=e=>{if(force&&e.error!=="interrupted"&&e.error!=="canceled")toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)};
+    ss.speak(u);
+    if(force)setTimeout(()=>{if(!started&&!ss.speaking)toast("info","沒聽到聲音嗎？","請確認手機沒有開靜音（iPhone 側邊靜音鍵）、音量已調高；在 App 內建瀏覽器可能被擋，請用 Safari 或 Chrome 開啟。",6500)},1600)
+  }catch(e){if(force)toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)}}
+function callLine(no,desk){const L={zh:`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`,en:`Number ${no}, please go to counter ${desk}.`,ja:`${no} 番の方、${desk} 番窓口へお越しください。`,ko:`${no}번 고객님, ${desk}번 창구로 오세요.`,vi:`Mời khách hàng số ${no}, đến quầy số ${desk}.`,id:`Nomor antrean ${no}, silakan ke loket ${desk}.`}[PREF.lang];return L+" "+L}
+function nearLine(n){return {zh:`前面剩 ${n} 組，請回到門市。`,en:`${n} groups ahead of you. Please come back to the store.`,ja:`あと ${n} 組です。お店にお戻りください。`,ko:`앞에 ${n}팀 남았어요. 매장으로 돌아와 주세요.`,vi:`Còn ${n} nhóm phía trước. Mời bạn quay lại cửa hàng.`,id:`Tinggal ${n} grup lagi. Silakan kembali ke toko.`}[PREF.lang]}
+/* iOS only lets a page speak after a tap: unlock speech on the first one */
+document.addEventListener("click",function unlock(e){if(e.target.closest&&e.target.closest("#stTry"))return;try{const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u)}catch(e){}document.removeEventListener("click",unlock,true)},true);
+function openSettings(){
+  const L=[["zh","中文"],["en","English"],["ja","日本語"],["ko","한국어"],["vi","Tiếng Việt"],["id","Bahasa Indonesia"]];
+  modal(`<div class="sheet" aria-labelledby="sth"><h3 id="sth">顯示與語音</h3>
+    <label class="setrow"><span><b>大字模式</b><small>字體放大、對比加深，長輩更好讀</small></span><span class="sw"><input type="checkbox" id="stBig" ${PREF.big?"checked":""}><i></i></span></label>
+    <label class="setrow"><span><b>語音叫號</b><small>快輪到和叫號時，手機會唸出號碼和櫃台</small></span><span class="sw"><input type="checkbox" id="stVoice" ${PREF.voice?"checked":""}><i></i></span></label>
+    <button type="button" class="btn sm" id="stTry" style="justify-self:start">🔊 試聽叫號</button>
+    <div class="setrow" style="grid-template-columns:1fr"><span><b>語言 Language</b><small>介面與語音叫號的語言</small></span>
+      <div class="langs">${L.map(([k,n])=>`<button type="button" data-lang="${k}" aria-pressed="${PREF.lang===k}">${n}</button>`).join("")}</div></div>
+    <div class="acts"><button class="btn dark wide" type="button" id="stDone">完成</button></div></div>`,m=>{
+    $("#stBig").onchange=e=>{PREF.big=e.target.checked;store.set("qt-big",PREF.big?"1":"0");applyBig()};
+    $("#stVoice").onchange=e=>{PREF.voice=e.target.checked;store.set("qt-voice",PREF.voice?"1":"0")};
+    $("#stTry").onclick=()=>say(callLine("A123",2),true);
+    m.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{PREF.lang=b.dataset.lang;store.set("qt-lang",PREF.lang);m.querySelectorAll("[data-lang]").forEach(x=>x.setAttribute("aria-pressed",x===b));if(typeof setLang==="function")setLang()});
+    $("#stDone").onclick=closeModal;
+  });
+}
+document.addEventListener("click",e=>{if(e.target.closest("#aaBtn"))openSettings()});
+
+/* ---- 多語介面：翻譯畫面上的中文文字（員工後台維持中文） ---- */
+const I18N={"d": {"en": {"叫號說": "QTalk", "排隊": "Queue", "我的號碼": "My ticket", "小教室": "Classroom", "現在取號 等約": "Take a ticket now: about", "分": "min", "你前面": "Ahead of you:", "組・約": "groups · about", "輪到你了！": "It's your turn!", "號櫃台": "counter", "繳費/儲值": "Bill payment / Top-up", "續約/換約/新申辦": "Renewal / New plan", "異動/諮詢/維修": "Changes / Questions / Repair", "網路取貨/預約取件": "Online order pickup", "到台灣大哥大 YouTube 頻道看更多精彩影片 ↗": "More videos on Taiwan Mobile's YouTube ↗", "門市，先聽我說！！": "Store, hear me out!", "說你來辦什麼，排到之前櫃台就準備好了。": "Tell us why you're here, and the counter will be ready before your turn.", "現在叫號": "Now serving", "請到": "Counter", "號": "", "櫃台": "", "◀ 拖曳・點角色看排隊狀態 ▶": "◀ Drag · tap a person to see their status ▶", "取號": "Take a ticket", "3 步驟": "3 steps", "你要辦什麼？": "What do you need?", "現在約": "Now about", "用 50 字說說狀況": "Describe it in 50 characters", "選填": "Optional", "合約快到期了": "My contract is ending soon", "想問家庭方案": "Ask about family plans", "手機摔壞了": "My phone is broken", "來取網路訂的手機": "Pick up an online order", "幫爸媽辦": "For my parents", "點選即可，不用打字": "Just tap, no typing needed", "✎ 想自己補充": "✎ Add my own words", "例如：合約下個月到期，想問有沒有家庭方案": "e.g. My contract ends next month, any family plans?", "🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。": "🔒 Only the counter sees what you write. It is anonymized to improve our help content.", "手機號碼": "Mobile number", "快輪到你時傳簡訊": "SMS when your turn is near", "更多選項": "More options", "我是幫家人取號": "I'm taking a ticket for family", "叫號時你和家人都會收到簡訊。": "You and your family will both get an SMS.", "接收跟這次需求有關的門市優惠": "Get store offers related to this visit", "選填，每次排隊最多 1 則，可隨時取消。": "Optional, at most 1 per visit, cancel anytime.", "想晚點再來？預約時段": "Come later? Book a time", "＋ 想晚點再來？預約時段": "＋ Come later? Book a time", "－ 想晚點再來？預約時段": "－ Come later? Book a time", "看哪個時段人少，選好時間再來，到店報到後優先叫號。": "Pick a quiet time, come back then, and check in for priority calling.", "影片": "Videos", "取號前，先看懂": "Watch before you queue", "＋ 有興趣": "＋ Interested", "✓ 已加入": "✓ Added", "⛶ 放大": "⛶ Enlarge", "排隊時先看一下": "Watch while you wait", "不用排隊，1 分鐘線上辦好": "No queue: done online in 1 minute", "線上繳費 ↗": "Pay online ↗", "預付卡儲值 ↗": "Prepaid top-up ↗", "用 APP 辦 ↗": "Use the app ↗", "想在門市辦也可以，繼續往下取號就好。": "Prefer the store? Just keep going to take a ticket.", "你的號碼": "Your number", "前面還有": "Ahead of you", "組": "groups", "預估等候": "Est. wait", "排隊動態": "Queue updates", "你寫給櫃台的話": "Your note to the counter", "排到之前，先準備好": "Get these ready before your turn", "點一下勾選你帶了的東西。": "Tap to tick what you brought.", "我先離開一下": "I'll step out for a bit", "不想乾等可以先去附近逛，快到了會叫你。": "Don't wait around: go for a walk, we'll call you back.", "還沒有號碼": "No ticket yet", "取號後，號碼、等候進度和要帶的證件都會在這裡。": "After you take a ticket, your number, progress and documents appear here.", "去取號": "Take a ticket", "請到 ": "Go to ", "我到了": "I'm here", "我還要 5 分鐘": "I need 5 more minutes", "櫃台已經看過你寫的需求，正在等你。": "The counter has read your note and is waiting for you.", "我回到門市了": "I'm back in the store", "我在路上": "I'm on my way", "來不及，往後延 2 組": "Can't make it: move back 2 places", "今天的問題解決了嗎？": "Was your issue solved today?", "解決了": "Solved", "沒解決": "Not solved", "幫這次的服務打個分數吧！": "Please rate today's service!", "點 3 下就完成，不用 10 秒": "3 taps, under 10 seconds", "櫃台人員的服務": "Staff service", "等候時間": "Waiting time", "問題處理的結果": "Result", "非常不滿意": "Very unhappy", "非常滿意": "Very happy", "送出": "Submit", "謝謝你的回饋！": "Thanks for your feedback!", "重新取號": "Take a new ticket", "等候小教室": "Waiting classroom", "防詐小測驗": "Scam quiz", "是詐騙": "Scam", "不是": "Not a scam", "下一題 →": "Next →", "答對了！": "Correct!", "再想想。": "Think again.", "門市科技課程": "Tech classes in store", "報名": "Sign up", "取消報名": "Cancel", "已額滿": "Full", "預約門市：": "Store:", "要辦的事：": "Purpose:", "請先在上面選一項": "Choose one above first", "已預約": "Booked", "我到店了，報到": "I'm here, check in", "改時間": "Change time", "取消預約": "Cancel booking", "選一個時段：": "Pick a time:", "顯示與語音": "Display & voice", "大字模式": "Large text", "字體放大、對比加深，長輩更好讀": "Bigger, higher-contrast text for easier reading", "語音叫號": "Voice calling", "快輪到和叫號時，手機會唸出號碼和櫃台": "Your phone reads out your number and counter", "🔊 試聽叫號": "🔊 Test voice", "介面與語音叫號的語言": "Language for screens and voice", "完成": "Done", "優先取號": "Priority ticket", "長輩（65 歲以上）、孕婦、行動不便者可選。": "For seniors 65+, pregnant women and people with limited mobility.", "優先": "Priority", "店員": "Staff", "下一位就是他": "Next in line", "🔒 每位顧客寫的內容只有櫃台看得到": "🔒 Only the counter can see what each customer wrote", "🔒 只有你和櫃台看得到": "🔒 Only you and the counter can see this", "選擇門市": "Choose a store", "取消": "Cancel", "門號或帳單": "Phone number or bill", "身分證": "National ID card", "第二證件（健保卡或駕照）": "Second ID (health card or driver's license)", "原門號 SIM 卡（續約時）": "Current SIM card (for renewal)", "要維修的手機（維修時）": "The phone to repair", "取貨簡訊或訂單編號": "Pickup SMS or order number", "模擬情境": "Scenario", "簡訊": "SMS", "提醒": "Notice", "簡訊・叫號說": "SMS · QTalk", "全部準備好了，櫃台會更快幫你辦完。": "All set! The counter can finish faster.", "Aa": "Aa", "知道了": "Got it"}, "ja": {"叫號說": "QTalk", "排隊": "順番待ち", "我的號碼": "自分の番号", "小教室": "教室", "現在取號 等約": "今発券すると約", "分": "分", "你前面": "あなたの前:", "組・約": "組・約", "輪到你了！": "あなたの番です！", "號櫃台": "番窓口", "繳費/儲值": "料金支払い／チャージ", "續約/換約/新申辦": "契約更新／新規契約", "異動/諮詢/維修": "変更／相談／修理", "網路取貨/預約取件": "オンライン注文の受取", "到台灣大哥大 YouTube 頻道看更多精彩影片 ↗": "台湾大哥大の YouTube でもっと見る ↗", "門市，先聽我說！！": "お店さん、聞いてください！", "說你來辦什麼，排到之前櫃台就準備好了。": "ご用件を伝えると、順番が来る前に窓口が準備しておきます。", "現在叫號": "呼び出し中", "請到": "", "號": "番", "櫃台": "窓口へ", "◀ 拖曳・點角色看排隊狀態 ▶": "◀ ドラッグ・人をタップで状況表示 ▶", "取號": "発券", "3 步驟": "3 ステップ", "你要辦什麼？": "ご用件は？", "現在約": "現在 約", "用 50 字說說狀況": "50 字で状況を説明", "選填": "任意", "合約快到期了": "契約がもうすぐ満了", "想問家庭方案": "家族プランを知りたい", "手機摔壞了": "スマホが壊れた", "來取網路訂的手機": "ネット注文の受取", "幫爸媽辦": "両親の代理", "點選即可，不用打字": "タップだけ、入力不要", "✎ 想自己補充": "✎ 自分で追記", "例如：合約下個月到期，想問有沒有家庭方案": "例：来月契約満了、家族プランはある？", "🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。": "🔒 入力内容は窓口だけが見ます。匿名化してサービス改善に使います。", "手機號碼": "携帯番号", "快輪到你時傳簡訊": "順番が近づくと SMS", "更多選項": "その他のオプション", "我是幫家人取號": "家族の代わりに発券", "叫號時你和家人都會收到簡訊。": "呼び出し時、あなたとご家族に SMS が届きます。", "接收跟這次需求有關的門市優惠": "今回の用件に関するお得情報を受け取る", "選填，每次排隊最多 1 則，可隨時取消。": "任意。1 回につき最大 1 件、いつでも解除できます。", "想晚點再來？預約時段": "後で来る？時間を予約", "＋ 想晚點再來？預約時段": "＋ 後で来る？時間を予約", "－ 想晚點再來？預約時段": "－ 後で来る？時間を予約", "看哪個時段人少，選好時間再來，到店報到後優先叫號。": "空いている時間を選んで来店、チェックインで優先呼び出し。", "影片": "動画", "取號前，先看懂": "発券前にチェック", "＋ 有興趣": "＋ 興味あり", "✓ 已加入": "✓ 追加済み", "⛶ 放大": "⛶ 拡大", "排隊時先看一下": "待ち時間に見る", "不用排隊，1 分鐘線上辦好": "並ばずにオンラインで 1 分", "線上繳費 ↗": "オンライン支払い ↗", "預付卡儲值 ↗": "プリペイドチャージ ↗", "用 APP 辦 ↗": "アプリで手続き ↗", "想在門市辦也可以，繼續往下取號就好。": "店頭で手続きする場合は、このまま下で発券してください。", "你的號碼": "あなたの番号", "前面還有": "前に", "組": "組", "預估等候": "待ち時間目安", "排隊動態": "待ち状況", "你寫給櫃台的話": "窓口へのメッセージ", "排到之前，先準備好": "順番の前に準備", "點一下勾選你帶了的東西。": "持ってきた物をタップでチェック。", "我先離開一下": "少し外出します", "不想乾等可以先去附近逛，快到了會叫你。": "待たずに近くを散策できます。順番が近づいたらお知らせします。", "還沒有號碼": "まだ番号がありません", "取號後，號碼、等候進度和要帶的證件都會在這裡。": "発券後、番号・待ち状況・必要書類がここに表示されます。", "去取號": "発券する", "請到 ": "", "我到了": "着きました", "我還要 5 分鐘": "あと 5 分かかります", "櫃台已經看過你寫的需求，正在等你。": "窓口はご用件を確認済みでお待ちしています。", "我回到門市了": "店に戻りました", "我在路上": "向かっています", "來不及，往後延 2 組": "間に合わない：2 組後ろへ", "今天的問題解決了嗎？": "今日の用件は解決しましたか？", "解決了": "解決した", "沒解決": "解決しない", "幫這次的服務打個分數吧！": "今日のサービスを評価してください！", "點 3 下就完成，不用 10 秒": "3 タップ、10 秒以内", "櫃台人員的服務": "スタッフの対応", "等候時間": "待ち時間", "問題處理的結果": "対応結果", "非常不滿意": "とても不満", "非常滿意": "とても満足", "送出": "送信", "謝謝你的回饋！": "ご意見ありがとうございます！", "重新取號": "もう一度発券", "等候小教室": "待ち時間教室", "防詐小測驗": "詐欺対策クイズ", "是詐騙": "詐欺", "不是": "違う", "下一題 →": "次へ →", "答對了！": "正解！", "再想想。": "もう一度考えて。", "門市科技課程": "店頭テック講座", "報名": "申込", "取消報名": "申込取消", "已額滿": "満員", "預約門市：": "店舗：", "要辦的事：": "ご用件：", "請先在上面選一項": "上で 1 つ選んでください", "已預約": "予約済み", "我到店了，報到": "着きました、チェックイン", "改時間": "時間変更", "取消預約": "予約取消", "選一個時段：": "時間を選択：", "顯示與語音": "表示と音声", "大字模式": "大きな文字", "字體放大、對比加深，長輩更好讀": "文字を大きく、コントラストを強く", "語音叫號": "音声呼び出し", "快輪到和叫號時，手機會唸出號碼和櫃台": "順番が近づくと、番号と窓口を読み上げます", "🔊 試聽叫號": "🔊 試しに聞く", "介面與語音叫號的語言": "画面と音声の言語", "完成": "完了", "優先取號": "優先発券", "長輩（65 歲以上）、孕婦、行動不便者可選。": "65 歳以上・妊娠中・体の不自由な方が選べます。", "優先": "優先", "店員": "スタッフ", "下一位就是他": "次の順番", "🔒 每位顧客寫的內容只有櫃台看得到": "🔒 お客様の入力内容は窓口だけが見られます", "🔒 只有你和櫃台看得到": "🔒 あなたと窓口だけが見られます", "選擇門市": "店舗を選択", "取消": "キャンセル", "門號或帳單": "電話番号または請求書", "身分證": "身分証", "第二證件（健保卡或駕照）": "第二の身分証（保険証または免許証）", "原門號 SIM 卡（續約時）": "現在の SIM カード（更新時）", "要維修的手機（維修時）": "修理するスマホ", "取貨簡訊或訂單編號": "受取 SMS または注文番号", "模擬情境": "シナリオ", "簡訊": "SMS", "提醒": "お知らせ", "簡訊・叫號說": "SMS・QTalk", "全部準備好了，櫃台會更快幫你辦完。": "準備完了！窓口の手続きが早くなります。", "Aa": "Aa", "知道了": "わかった"}, "ko": {"叫號說": "QTalk", "排隊": "대기", "我的號碼": "내 번호", "小教室": "교실", "現在取號 等約": "지금 발권 시 약", "分": "분", "你前面": "내 앞:", "組・約": "팀 · 약", "輪到你了！": "차례입니다!", "號櫃台": "번 창구", "繳費/儲值": "요금 납부 / 충전", "續約/換約/新申辦": "재약정 / 신규 가입", "異動/諮詢/維修": "변경 / 상담 / 수리", "網路取貨/預約取件": "온라인 주문 수령", "到台灣大哥大 YouTube 頻道看更多精彩影片 ↗": "타이완모바일 YouTube에서 더 보기 ↗", "門市，先聽我說！！": "매장님, 들어 주세요!", "說你來辦什麼，排到之前櫃台就準備好了。": "용건을 알려 주시면 차례가 오기 전에 창구가 준비합니다.", "現在叫號": "현재 호출", "請到": "", "號": "번", "櫃台": "창구로", "◀ 拖曳・點角色看排隊狀態 ▶": "◀ 드래그 · 사람을 눌러 상태 보기 ▶", "取號": "번호표 받기", "3 步驟": "3단계", "你要辦什麼？": "어떤 업무인가요?", "現在約": "현재 약", "用 50 字說說狀況": "50자로 상황 설명", "選填": "선택", "合約快到期了": "약정이 곧 끝나요", "想問家庭方案": "가족 요금제 문의", "手機摔壞了": "휴대폰이 고장 났어요", "來取網路訂的手機": "온라인 주문 수령", "幫爸媽辦": "부모님 대신", "點選即可，不用打字": "누르기만 하면 돼요, 입력 불필요", "✎ 想自己補充": "✎ 직접 추가", "例如：合約下個月到期，想問有沒有家庭方案": "예: 다음 달 약정 만료, 가족 요금제 있나요?", "🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。": "🔒 작성 내용은 창구만 봅니다. 익명화 후 서비스 개선에 사용합니다.", "手機號碼": "휴대폰 번호", "快輪到你時傳簡訊": "차례가 가까워지면 문자", "更多選項": "추가 옵션", "我是幫家人取號": "가족 대신 발권", "叫號時你和家人都會收到簡訊。": "호출 시 본인과 가족 모두 문자를 받습니다.", "接收跟這次需求有關的門市優惠": "이번 용건 관련 매장 혜택 받기", "選填，每次排隊最多 1 則，可隨時取消。": "선택 사항, 1회 최대 1건, 언제든 해지 가능.", "想晚點再來？預約時段": "나중에 올까요? 시간 예약", "＋ 想晚點再來？預約時段": "＋ 나중에 올까요? 시간 예약", "－ 想晚點再來？預約時段": "－ 나중에 올까요? 시간 예약", "看哪個時段人少，選好時間再來，到店報到後優先叫號。": "한산한 시간을 골라 방문하고, 체크인하면 우선 호출됩니다.", "影片": "영상", "取號前，先看懂": "발권 전에 확인", "＋ 有興趣": "＋ 관심 있음", "✓ 已加入": "✓ 추가됨", "⛶ 放大": "⛶ 크게", "排隊時先看一下": "기다리며 보기", "不用排隊，1 分鐘線上辦好": "줄 설 필요 없이 온라인 1분", "線上繳費 ↗": "온라인 납부 ↗", "預付卡儲值 ↗": "선불 충전 ↗", "用 APP 辦 ↗": "앱으로 처리 ↗", "想在門市辦也可以，繼續往下取號就好。": "매장에서 처리하려면 아래에서 계속 발권하세요.", "你的號碼": "내 번호", "前面還有": "앞에", "組": "팀", "預估等候": "예상 대기", "排隊動態": "대기 현황", "你寫給櫃台的話": "창구에 남긴 말", "排到之前，先準備好": "차례 전에 준비하세요", "點一下勾選你帶了的東西。": "가져온 것을 눌러 체크하세요.", "我先離開一下": "잠깐 나갔다 올게요", "不想乾等可以先去附近逛，快到了會叫你。": "기다리지 말고 근처를 둘러보세요. 차례가 가까워지면 알려 드려요.", "還沒有號碼": "아직 번호가 없어요", "取號後，號碼、等候進度和要帶的證件都會在這裡。": "발권 후 번호, 대기 현황, 필요 서류가 여기에 표시됩니다.", "去取號": "발권하기", "請到 ": "", "我到了": "도착했어요", "我還要 5 分鐘": "5분 더 필요해요", "櫃台已經看過你寫的需求，正在等你。": "창구에서 용건을 확인하고 기다리고 있어요.", "我回到門市了": "매장에 돌아왔어요", "我在路上": "가는 중이에요", "來不及，往後延 2 組": "늦어요: 2팀 뒤로", "今天的問題解決了嗎？": "오늘 용건은 해결되었나요?", "解決了": "해결됨", "沒解決": "미해결", "幫這次的服務打個分數吧！": "오늘 서비스를 평가해 주세요!", "點 3 下就完成，不用 10 秒": "3번 터치, 10초 이내", "櫃台人員的服務": "직원 응대", "等候時間": "대기 시간", "問題處理的結果": "처리 결과", "非常不滿意": "매우 불만족", "非常滿意": "매우 만족", "送出": "제출", "謝謝你的回饋！": "의견 감사합니다!", "重新取號": "다시 발권", "等候小教室": "대기 교실", "防詐小測驗": "사기 예방 퀴즈", "是詐騙": "사기", "不是": "아니요", "下一題 →": "다음 →", "答對了！": "정답!", "再想想。": "다시 생각해 보세요.", "門市科技課程": "매장 기술 강좌", "報名": "신청", "取消報名": "신청 취소", "已額滿": "마감", "預約門市：": "매장:", "要辦的事：": "용건:", "請先在上面選一項": "위에서 하나를 선택하세요", "已預約": "예약됨", "我到店了，報到": "도착했어요, 체크인", "改時間": "시간 변경", "取消預約": "예약 취소", "選一個時段：": "시간 선택:", "顯示與語音": "화면 및 음성", "大字模式": "큰 글씨", "字體放大、對比加深，長輩更好讀": "글씨를 크게, 대비를 강하게", "語音叫號": "음성 호출", "快輪到和叫號時，手機會唸出號碼和櫃台": "차례가 되면 번호와 창구를 읽어 줍니다", "🔊 試聽叫號": "🔊 미리 듣기", "介面與語音叫號的語言": "화면과 음성 언어", "完成": "완료", "優先取號": "우선 발권", "長輩（65 歲以上）、孕婦、行動不便者可選。": "65세 이상, 임산부, 거동이 불편한 분이 선택할 수 있어요.", "優先": "우선", "店員": "직원", "下一位就是他": "다음 차례", "🔒 每位顧客寫的內容只有櫃台看得到": "🔒 고객 작성 내용은 창구만 볼 수 있어요", "🔒 只有你和櫃台看得到": "🔒 본인과 창구만 볼 수 있어요", "選擇門市": "매장 선택", "取消": "취소", "門號或帳單": "전화번호 또는 청구서", "身分證": "신분증", "第二證件（健保卡或駕照）": "보조 신분증 (건강보험증 또는 운전면허증)", "原門號 SIM 卡（續約時）": "기존 SIM 카드 (재약정 시)", "要維修的手機（維修時）": "수리할 휴대폰", "取貨簡訊或訂單編號": "수령 문자 또는 주문 번호", "模擬情境": "시나리오", "簡訊": "문자", "提醒": "알림", "簡訊・叫號說": "문자 · QTalk", "全部準備好了，櫃台會更快幫你辦完。": "준비 완료! 창구 처리가 더 빨라져요.", "Aa": "Aa", "知道了": "알겠어요"}, "vi": {"叫號說": "QTalk", "排隊": "Xếp hàng", "我的號碼": "Số của tôi", "小教室": "Lớp học", "現在取號 等約": "Lấy số bây giờ: chờ khoảng", "分": "phút", "你前面": "Trước bạn:", "組・約": "nhóm · khoảng", "輪到你了！": "Đến lượt bạn!", "號櫃台": "quầy", "繳費/儲值": "Thanh toán / Nạp tiền", "續約/換約/新申辦": "Gia hạn / Gói mới", "異動/諮詢/維修": "Thay đổi / Tư vấn / Sửa chữa", "網路取貨/預約取件": "Nhận hàng đặt online", "到台灣大哥大 YouTube 頻道看更多精彩影片 ↗": "Xem thêm video trên YouTube Taiwan Mobile ↗", "門市，先聽我說！！": "Cửa hàng ơi, nghe tôi nói nè!", "說你來辦什麼，排到之前櫃台就準備好了。": "Cho biết bạn cần gì, quầy sẽ chuẩn bị sẵn trước khi đến lượt.", "現在叫號": "Đang gọi số", "請到": "Quầy", "號": "", "櫃台": "", "◀ 拖曳・點角色看排隊狀態 ▶": "◀ Kéo · chạm vào người để xem trạng thái ▶", "取號": "Lấy số", "3 步驟": "3 bước", "你要辦什麼？": "Bạn cần làm gì?", "現在約": "Hiện khoảng", "用 50 字說說狀況": "Mô tả trong 50 ký tự", "選填": "Không bắt buộc", "合約快到期了": "Hợp đồng sắp hết hạn", "想問家庭方案": "Hỏi về gói gia đình", "手機摔壞了": "Điện thoại bị hỏng", "來取網路訂的手機": "Nhận đơn hàng online", "幫爸媽辦": "Làm giúp bố mẹ", "點選即可，不用打字": "Chỉ cần chạm, không cần gõ", "✎ 想自己補充": "✎ Tự viết thêm", "例如：合約下個月到期，想問有沒有家庭方案": "VD: Hợp đồng hết hạn tháng sau, có gói gia đình không?", "🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。": "🔒 Chỉ quầy xem được nội dung bạn viết; được ẩn danh để cải thiện hướng dẫn.", "手機號碼": "Số điện thoại", "快輪到你時傳簡訊": "Gửi SMS khi sắp đến lượt", "更多選項": "Thêm tùy chọn", "我是幫家人取號": "Tôi lấy số giúp người nhà", "叫號時你和家人都會收到簡訊。": "Bạn và người nhà đều nhận SMS khi gọi số.", "接收跟這次需求有關的門市優惠": "Nhận ưu đãi liên quan đến lần này", "選填，每次排隊最多 1 則，可隨時取消。": "Không bắt buộc, tối đa 1 tin mỗi lần, hủy bất cứ lúc nào.", "想晚點再來？預約時段": "Đến sau? Đặt lịch", "＋ 想晚點再來？預約時段": "＋ Đến sau? Đặt lịch", "－ 想晚點再來？預約時段": "－ Đến sau? Đặt lịch", "看哪個時段人少，選好時間再來，到店報到後優先叫號。": "Chọn giờ vắng khách, đến cửa hàng check-in để được gọi ưu tiên.", "影片": "Video", "取號前，先看懂": "Xem trước khi lấy số", "＋ 有興趣": "＋ Quan tâm", "✓ 已加入": "✓ Đã thêm", "⛶ 放大": "⛶ Phóng to", "排隊時先看一下": "Xem trong lúc chờ", "不用排隊，1 分鐘線上辦好": "Không cần xếp hàng: làm online 1 phút", "線上繳費 ↗": "Thanh toán online ↗", "預付卡儲值 ↗": "Nạp thẻ trả trước ↗", "用 APP 辦 ↗": "Dùng ứng dụng ↗", "想在門市辦也可以，繼續往下取號就好。": "Muốn làm tại cửa hàng? Cứ tiếp tục lấy số.", "你的號碼": "Số của bạn", "前面還有": "Phía trước còn", "組": "nhóm", "預估等候": "Chờ dự kiến", "排隊動態": "Cập nhật hàng chờ", "你寫給櫃台的話": "Lời nhắn cho quầy", "排到之前，先準備好": "Chuẩn bị trước khi đến lượt", "點一下勾選你帶了的東西。": "Chạm để đánh dấu giấy tờ đã mang.", "我先離開一下": "Tôi ra ngoài một chút", "不想乾等可以先去附近逛，快到了會叫你。": "Không muốn chờ? Cứ đi dạo, sắp đến lượt sẽ gọi bạn.", "還沒有號碼": "Chưa có số", "取號後，號碼、等候進度和要帶的證件都會在這裡。": "Sau khi lấy số, số, tiến độ và giấy tờ cần mang sẽ hiện ở đây.", "去取號": "Đi lấy số", "請到 ": "Mời đến ", "我到了": "Tôi đã đến", "我還要 5 分鐘": "Tôi cần thêm 5 phút", "櫃台已經看過你寫的需求，正在等你。": "Quầy đã xem lời nhắn và đang chờ bạn.", "我回到門市了": "Tôi đã về cửa hàng", "我在路上": "Tôi đang trên đường", "來不及，往後延 2 組": "Không kịp: lùi lại 2 lượt", "今天的問題解決了嗎？": "Vấn đề hôm nay đã được giải quyết chưa?", "解決了": "Đã xong", "沒解決": "Chưa xong", "幫這次的服務打個分數吧！": "Hãy đánh giá dịch vụ hôm nay!", "點 3 下就完成，不用 10 秒": "3 lần chạm, chưa tới 10 giây", "櫃台人員的服務": "Thái độ nhân viên", "等候時間": "Thời gian chờ", "問題處理的結果": "Kết quả xử lý", "非常不滿意": "Rất không hài lòng", "非常滿意": "Rất hài lòng", "送出": "Gửi", "謝謝你的回饋！": "Cảm ơn góp ý của bạn!", "重新取號": "Lấy số mới", "等候小教室": "Lớp học khi chờ", "防詐小測驗": "Đố vui chống lừa đảo", "是詐騙": "Lừa đảo", "不是": "Không phải", "下一題 →": "Câu tiếp →", "答對了！": "Chính xác!", "再想想。": "Nghĩ lại nhé.", "門市科技課程": "Lớp công nghệ tại cửa hàng", "報名": "Đăng ký", "取消報名": "Hủy đăng ký", "已額滿": "Đã đầy", "預約門市：": "Cửa hàng:", "要辦的事：": "Việc cần làm:", "請先在上面選一項": "Hãy chọn một mục ở trên trước", "已預約": "Đã đặt lịch", "我到店了，報到": "Tôi đã đến, check-in", "改時間": "Đổi giờ", "取消預約": "Hủy lịch", "選一個時段：": "Chọn khung giờ:", "顯示與語音": "Hiển thị & giọng nói", "大字模式": "Chữ lớn", "字體放大、對比加深，長輩更好讀": "Chữ to, tương phản cao, người lớn tuổi dễ đọc", "語音叫號": "Gọi số bằng giọng nói", "快輪到和叫號時，手機會唸出號碼和櫃台": "Điện thoại sẽ đọc số và quầy của bạn", "🔊 試聽叫號": "🔊 Nghe thử", "介面與語音叫號的語言": "Ngôn ngữ giao diện và giọng gọi số", "完成": "Xong", "優先取號": "Lấy số ưu tiên", "長輩（65 歲以上）、孕婦、行動不便者可選。": "Dành cho người từ 65 tuổi, phụ nữ mang thai, người đi lại khó khăn.", "優先": "Ưu tiên", "店員": "Nhân viên", "下一位就是他": "Người kế tiếp", "🔒 每位顧客寫的內容只有櫃台看得到": "🔒 Chỉ quầy xem được nội dung khách viết", "🔒 只有你和櫃台看得到": "🔒 Chỉ bạn và quầy xem được", "選擇門市": "Chọn cửa hàng", "取消": "Hủy", "門號或帳單": "Số điện thoại hoặc hóa đơn", "身分證": "Thẻ cư trú / CCCD", "第二證件（健保卡或駕照）": "Giấy tờ thứ hai (thẻ bảo hiểm hoặc bằng lái)", "原門號 SIM 卡（續約時）": "SIM hiện tại (khi gia hạn)", "要維修的手機（維修時）": "Điện thoại cần sửa", "取貨簡訊或訂單編號": "SMS nhận hàng hoặc mã đơn", "模擬情境": "Tình huống", "簡訊": "SMS", "提醒": "Thông báo", "簡訊・叫號說": "SMS · QTalk", "全部準備好了，櫃台會更快幫你辦完。": "Đã chuẩn bị đủ! Quầy sẽ làm nhanh hơn.", "Aa": "Aa", "知道了": "Đã hiểu"}, "id": {"叫號說": "QTalk", "排隊": "Antrean", "我的號碼": "Nomor saya", "小教室": "Kelas", "現在取號 等約": "Ambil nomor sekarang: sekitar", "分": "menit", "你前面": "Di depan Anda:", "組・約": "grup · sekitar", "輪到你了！": "Giliran Anda!", "號櫃台": "loket", "繳費/儲值": "Bayar tagihan / Isi ulang", "續約/換約/新申辦": "Perpanjang / Paket baru", "異動/諮詢/維修": "Perubahan / Konsultasi / Servis", "網路取貨/預約取件": "Ambil pesanan online", "到台灣大哥大 YouTube 頻道看更多精彩影片 ↗": "Video lainnya di YouTube Taiwan Mobile ↗", "門市，先聽我說！！": "Toko, dengarkan aku dulu!", "說你來辦什麼，排到之前櫃台就準備好了。": "Sebutkan keperluan Anda, loket siap sebelum giliran Anda.", "現在叫號": "Nomor dipanggil", "請到": "Loket", "號": "", "櫃台": "", "◀ 拖曳・點角色看排隊狀態 ▶": "◀ Geser · ketuk orang untuk lihat status ▶", "取號": "Ambil nomor", "3 步驟": "3 langkah", "你要辦什麼？": "Apa keperluan Anda?", "現在約": "Saat ini sekitar", "用 50 字說說狀況": "Jelaskan dalam 50 karakter", "選填": "Opsional", "合約快到期了": "Kontrak segera berakhir", "想問家庭方案": "Tanya paket keluarga", "手機摔壞了": "HP saya rusak", "來取網路訂的手機": "Ambil pesanan online", "幫爸媽辦": "Untuk orang tua", "點選即可，不用打字": "Cukup ketuk, tanpa mengetik", "✎ 想自己補充": "✎ Tulis sendiri", "例如：合約下個月到期，想問有沒有家庭方案": "Mis.: Kontrak berakhir bulan depan, ada paket keluarga?", "🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。": "🔒 Hanya loket yang melihat tulisan Anda; dianonimkan untuk memperbaiki panduan.", "手機號碼": "Nomor HP", "快輪到你時傳簡訊": "SMS saat giliran hampir tiba", "更多選項": "Opsi lainnya", "我是幫家人取號": "Saya ambil nomor untuk keluarga", "叫號時你和家人都會收到簡訊。": "Anda dan keluarga sama-sama dapat SMS.", "接收跟這次需求有關的門市優惠": "Terima promo terkait kunjungan ini", "選填，每次排隊最多 1 則，可隨時取消。": "Opsional, maks. 1 pesan per kunjungan, bisa dibatalkan.", "想晚點再來？預約時段": "Datang nanti? Pesan jadwal", "＋ 想晚點再來？預約時段": "＋ Datang nanti? Pesan jadwal", "－ 想晚點再來？預約時段": "－ Datang nanti? Pesan jadwal", "看哪個時段人少，選好時間再來，到店報到後優先叫號。": "Pilih jam sepi, datang dan check-in untuk dipanggil lebih dulu.", "影片": "Video", "取號前，先看懂": "Tonton sebelum antre", "＋ 有興趣": "＋ Tertarik", "✓ 已加入": "✓ Ditambahkan", "⛶ 放大": "⛶ Perbesar", "排隊時先看一下": "Tonton sambil menunggu", "不用排隊，1 分鐘線上辦好": "Tanpa antre: selesai online 1 menit", "線上繳費 ↗": "Bayar online ↗", "預付卡儲值 ↗": "Isi ulang prabayar ↗", "用 APP 辦 ↗": "Pakai aplikasi ↗", "想在門市辦也可以，繼續往下取號就好。": "Ingin di toko? Lanjutkan ambil nomor.", "你的號碼": "Nomor Anda", "前面還有": "Di depan Anda", "組": "grup", "預估等候": "Perkiraan tunggu", "排隊動態": "Info antrean", "你寫給櫃台的話": "Catatan untuk loket", "排到之前，先準備好": "Siapkan sebelum giliran", "點一下勾選你帶了的東西。": "Ketuk untuk centang yang Anda bawa.", "我先離開一下": "Saya keluar sebentar", "不想乾等可以先去附近逛，快到了會叫你。": "Tak mau menunggu? Jalan-jalan dulu, nanti kami panggil.", "還沒有號碼": "Belum ada nomor", "取號後，號碼、等候進度和要帶的證件都會在這裡。": "Setelah ambil nomor, nomor, progres dan dokumen muncul di sini.", "去取號": "Ambil nomor", "請到 ": "Silakan ke ", "我到了": "Saya sudah tiba", "我還要 5 分鐘": "Saya perlu 5 menit lagi", "櫃台已經看過你寫的需求，正在等你。": "Loket sudah membaca catatan Anda dan menunggu.", "我回到門市了": "Saya sudah kembali", "我在路上": "Saya dalam perjalanan", "來不及，往後延 2 組": "Tidak sempat: mundur 2 giliran", "今天的問題解決了嗎？": "Apakah masalah Anda selesai?", "解決了": "Selesai", "沒解決": "Belum selesai", "幫這次的服務打個分數吧！": "Beri nilai layanan hari ini!", "點 3 下就完成，不用 10 秒": "3 ketukan, kurang dari 10 detik", "櫃台人員的服務": "Layanan staf", "等候時間": "Waktu tunggu", "問題處理的結果": "Hasil penanganan", "非常不滿意": "Sangat tidak puas", "非常滿意": "Sangat puas", "送出": "Kirim", "謝謝你的回饋！": "Terima kasih atas masukan Anda!", "重新取號": "Ambil nomor baru", "等候小教室": "Kelas sambil menunggu", "防詐小測驗": "Kuis anti-penipuan", "是詐騙": "Penipuan", "不是": "Bukan", "下一題 →": "Berikutnya →", "答對了！": "Benar!", "再想想。": "Coba pikir lagi.", "門市科技課程": "Kelas teknologi di toko", "報名": "Daftar", "取消報名": "Batal daftar", "已額滿": "Penuh", "預約門市：": "Toko:", "要辦的事：": "Keperluan:", "請先在上面選一項": "Pilih salah satu di atas dulu", "已預約": "Sudah dipesan", "我到店了，報到": "Saya sudah tiba, check-in", "改時間": "Ubah jam", "取消預約": "Batalkan", "選一個時段：": "Pilih jam:", "顯示與語音": "Tampilan & suara", "大字模式": "Teks besar", "字體放大、對比加深，長輩更好讀": "Teks lebih besar dan kontras, mudah dibaca lansia", "語音叫號": "Panggilan suara", "快輪到和叫號時，手機會唸出號碼和櫃台": "HP membacakan nomor dan loket Anda", "🔊 試聽叫號": "🔊 Coba suara", "介面與語音叫號的語言": "Bahasa layar dan panggilan suara", "完成": "Selesai", "優先取號": "Nomor prioritas", "長輩（65 歲以上）、孕婦、行動不便者可選。": "Untuk lansia 65+, ibu hamil, dan penyandang disabilitas.", "優先": "Prioritas", "店員": "Staf", "下一位就是他": "Berikutnya", "🔒 每位顧客寫的內容只有櫃台看得到": "🔒 Hanya loket yang bisa melihat tulisan pelanggan", "🔒 只有你和櫃台看得到": "🔒 Hanya Anda dan loket yang bisa melihat", "選擇門市": "Pilih toko", "取消": "Batal", "門號或帳單": "Nomor HP atau tagihan", "身分證": "Kartu identitas", "第二證件（健保卡或駕照）": "Identitas kedua (kartu asuransi atau SIM)", "原門號 SIM 卡（續約時）": "Kartu SIM saat ini (perpanjangan)", "要維修的手機（維修時）": "HP yang akan diservis", "取貨簡訊或訂單編號": "SMS pengambilan atau nomor pesanan", "模擬情境": "Skenario", "簡訊": "SMS", "提醒": "Info", "簡訊・叫號說": "SMS · QTalk", "全部準備好了，櫃台會更快幫你辦完。": "Semua siap! Loket bisa lebih cepat.", "Aa": "Aa", "知道了": "Mengerti"}}, "rx": [["^簡訊已傳到 (.+?)。點簡訊連結隨時回到號碼卡。$", {"en": "SMS sent to \\1. Tap the link anytime to return to your ticket.", "ja": "SMS を \\1 に送信しました。リンクからいつでも番号に戻れます。", "ko": "\\1(으)로 문자를 보냈어요. 링크로 언제든 번호로 돌아올 수 있어요.", "vi": "SMS đã gửi đến \\1. Chạm vào liên kết để quay lại số của bạn.", "id": "SMS terkirim ke \\1. Ketuk tautan untuk kembali ke nomor Anda."}], ["^(\\w+) 前面剩 (\\d+) 組$", {"en": "\\1: \\2 groups ahead", "ja": "\\1：前に \\2 組", "ko": "\\1: 앞에 \\2팀", "vi": "\\1: còn \\2 nhóm phía trước", "id": "\\1: \\2 grup di depan"}], ["^約 (\\d+) 分鐘後叫號，請回到(.+?)。$", {"en": "Called in about \\1 min. Please return to \\2.", "ja": "約 \\1 分後に呼び出し。\\2 にお戻りください。", "ko": "약 \\1분 후 호출. \\2(으)로 돌아오세요.", "vi": "Khoảng \\1 phút nữa sẽ gọi. Mời quay lại \\2.", "id": "Dipanggil sekitar \\1 menit lagi. Silakan kembali ke \\2."}], ["^(.+?) 約 (\\d+) 分$", {"en": "\\1 ~\\2 min", "ja": "\\1 約 \\2 分", "ko": "\\1 약 \\2분", "vi": "\\1 ~\\2 phút", "id": "\\1 ~\\2 menit"}], ["^15:00 防詐小教室剩 (\\d+) 位$", {"en": "15:00 scam class: \\1 seats left", "ja": "15:00 詐欺対策講座 残り \\1 席", "ko": "15:00 사기 예방 강좌 \\1석 남음", "vi": "15:00 lớp chống lừa đảo: còn \\1 chỗ", "id": "15:00 kelas anti-penipuan: sisa \\1 kursi"}], ["^前面還有 (\\d+) 組・約 (\\d+) 分$", {"en": "\\1 groups ahead · ~\\2 min", "ja": "前に \\1 組・約 \\2 分", "ko": "앞에 \\1팀 · 약 \\2분", "vi": "Còn \\1 nhóm phía trước · ~\\2 phút", "id": "\\1 grup di depan · ~\\2 menit"}], ["^正在 (\\d+) 號櫃台辦理$", {"en": "Being served at counter \\1", "ja": "\\1 番窓口で対応中", "ko": "\\1번 창구에서 처리 중", "vi": "Đang phục vụ tại quầy \\1", "id": "Sedang dilayani di loket \\1"}], ["^請到 (\\d+) 號櫃台$", {"en": "Please go to counter \\1", "ja": "\\1 番窓口へお越しください", "ko": "\\1번 창구로 오세요", "vi": "Mời đến quầy số \\1", "id": "Silakan ke loket \\1"}], ["^輪到你了！(\\w+)$", {"en": "Your turn! \\1", "ja": "あなたの番です！\\1", "ko": "차례입니다! \\1", "vi": "Đến lượt bạn! \\1", "id": "Giliran Anda! \\1"}], ["^快輪到你了！前面剩 (\\d+) 組$", {"en": "Almost your turn! \\1 groups ahead", "ja": "もうすぐ順番！前に \\1 組", "ko": "곧 차례예요! 앞에 \\1팀", "vi": "Sắp đến lượt! Còn \\1 nhóm phía trước", "id": "Hampir giliran Anda! \\1 grup di depan"}], ["^約 (\\d+) 分鐘後叫到 (\\w+)，請回到門市。$", {"en": "\\2 will be called in about \\1 min. Please come back.", "ja": "約 \\1 分後に \\2 を呼び出します。お店にお戻りください。", "ko": "약 \\1분 후 \\2 호출. 매장으로 돌아오세요.", "vi": "Khoảng \\1 phút nữa sẽ gọi \\2. Mời quay lại cửa hàng.", "id": "\\2 dipanggil sekitar \\1 menit lagi. Silakan kembali."}], ["^已取號 (\\w+)$", {"en": "Ticket \\1 taken", "ja": "\\1 を発券しました", "ko": "\\1 발권 완료", "vi": "Đã lấy số \\1", "id": "Nomor \\1 diambil"}], ["^預約 (\\d+:\\d+)$", {"en": "Book \\1", "ja": "\\1 を予約", "ko": "\\1 예약", "vi": "Đặt \\1", "id": "Pesan \\1"}], ["^剩 (\\d+) 個名額$", {"en": "\\1 left", "ja": "残り \\1", "ko": "\\1 남음", "vi": "Còn \\1 chỗ", "id": "Sisa \\1"}], ["^今天 (\\d+:\\d+)$", {"en": "Today \\1", "ja": "今日 \\1", "ko": "오늘 \\1", "vi": "Hôm nay \\1", "id": "Hari ini \\1"}]]};
+I18N.rx=I18N.rx.map(([re,o])=>[new RegExp(re),Object.fromEntries(Object.entries(o).map(([k,v])=>[k,v.replace(/\\(\d)/g,"$$$1")]))]);
+function trText(zh){const core=zh.trim();if(!core||!/[\u4e00-\u9fff]/.test(core))return null;if(core.includes("★")){const parts=core.split("★").map(x=>{const t=trText(x);return t!=null?t:x});return zh.replace(core,parts.join("★"))}const L=PREF.lang,d=I18N.d[L];if(!d)return null;
+  let pre="",body=core;const pm=core.match(/^([+＋✓]\s?)(.+)$/);if(pm&&d[pm[2]]!=null){pre=pm[1];body=pm[2]}let out=d[body]!=null?pre+d[body]:undefined;if(out==null){for(const[re,o]of I18N.rx){if(re.test(core)){out=core.replace(re,o[L]);out=out.replace(/(繳費\/儲值|續約\/換約\/新申辦|異動\/諮詢\/維修|網路取貨\/預約取件)/g,m=>d[m]||m);break}}}
+  if(out==null)return null;const lead=zh.match(/^\s*/)[0],tail=zh.match(/\s*$/)[0];return lead+out+tail}
+function trNode(n){if(n.nodeType===3){if(n.__tr!==undefined&&n.nodeValue===n.__tr)return;const zh=n.nodeValue;n.__zh=zh;const t=PREF.lang==="zh"?null:trText(zh);if(t!=null){n.__tr=t;n.nodeValue=t}else{n.__tr=undefined}return}
+  if(n.nodeType!==1||n.id==="admin"||n.closest&&n.closest("#admin"))return;
+  if(n.placeholder&&PREF.lang!=="zh"){n.__ph=n.__ph||n.placeholder;const t=trText(n.__ph);if(t)n.placeholder=t}
+  n.querySelectorAll&&n.querySelectorAll("[placeholder]").forEach(trNode);
+  const w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT,{acceptNode:x=>x.parentElement&&x.parentElement.closest("#admin,script,style")?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});let x;while((x=w.nextNode()))trNode(x)}
+const trObs=new MutationObserver(ms=>{if(PREF.lang==="zh")return;for(const m of ms){if(m.type==="characterData")trNode(m.target);else m.addedNodes.forEach(trNode)}});
+function setLang(){document.documentElement.lang={zh:"zh-Hant",en:"en",ja:"ja",ko:"ko",vi:"vi",id:"id"}[PREF.lang];
+  const ph=$("#phone");
+  if(PREF.lang==="zh"){const w=document.createTreeWalker(ph,NodeFilter.SHOW_TEXT);let x;while((x=w.nextNode())){if(x.__zh!==undefined&&x.__tr!==undefined&&x.nodeValue===x.__tr){x.nodeValue=x.__zh;x.__tr=undefined}}ph.querySelectorAll("[placeholder]").forEach(e=>{if(e.__ph)e.placeholder=e.__ph})}
+  else{const w=document.createTreeWalker(ph,NodeFilter.SHOW_TEXT);let x;const all=[];while((x=w.nextNode()))all.push(x);all.forEach(x=>{if(x.__zh!==undefined&&x.__tr!==undefined&&x.nodeValue===x.__tr)x.nodeValue=x.__zh;x.__tr=undefined});trNode(ph)}
+  lastMq="";renderMarquee();}
+trObs.observe(document.getElementById("phone"),{subtree:true,childList:true,characterData:true});
+let VP={land:true,src:null};
+function vpLayout(){const box=$("#vplayer"),st=box&&box.querySelector(".stage");if(!st)return;const W=box.clientWidth,H=box.clientHeight;
+  if(VP.land){st.style.width=H+"px";st.style.height=W+"px";st.style.transform="translate(-50%,-50%) rotate(90deg)"}
+  else{st.style.width=W+"px";st.style.height=H+"px";st.style.transform="translate(-50%,-50%)"}
+  const r=box.querySelector("[data-rot]");if(r)r.textContent=VP.land?"轉直式":"轉橫式";phoneTurn(VP.land&&!box.hidden)}
+function phoneTurn(on){const ph=$("#phone");if(!ph)return;
+  if(!on||innerWidth<=480){ph.style.transform="";return}
+  const W=ph.offsetWidth,H=ph.offsetHeight,k=Math.min(1,(innerWidth-40)/H,(innerHeight-40)/W);
+  const r=ph.getBoundingClientRect(),cy=(r.top+r.bottom)/2;ph.style.transform="";const top=ph.getBoundingClientRect().top+H/2;
+  ph.style.transform=`translateY(${innerHeight/2-top}px) rotate(-90deg) scale(${k})`}
+function openPlayer(src){const lbl=src.getAttribute("aria-label")||"";
+  const playing=!src.paused&&!src.ended;VP.src=src;VP.home=src.parentElement;
+  const box=$("#vplayer");box.hidden=false;
+  box.innerHTML=`<div class="stage" role="dialog" aria-modal="true" aria-label="${esc(lbl)}"><div class="vbar"><span>${esc(lbl)}</span><button type="button" class="ghost" data-rot>轉直式</button><button type="button" data-vclose>✕ 縮小</button></div></div>`;
+  box.querySelector(".stage").appendChild(src); /* move the same element: keeps position, buffer and play state */
+  if(playing&&src.paused){const pr=src.play();if(pr&&pr.catch)pr.catch(()=>{})}
+  box.querySelector("[data-rot]").onclick=()=>{VP.land=!VP.land;vpLayout()};
+  box.querySelector("[data-vclose]").onclick=closePlayer;vpLayout();box.querySelector("[data-vclose]").focus({preventScroll:true})}
+function closePlayer(){const box=$("#vplayer");if(box.hidden)return;const v=VP.src;
+  if(v){const playing=!v.paused&&!v.ended;const key=v.getAttribute("src");
+    let home=VP.home&&VP.home.isConnected?VP.home:null;
+    if(!home){const twin=[...document.querySelectorAll(".vframe video")].find(x=>x!==v&&x.getAttribute("src")===key);if(twin){home=twin.parentElement;twin.remove()}}
+    if(home)home.appendChild(v);
+    if(playing&&v.paused){const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{})}}
+  box.innerHTML="";box.hidden=true;VP.src=null;VP.home=null;phoneTurn(false)}
+addEventListener("resize",vpLayout);addEventListener("keydown",e=>{if(e.key==="Escape")closePlayer()});
+function bindVideos(){
+  document.querySelectorAll(".vmax").forEach(b=>b.onclick=()=>openPlayer(b.parentElement.querySelector("video")));
+  document.querySelectorAll(".vframe video").forEach(v=>v.addEventListener("dblclick",e=>{e.preventDefault();openPlayer(v)}));
+  document.querySelectorAll("[data-ask]").forEach(b=>b.onchange=()=>{const ask=b.dataset.ask;
+    if(b.checked)addInterest(ask);else{U.chips=(U.chips||[]).filter(x=>x!==ask);const say=$("#say");if(!U.writeOpen)U.draft=U.chips.join("，");else if(say)U.draft=say.value;const ph=$("#phoneIn");if(ph)U.phone=ph.value}
+    const y=$("#appBody").scrollTop,xs=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
+    fullRender();$("#appBody").scrollTop=y;document.querySelectorAll(".vids").forEach((v,i)=>{if(xs[i]!=null){v.style.scrollBehavior="auto";v.scrollLeft=xs[i];v.style.scrollBehavior="";v.dispatchEvent(new Event("scroll"))}})});
+  document.querySelectorAll("video").forEach(v=>v.addEventListener("play",()=>document.querySelectorAll("video").forEach(o=>{if(o!==v)o.pause()})));
+  document.querySelectorAll(".vcar").forEach(car=>{
+    const vs=car.querySelector(".vids");if(!vs||!vs.firstElementChild)return;
+    const step=()=>vs.firstElementChild.offsetWidth+12;
+    const upd=()=>{const i=Math.round(vs.scrollLeft/step()),n=vs.children.length;car.querySelectorAll(".vdots i").forEach((d,k)=>d.classList.toggle("on",k===i));const l=car.querySelector('[data-vs="-1"]'),r=car.querySelector('[data-vs="1"]');if(l)l.disabled=i<=0;if(r)r.disabled=i>=n-1};
+    vs.onscroll=upd;
+    car.querySelectorAll("[data-vs]").forEach(b=>b.onclick=()=>vs.scrollBy({left:step()*+b.dataset.vs,behavior:"smooth"}));
+    upd();
+  });
+}
+
+/* ================= tab: 排隊 ================= */
+function nowCalled(){const t=S.serving[S.lastDesk];return t?{no:t.no,desk:S.lastDesk}:(S.lastCalled||null)}
+function updateBillboard(){
+  const now=nowCalled(),el=$("#bbNow");if(!el)return;
+  const no=now?now.no:"—";
+  if(el.textContent!==no){el.textContent=no;el.classList.remove("flip");void el.offsetWidth;el.classList.add("flip")}
+  $("#bbDesk").textContent=now?now.desk+1:"—";
+}
+function liveHTML(){
+  const st=meState();
+  if(st==="waiting"||st==="called"){const t=S.me,w=st==="waiting"?waitFor(t):null;
+    return `<div class="box" data-live style="background:var(--yellow)"><div class="row" style="justify-content:space-between"><div><small style="font-weight:900">你的號碼</small><div style="font-family:var(--f-num);font-size:34px;line-height:1">${t.no}</div></div><div style="text-align:right;font-weight:900">${st==="called"?`請到 <span style="font-family:var(--f-num);font-size:30px">${S.serving.indexOf(t)+1}</span> 號櫃台`:`前面 ${w.ahead} 組<br>約 ${w.mins} 分`}</div></div><button class="btn dark wide" id="toMine">看我的號碼</button></div>`}
+  return `<div data-live hidden></div>`;
+}
+function bindLive(){const m=$("#toMine");if(m)m.onclick=()=>go("mine")}
+function queueHTML(){
+  const st=meState(),has=st==="waiting"||st==="called";
+  const now=nowCalled();lastNow=now?now.no:null;
+  return `${has?liveHTML():`<div data-live hidden></div><div class="shout"><h3>門市，先聽我說！！</h3><p>說你來辦什麼，排到之前櫃台就準備好了。</p></div>`}
+  <div class="scene" id="scene" aria-label="排隊中的顧客，點角色看他的排隊狀態">
+    <div class="billboard"><div><small>現在叫號</small><div class="now" id="bbNow">${now?now.no:"—"}</div></div><div class="to"><span>請到</span><b id="bbDesk">${now?now.desk+1:"—"}</b><span>號<br>櫃台</span></div></div>
+    <div id="bubbleWrap"></div>
+    <span class="hint">◀ 拖曳・點角色看排隊狀態 ▶</span>
+  </div>
+  ${has?"":takeHTML()}
+  ${has?"":resvHTML()}
+  ${videosHTML(KNOW_VIDEOS,"取號前，先看懂")}`;
+}
+function bindQueue(){
+  bindLive();Q3.mount($("#scene"));
+  if(!(meState()==="waiting"||meState()==="called")){bindTake();bindResv()}
+  bindVideos();
+}
+function showBubble(no){
+  U.bubble=no;const w=$("#bubbleWrap");if(!w)return;
+  const t=[...S.serving,...S.queue].find(x=>x&&x.no===no);
+  w.innerHTML=t?`<div class="bubble"><div class="row"><b style="font-family:var(--f-num)">No.${t.no}</b>${tag(t.cat)}${t.me?'<span class="tagc">你</span>':""}</div>${(()=>{const d=S.serving.indexOf(t);const st=d>=0?`正在 ${d+1} 號櫃台辦理`:(()=>{const w=waitFor(t);return w.ahead?`前面還有 ${w.ahead} 組・約 ${w.mins} 分`:"下一位就是他"})();
+    return t.me?`${st}${t.text?`<div style="margin-top:4px;font-weight:500">你寫給櫃台的話：${esc(t.text)}</div><small style="color:var(--muted)">🔒 只有你和櫃台看得到</small>`:""}`:`${st}<br><small style="color:var(--muted)">🔒 每位顧客寫的內容只有櫃台看得到</small>`})()}</div>`:"";
+}
+
+/* ---- take ---- */
+function takeHTML(){
+  const n=[...U.draft].length,phoneOK=/^09\d{8}$/.test(U.phone.replace(/\D/g,""));
+  return `<div class="box" id="take">
+    <div class="h2"><h3 style="text-shadow:none;color:var(--ink)">取號</h3><span>3 步驟</span></div>
+    <div class="step"><div class="lbl"><i>1</i>你要辦什麼？</div>
+      <div class="cats">${Object.keys(CATS).map(c=>`<button class="cat" data-c="${c}" aria-pressed="${U.picked===c}">${c}<small>現在約 <b>${catWait(c)}</b> 分</small></button>`).join("")}</div>
+      ${U.picked&&CATS[U.picked].quick?`<div class="notice"><b>不用排隊，1 分鐘線上辦好</b><div class="quickgo"><a class="btn" href="https://www.taiwanmobile.com/csonline/ssi/webpay/mpPrepayIndex.html" target="_blank" rel="noopener">線上繳費 ↗</a><a class="btn" href="https://www.taiwanmobile.com/mobile/prepaid/internet/topup.html" target="_blank" rel="noopener">預付卡儲值 ↗</a><a class="btn dark" href="https://apps.apple.com/tw/app/%E5%8F%B0%E7%81%A3%E5%A4%A7%E5%93%A5%E5%A4%A7/id483294857" target="_blank" rel="noopener">用 APP 辦 ↗</a></div><span style="font-weight:500">想在門市辦也可以，繼續往下取號就好。</span></div>`:""}</div>
+    <div class="step"><div class="lbl"><i>2</i>用 50 字說說狀況 <em>選填</em></div>
+      <div class="starters chipgrid">${STARTERS.map(x=>chipHTML(x)).join("")}</div>
+      ${(()=>{const iv=KNOW_VIDEOS.filter(v=>(U.chips||[]).includes(v.ask));return iv.length?`<div class="chiplbl">✓ 影片有興趣：${iv.map(v=>esc(v.short)).join("、")}</div>`:""})()}
+      ${(U.chips||[]).length&&!U.writeOpen?`<div class="picked-say"><span>點選即可，不用打字</span><button class="linkbtn" id="writeMore" type="button">✎ 想自己補充</button></div>`:""}
+      <textarea id="say" maxlength="60" ${(U.chips||[]).length&&!U.writeOpen?"hidden":""} placeholder="例如：合約下個月到期，想問有沒有家庭方案">${esc(U.draft)}</textarea>
+      <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。</p></div>
+    <div class="step"><div class="lbl"><i>3</i>手機號碼 <em>快輪到你時傳簡訊</em></div>
+      <input type="tel" id="phoneIn" inputmode="numeric" autocomplete="tel" placeholder="0912345678" value="${esc(U.phone)}">
+      <label class="opt prio"><input type="checkbox" id="prioOn" ${U.prio?"checked":""}><span>優先取號<small>長輩（65 歲以上）、孕婦、行動不便者可選。</small></span></label></div>
+    <details class="more" ${U.more?"open":""} id="more"><summary>更多選項</summary>
+      <label class="opt"><input type="checkbox" id="famOn" ${U.familyOn?"checked":""}><span>我是幫家人取號${U.family?`<small>叫號時也會通知 ${esc(U.family.name)}（${maskPhone(U.family.phone)}）・<button class="linkbtn" id="famEdit">修改</button></small>`:"<small>叫號時你和家人都會收到簡訊。</small>"}</span></label>
+      <label class="opt"><input type="checkbox" id="consent" ${U.consent?"checked":""}><span>接收跟這次需求有關的門市優惠<small>選填，每次排隊最多 1 則，可隨時取消。</small></span></label>
+    </details>
+    <button class="cta" id="takeBtn" ${U.picked&&n<=50&&phoneOK?"":"disabled"}>取號</button>
+  </div>`;
+}
+function chipHTML(s,label){const on=(U.chips||[]).includes(s);return `<button type="button" data-st="${s}" aria-pressed="${on}" aria-label="${s}">${on?"✓":"+"} ${label||s}</button>`}
+function addInterest(ask){
+  U.chips=U.chips||[];if(!U.chips.includes(ask))U.chips.push(ask);
+  const v=KNOW_VIDEOS.find(x=>x.ask===ask);if(v&&!U.picked)U.picked=v.cat;
+  const say=$("#say");if(!U.writeOpen)U.draft=U.chips.join("，");else if(say)U.draft=say.value;
+  const ph=$("#phoneIn");if(ph)U.phone=ph.value;
+}
+function bindTake(){
+  const say=$("#say"),ph=$("#phoneIn"),btn=$("#takeBtn");
+  const valid=()=>{const n=[...say.value].length;btn.disabled=!(U.picked&&n<=50&&/^09\d{8}$/.test(ph.value.replace(/\D/g,"")))};
+  document.querySelectorAll(".cat").forEach(b=>b.onclick=()=>{U.picked=b.dataset.c;U.draft=say.value;U.phone=ph.value;fullRender();});
+  document.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{const st=b.dataset.st;U.chips=U.chips||[];
+    const on=U.chips.includes(st);U.chips=on?U.chips.filter(x=>x!==st):[...U.chips,st];
+    const iv=KNOW_VIDEOS.find(x=>x.ask===st);if(iv&&!on&&!U.picked)U.picked=iv.cat;
+    if(!U.writeOpen)say.value=U.chips.join("，");say.dispatchEvent(new Event("input"));U.phone=ph.value;
+    const y=$("#appBody").scrollTop;fullRender();$("#appBody").scrollTop=y;
+    if(!on&&/幫爸媽/.test(st)&&!U.familyOn)openFamily()});
+  const wm=$("#writeMore");if(wm)wm.onclick=()=>{U.writeOpen=true;const y=$("#appBody").scrollTop;fullRender();$("#appBody").scrollTop=y;const t=$("#say");t.focus();t.setSelectionRange(t.value.length,t.value.length)};
+  say.oninput=()=>{U.draft=say.value;const n=[...say.value].length;$("#cnt").textContent=`${n} / 50`;$("#cnt").style.color=n>50?"var(--red)":"";
+    const g=guess(say.value),sug=$("#sug");
+    if(g&&!U.picked){U.picked=g;document.querySelectorAll(".cat").forEach(x=>x.setAttribute("aria-pressed",x.dataset.c===g))}
+    sug.innerHTML=g&&g!==U.picked?`像是「${g}」？<button class="linkbtn" id="sw">改選</button>`:"";
+    const sw=$("#sw");if(sw)sw.onclick=()=>{U.picked=g;fullRender()};valid();};
+  ph.oninput=()=>{U.phone=ph.value;valid()};
+  $("#more").ontoggle=e=>U.more=e.target.open;
+  $("#famOn").onchange=e=>{if(e.target.checked){e.target.checked=false;openFamily()}else{U.familyOn=false;U.family=null;U.draft=say.value;U.phone=ph.value;fullRender()}};
+  const fe=$("#famEdit");if(fe)fe.onclick=e=>{e.preventDefault();openFamily()};
+  $("#consent").onchange=e=>U.consent=e.target.checked;
+  $("#prioOn").onchange=e=>{U.prio=e.target.checked};
+  btn.onclick=doTake;valid();
+}
+function openFamily(){
+  const f=U.family||{name:"",phone:""};
+  modal(`<form class="sheet" id="famForm" aria-labelledby="fh"><h3 id="fh">幫家人取號</h3>
+    <p style="font-weight:500">叫號時，你和家人都會收到簡訊，家人點開就能看到同一張號碼卡。</p>
+    <label>怎麼稱呼他<input type="text" id="fName" maxlength="10" placeholder="例如：爸爸" value="${esc(f.name)}"></label>
+    <label>家人的手機號碼<input type="tel" id="fPhone" inputmode="numeric" placeholder="0912345678" value="${esc(f.phone)}"></label>
+    <div class="err" id="fErr"></div>
+    <div class="acts"><button class="btn dark wide" type="submit">確定</button><button class="btn wide" type="button" id="fCancel">取消</button></div>
+    <p class="fine">這支號碼只用來傳這次的叫號通知，辦完就刪除。</p></form>`,m=>{
+    $("#fCancel").onclick=closeModal;
+    $("#famForm").onsubmit=e=>{e.preventDefault();const name=$("#fName").value.trim(),p=$("#fPhone").value.replace(/\D/g,"");
+      if(!name){$("#fErr").textContent="請填一個稱呼，例如「爸爸」。";return}
+      if(!/^09\d{8}$/.test(p)){$("#fErr").textContent="手機號碼要是 09 開頭的 10 碼數字。";return}
+      U.family={name,phone:p};U.familyOn=true;U.more=true;const s=$("#say"),ph=$("#phoneIn");if(s)U.draft=s.value;if(ph)U.phone=ph.value;closeModal();fullRender();};
+  });
+}
+function doTake(){
+  const txt=U.draft.trim().slice(0,50),sc=pickScenario();
+  S.pauseLeft=0;if(ONDUTY>3){ONDUTY=3;S.serving.length=3}
+  if(sc.before)sc.before();
+  S.me=enqueue(U.picked,txt,{me:true,family:U.familyOn?U.family:null,prefix:U.prio?"P":undefined,prio:!!U.prio});
+  S.me.sc=sc;S.me.log=[];
+  S.me.start=waitFor(S.me).ahead;
+  afterTake();
+  if(sc.after)setTimeout(sc.after,5600);
+}
+function afterTake(){
+  U.draft="";U.chips=[];U.writeOpen=false;U.prio=false;U.bubble=S.me.no;U.docs=new Set();U.out=false;U.done=null;U.rating={};U.contact=null;U.fresh=true;
+  Q3.sync();go("mine");buzz(60);
+  toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
+  setTimeout(()=>tip("took"),1200);
+  if(U.consent)setTimeout(()=>{if(S.me&&meState()==="waiting")toast("promo",CATS[S.me.cat].promo,"跟你這次要辦的事有關，到櫃台出示號碼即可使用。")},7000);
+}
+
+/* ---- reservation ---- */
+function slotsFor(h){return[0,30].map(m=>{const full=PEAK[h]>=9&&m===0;return{label:`${10+h}:${m?"30":"00"}`,left:full?0:Math.max(1,10-PEAK[h]-(m?1:0))}})}
+function resvHTML(){
+  if(U.resv)return `<div class="box resv"><div class="row" style="justify-content:space-between"><span class="tagc">已預約</span><span class="muted" style="color:var(--ink)">${U.resv.cat}</span></div>
+    <div class="t">今天 ${U.resv.time}</div><p><b>${STORES[U.resv.store||0].name}</b>${U.resv.store?`（${STORES[U.resv.store].dist}）・<a href="https://www.google.com/maps/search/${encodeURIComponent(STORE_ADDR[STORES[U.resv.store].name]||("台灣大哥大 "+STORES[U.resv.store].name))}" target="_blank" rel="noopener">導航 ↗</a>`:""}<br>前 15 分鐘傳簡訊提醒你出發。到店掃門口的 QR code 報到，報到後優先叫號。</p>
+    <div class="row"><button class="btn dark sm" id="checkin">我到店了，報到</button><button class="btn sm" id="rChange">改時間</button><button class="btn sm" id="rCancel">取消預約</button></div></div>`;
+  const sel=U.peakSel,slots=slotsFor(sel);
+  return `<div class="box"><button class="linkbtn" id="resvToggle" style="text-align:left;text-decoration:none;font-size:16px;font-weight:900">${U.resvOpen?"－":"＋"} 想晚點再來？預約時段</button>
+  ${U.resvOpen?`<div class="stores" role="group" aria-label="選擇門市">${STORES.map((st,i)=>{const lv=st.peak[NOW_IDX];return `<button type="button" class="store-opt" data-store="${i}" aria-pressed="${(U.store||0)===i}"><b>${st.name}</b><small>${st.dist}・現在${lv<=4?"人少":lv>=8?"人多":"普通"}</small></button>`}).join("")}</div>
+    <div class="peak" role="group" aria-label="今日各時段人潮">${PEAK.map((v,i)=>`<button class="${i===NOW_IDX?"now":""}" aria-pressed="${i===sel}" data-pk="${i}" style="height:${v*10}%" aria-label="${10+i} 點，人潮 ${v}"></button>`).join("")}</div>
+    <div class="peakx">${PEAK.map((_,i)=>`<span>${10+i}</span>`).join("")}</div>
+    <p class="muted"><b style="color:var(--ink)">${10+sel}:00 這一小時</b>${sel===NOW_IDX?"（現在）":""}平均等約 ${PEAK[sel]*3} 分鐘${PEAK[sel]<=4?"，人很少":PEAK[sel]>=8?"，最擠的時段":""}。選一個時段：</p>
+    <div class="slots">${slots.map(s=>`<button class="slot" data-slot="${s.label}" aria-pressed="${U.slot===s.label}" ${s.left?"":"disabled"}>${s.label}<small>${s.left?`剩 ${s.left} 個名額`:"已額滿"}</small></button>`).join("")}</div>
+    ${U.slot?`<p class="muted">預約門市：<b style="color:var(--ink)">${STORES[U.store||0].name}</b><br>要辦的事：${U.picked?`<b style="color:var(--ink)">${U.picked}</b>`:"請先在上面選一項"}</p><button class="btn dark wide" id="book" ${U.picked?"":"disabled"}>預約 ${U.slot}</button>`:""}`:`<p class="muted">看哪個時段人少，選好時間再來，到店報到後優先叫號。</p>`}</div>`;
+}
+function bindResv(){
+  const t=$("#resvToggle");if(t)t.onclick=()=>{U.resvOpen=!U.resvOpen;fullRender();if(U.resvOpen)tip("resv")};
+  document.querySelectorAll("[data-pk]").forEach(b=>b.onclick=()=>{U.peakSel=+b.dataset.pk;U.slot=null;fullRender()});
+  document.querySelectorAll("[data-store]").forEach(b=>b.onclick=()=>{U.store=+b.dataset.store;PEAK=STORES[U.store].peak;U.slot=null;const y=$("#appBody").scrollTop;fullRender();$("#appBody").scrollTop=y});
+  const so=document.querySelector('.store-opt[aria-pressed="true"]');if(so&&so.parentElement)so.parentElement.scrollLeft=Math.max(0,so.offsetLeft-so.parentElement.offsetLeft-8);
+  document.querySelectorAll("[data-slot]").forEach(b=>b.onclick=()=>{U.slot=b.dataset.slot;fullRender()});
+  const bk=$("#book");if(bk)bk.onclick=()=>{U.resv={time:U.slot,cat:U.picked,text:U.draft,store:U.store||0};U.slot=null;U.resvOpen=false;toast("sms",`已預約${STORES[U.resv.store].name} 今天 ${U.resv.time}`,"前 15 分鐘會傳簡訊提醒你出發。");fullRender()};
+  const rc=$("#rChange");if(rc)rc.onclick=()=>{U.store=U.resv.store||0;PEAK=STORES[U.store].peak;U.resv=null;U.resvOpen=true;fullRender()};
+  const rx=$("#rCancel");if(rx)rx.onclick=()=>{U.resv=null;toast("info","已取消預約","");fullRender()};
+  const ci=$("#checkin");if(ci)ci.onclick=()=>{const r=U.resv;U.resv=null;S.me=enqueue(r.cat,r.text,{me:true,prefix:"R",front:true,family:U.familyOn?U.family:null});S.me.start=waitFor(S.me).ahead;afterTake()};
+}
+
+/* ================= tab: 我的號碼 ================= */
+function ticketInner(){
+  const t=S.me,st=meState();if(!t||st==="done")return"";
+  const w=st==="waiting"?waitFor(t):{ahead:0,mins:0};
+  const prog=st==="called"?100:Math.round(100*(1-w.ahead/Math.max(t.start||1,1)));
+  return `<div class="top"><div><span class="lab">STORE VOICE CARD</span><div class="no">${t.no}</div><div class="row" style="margin-top:6px">${tag(t.cat)}${t.no[0]==="R"?'<span class="tagc white">預約</span>':""}${t.prio?'<span class="tagc white">優先</span>':""}</div></div><div class="pt">${portrait(t.no)}</div></div>
+    <div class="stat"><div><small>前面還有</small><b>${w.ahead}<span>組</span></b></div><div><small>預估等候</small><b>${w.mins}<span>分</span></b></div></div>
+    <div class="meter"><i class="orange" style="width:${Math.max(4,prog)}%"></i></div>
+    ${t.sc?`<div class="scn"><span class="tagc">模擬情境</span><b>${t.sc.name}</b></div>`:""}
+    ${t.log&&t.log.length?`<div class="say"><small>排隊動態</small>${t.log.map(m=>`<div>・${esc(m)}</div>`).join("")}</div>`:""}
+    ${t.text?`<div class="say"><small>你寫給櫃台的話</small>${esc(t.text)}</div>`:""}
+    ${t.family?`<div class="fam">叫號時也會通知 ${esc(t.family.name)}（${maskPhone(t.family.phone)}）</div>`:""}`;
+}
+function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.serving.indexOf(t);
+  return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
+function mineHTML(){
+  const st=meState();
+  if(st==="none")return `<div class="box"><h4>還沒有號碼</h4><p class="muted">取號後，號碼、等候進度和要帶的證件都會在這裡。</p><button class="btn blue" id="goTake">去取號</button></div>${videosHTML()}`;
+  if(st==="done")return doneHTML();
+  const t=S.me,docs=CATS[t.cat].docs,w=st==="waiting"?waitFor(t):null;
+  const pop=U.fresh;U.fresh=false;
+  const near=st==="waiting"&&w.ahead<=3;U.wasNear=near;
+  return `<div id="calledWrap">${calledInner()}</div>
+  <div class="ticket ${pop?"pop":""}" id="ticketWrap">${ticketInner()}</div>
+  ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，先把下面的證件準備好。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
+  ${st==="waiting"&&!near?`<button class="btn wide away ${U.out?"on":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>
+  <p class="note" style="margin-top:-8px">${U.out?"放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。":"不想乾等可以先去附近逛，快到了會叫你。"}</p>`:""}
+  <div class="box ${near?"docsnear":""}"><h4>${near?"現在就把這些拿出來":"排到之前，先準備好"}</h4><div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
+    <p class="muted">${U.docs.size===docs.length?"全部準備好了，櫃台會更快幫你辦完。":"點一下勾選你帶了的東西。"}</p></div>
+  ${st==="waiting"&&U.consent?`<div class="box" style="background:var(--cream)"><span class="tagc lilac" style="justify-self:start">跟你有關的優惠</span><h4>${CATS[t.cat].promo}</h4><p class="muted">到櫃台出示號碼即可使用。</p></div>`:""}
+  ${st==="waiting"&&!near?gameCardHTML(w.mins):""}
+  ${st==="waiting"&&!near?miniClassHTML(w.mins):""}
+  ${videosHTML()}`;
+}
+function doneHTML(){
+  const t=S.me;
+  if(!U.done)return `<div class="box" style="text-align:center" id="rateBox"><span class="tagc green" style="justify-self:center">${t.no} 已辦理完成</span><h4 style="font-size:20px">今天的問題解決了嗎？</h4><p class="muted" style="margin-top:-4px">點一下表情，接著 3 題快速評分，不用 10 秒。</p><div class="faces"><button data-f="good" aria-label="解決了">😀</button><button data-f="mid" aria-label="普通">😐</button><button data-f="bad" aria-label="沒解決">😞</button></div></div>${videosHTML()}`;
+  if(U.done!=="sent"){
+    const qs=[["service","櫃台人員的服務"],["wait","等候時間"],["solved","問題處理的結果"]];
+    const all=qs.every(([k])=>U.rating[k]);
+    const low=Object.values(U.rating).some(v=>v<=2);
+    return `<div class="box rate" id="rateBox"><h4 style="font-size:19px">幫這次的服務打個分數吧！</h4><div class="notice" style="background:var(--cream)"><b>點 3 下就完成，不用 10 秒</b><span style="font-weight:500">每題點一個分數，5 分非常滿意，1 分非常不滿意。</span></div>
+      ${qs.map(([k,n])=>`<div class="q"><b>${n}</b><div class="scale" role="group" aria-label="${n}">${[1,2,3,4,5].map(v=>`<button data-r="${k}" data-v="${v}" aria-pressed="${U.rating[k]===v}">${v}</button>`).join("")}</div><div class="scale-l"><span>非常不滿意</span><span>非常滿意</span></div></div>`).join("")}
+      ${low?`<div class="notice" style="background:var(--cream)">很抱歉讓你不滿意。需要門市主管聯絡你嗎？<div class="row" style="margin-top:6px"><button class="btn sm ${U.contact===true?"dark":""}" data-c="1">需要</button><button class="btn sm ${U.contact===false?"dark":""}" data-c="0">不用</button></div></div>`:""}
+      <button class="cta" id="sendRate" ${all?"":"disabled"}>送出</button></div>`;
+  }
+  return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>${videosHTML()}`;
+}
+function bindMine(){
+  const g=$("#goTake");if(g)g.onclick=()=>go("queue");
+  const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
+  const a=$("#away");if(a)a.onclick=()=>{U.out=!U.out;if(U.out)toast("info","放心去逛","前面剩 3 組時會傳簡訊並跳出提醒。");fullRender()};
+  document.querySelectorAll("[data-doc]").forEach(b=>b.onclick=()=>{const i=+b.dataset.doc;U.docs.has(i)?U.docs.delete(i):U.docs.add(i);buzz(20);fullRender()});
+  document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{U.done=b.dataset.f;fullRender()});
+  document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{U.rating[b.dataset.r]=+b.dataset.v;fullRender()});
+  document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{U.contact=b.dataset.c==="1";fullRender()});
+  const sr=$("#sendRate");if(sr)sr.onclick=()=>{U.done="sent";fullRender()};
+  const n=$("#newTicket");if(n)n.onclick=()=>{S.me=null;U.done=null;U.picked=null;go("queue")};
+  if(meState()==="done"&&!U.done)setTimeout(()=>tip("done"),500);
+  bindClassroom();bindVideos();
+}
+// watch for my ticket finishing (someone else gets my counter)
+
+/* ================= 等候小遊戲（小小店長・防詐偵探） ================= */
+const GAMES={lm:{n:"小小店長",ic:"🏪",d:"打倒詐騙怪，帶顧客到櫃台",src:"games/little-manager.html"},fd:{n:"防詐偵探",ic:"🕵️",d:"12 位嫌疑人，抓出騙子",src:"games/fraud-detective.html"}};
+function gameCardHTML(mins){
+  const head=mins?`約等 ${mins} 分，剛好玩 ${Math.max(1,Math.round(mins/5))} 局！`:"排隊時玩一局，邊玩邊學防詐";
+  return `<div class="box gamecard"><span class="tagc" style="justify-self:start;background:var(--yellow)">🎮 等候小遊戲</span><h4>${head}</h4>
+  <div class="gbtns">${Object.entries(GAMES).map(([k,g])=>`<button type="button" class="gbtn" data-game="${k}"><span class="gi">${g.ic}</span><b>${g.n}</b><small>${g.d}</small></button>`).join("")}</div>
+  <p class="muted" style="margin:0">輪到你時遊戲會自動暫停，不會漏叫號。</p></div>`;
+}
+let GAME_OPEN=null;
+function openGame(k){const g=GAMES[k],v=$("#gameview");if(!g)return;closePlayer();
+  let f=v.querySelector(`iframe[data-k="${k}"]`);
+  if(!f){f=document.createElement("iframe");f.dataset.k=k;f.title=g.n;f.src=g.src;f.setAttribute("allow","autoplay");v.appendChild(f)}
+  v.querySelectorAll("iframe").forEach(x=>x.classList.toggle("on",x===f));
+  $("#gname").textContent=`${g.ic} ${g.n}`;GAME_OPEN=k;v.hidden=false;gameStatus();buzz(15);
+}
+function closeGame(){const v=$("#gameview");if(!v||v.hidden)return;
+  v.querySelectorAll("iframe").forEach(f=>{try{f.contentWindow.postMessage("qtalk:pause","*")}catch(e){}});
+  v.hidden=true;GAME_OPEN=null;
+}
+function gameStatus(){if(!GAME_OPEN)return;const st=$("#gst"),bar=$("#gbar");if(!st)return;
+  let txt="還沒取號",near=false;
+  if(S.me){const s=meState();
+    if(s==="waiting"){const w=waitFor(S.me);near=w.ahead<=3;txt=near?`快輪到了！${S.me.no} 前面剩 ${w.ahead} 組`:`${S.me.no}・前面 ${w.ahead} 組・約 ${w.mins} 分`}
+    else if(s==="called")txt=`輪到你了！${S.me.no}`;else if(s==="done")txt=`${S.me.no} 已完成`}
+  st.textContent=txt;bar.classList.toggle("near",near);
+}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-game]");if(b){e.preventDefault();openGame(b.dataset.game)}
+  if(e.target.closest&&e.target.closest("#gback"))closeGame()});
+
+/* ================= classroom & 小教室 ================= */
+const COUPON=`<a class="btn dark" href="https://www.taiwanmobile.com/cs/public/coupon/couponList.htm" target="_blank" rel="noopener" style="justify-self:center">領優惠券 ↗</a>`;
+const roundDone=r=>[0,1,2,3].every(k=>U.stamps.has(r*ROUND+k));
+const TITLES=["防詐小達人","防詐高手","防詐大師"];
+function quizHTML(){
+  const r=U.round,qi=U.quizIdx,q=QUIZ[r*ROUND+qi];
+  const stamps=`<div class="stamps">${[0,1,2,3].map(k=>{const g=U.stamps.has(r*ROUND+k);return `<div class="stamp ${g?"got":""}">${g?"識破":"第 "+(k+1)+" 題"}</div>`}).join("")}</div>`;
+  const rounds=`<div class="rounds">${[0,1,2].map(k=>`<span class="${roundDone(k)?"done":k===r?"cur":""}">第 ${k+1} 輪${roundDone(k)?" ✓":""}</span>`).join("")}</div>`;
+  let body;
+  if(U.roundEnd){
+    body=`<div class="reward"><b>第 ${r+1} 輪全部識破！你是${TITLES[r]}</b>
+      ${r===0?`<span>恭喜！你可以領一張優惠券</span>${COUPON}<span class="muted" style="color:var(--ink)">會開啟台灣大哥大優惠券頁面</span>`:""}
+      ${r<ROUNDS-1?`<button class="btn" id="nextRound" style="justify-self:center">挑戰第 ${r+2} 輪 →</button>`:`<span>12 題全部答對，下次遇到詐騙一定識破！</span>`}</div>`;
+  }else{
+    body=`<div class="quizq"><small>你收到這則${q.src}：</small>${esc(q.q)}</div>
+    ${U.quizAns===null?`<p style="font-weight:900">這是詐騙嗎？</p><div class="ans"><button data-a="1">是詐騙</button><button data-a="0">不是</button></div>`
+    :`<div class="ans"><button disabled class="${U.quizAns===q.scam?"ok":"bad"}">${U.quizAns?"是詐騙":"不是"}</button><button disabled>${U.quizAns===q.scam?"答對了":"再想想"}</button></div><div class="explain"><b>${q.scam?"這是詐騙。":"這則比較像真的。"}</b>${q.why}</div><button class="btn sm" id="nextQ" style="justify-self:start">${roundDone(r)?"看結果 →":"下一題 →"}</button>`}`;
+  }
+  return `<div class="box cls"><div class="row" style="justify-content:space-between"><span class="tagc red">防詐小測驗・第 ${r+1} 輪${U.roundEnd?"":`・第 ${qi+1} / ${ROUND} 題`}</span>${U.streak>1?`<span class="tagc">連對 ${U.streak} 題</span>`:""}</div>
+    ${rounds}${body}${stamps}
+    ${roundDone(0)&&!(U.roundEnd&&r===0)?`<div class="row" style="justify-content:space-between"><span class="muted">第 1 輪已完成，可以領優惠券</span>${COUPON.replace('btn dark','btn sm')}</div>`:U.roundEnd?"":`<p class="muted">答對蓋一個章，集滿第 1 輪 4 個章就能領優惠券，還有第 2、3 輪可以挑戰。</p>`}
+  </div>`;
+}
+const FRAUD_EDU={src:"/_blob/2d956da08b8d985786a6ec94d342f8d2",poster:"/_blob/627e9fe842e60279e0b06e09a867c4d0",label:"1 分鐘看懂：12 種常見詐騙",dur:"1:19"};
+function fraudVideoHTML(){return `<div class="box cls"><span class="tagc red" style="justify-self:start">防詐短片</span>${carousel([FRAUD_EDU,FRAUD],"fraud")}</div>`}
+function courseHTML(c,compact){
+  const fam=S.me&&S.me.family,mine=S.enrolled.has(c.id),taken=c.seats-c.left;
+  const seats=`<div class="seats" aria-label="座位 ${taken}/${c.seats}">${Array.from({length:c.seats},(_,i)=>`<i class="${i<taken-(mine?1:0)?"taken":i<taken?"mine":""}"></i>`).join("")}</div>`;
+  const btn=mine?`<button class="btn sm" data-cancel="${c.id}">取消報名</button>`:c.left?`<button class="btn ${c.feature?"":"dark"} sm" data-enroll="${c.id}">${fam?`幫${esc(fam.name)}報名`:"報名"}</button>`:`<span class="tagc white">額滿</span>`;
+  if(c.feature)return `<div class="box feature"><div class="row"><span class="tagc">${compact?`${c.startsIn} 分鐘後開課`:"本週主打"}</span><span class="tagc white">${c.tag}</span></div><h4>${c.clock}〈${c.name}〉</h4><p>${c.desc}</p>${seats}<div class="row" style="justify-content:space-between"><span class="muted">${c.mins} 分鐘・剩 ${c.left} / ${c.seats} 位</span>${btn}</div></div>`;
+  return `<div class="box course"><div class="time">${c.when==="weekend"?`<small style="font-size:12px;color:var(--yellow)">${c.day}</small>`:""}${c.clock}<small>${c.when==="weekend"?c.date+"・":""}${c.mins} 分</small></div><div><h4>${c.name}</h4><p class="muted">${c.desc}</p></div><div class="act">${seats}${btn}</div></div>`;
+}
+function classroomHTML(wait){
+  let lead,items;
+  if(wait<5){lead=`再 ${wait} 分鐘，剛好做一題：`;items=[quizHTML()]}
+  else if(wait<15){lead=`要等 ${wait} 分鐘，剛好看一支短片：`;items=[fraudVideoHTML(),quizHTML()]}
+  else{lead=`要等 ${wait} 分鐘，剛好上一堂課：`;items=[courseHTML(S.courses[0],true),fraudVideoHTML(),quizHTML()]}
+  return `<div class="h2"><span>等候小教室</span><h3>${lead}</h3></div>${items.join("")}`;
+}
+function miniClassHTML(wait){
+  const r=U.round,q=QUIZ[r*ROUND+U.quizIdx],done=roundDone(r)||U.roundEnd;
+  let body;
+  if(done)body=`<p style="margin:0;font-weight:900">第 ${r+1} 輪全部識破！</p><p class="muted" style="margin:0">${r===0?"到小教室領優惠券，還能挑戰第 2 輪。":r<ROUNDS-1?`到小教室挑戰第 ${r+2} 輪。`:"12 題全部答對了！"}</p>`;
+  else body=`<div class="quizq"><small>你收到這則${q.src}：</small>${esc(q.q)}</div>
+    ${U.quizAns===null?`<div class="ans"><button data-a="1">是詐騙</button><button data-a="0">不是</button></div>`
+    :`<div class="explain"><b>${U.quizAns===q.scam?"答對了！":"再想想。"}${q.scam?"這是詐騙。":"這則比較像真的。"}</b>${q.why}</div><button class="btn sm" id="nextQ" style="justify-self:start">${roundDone(r)?"看結果 →":"下一題 →"}</button>`}`;
+  return `<div class="box cls mini"><div class="row" style="justify-content:space-between"><span class="tagc red">等候小教室・約 ${wait} 分鐘</span><span class="muted">第 ${r+1} 輪 ${[0,1,2,3].filter(k=>U.stamps.has(r*ROUND+k)).length}/4 章</span></div>
+    ${body}
+    <button class="linkbtn" id="toLearn" style="justify-self:start;color:var(--sky-deep)">更多題目、防詐短片和課程 → 小教室</button></div>`;
+}
+function learnHTML(){
+  return `<div class="h2"><span>小教室</span><h2>門市科技課程</h2></div>
+  <p style="margin:0;font-weight:700">課程都免費。今天的課排隊時就能聽，週末課程可以先報名。</p>
+  <div class="h2"><span>今天</span><h3>排隊時就能聽</h3></div>
+  ${S.courses.filter(c=>c.when==="today").map(c=>courseHTML(c,false)).join("")}
+  <div class="h2"><span>週末</span><h3>10/17–10/18 週末課程・需報名</h3></div>
+  ${S.courses.filter(c=>c.when==="weekend").map(c=>courseHTML(c,false)).join("")}
+  <div class="h2"><span>玩</span><h3>等候小遊戲</h3></div>${gameCardHTML()}
+  <div class="h2"><span>練習</span><h3>防詐小測驗</h3></div>${quizHTML()}${fraudVideoHTML()}
+  <p class="note">題目為示意，正式版每週依最新手法更新。遇到可疑來電可撥 165 反詐騙專線。</p>`;
+}
+function bindClassroom(){
+  const tl=$("#toLearn");if(tl)tl.onclick=()=>go("learn");
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const n=U.round*ROUND+U.quizIdx,q=QUIZ[n];U.quizAns=b.dataset.a==="1";
+    if(U.quizAns===q.scam){U.stamps.add(n);U.streak++;buzz(40)}else{U.streak=0;buzz([60,40,60])}fullRender()});
+  const nq=$("#nextQ");if(nq)nq.onclick=()=>{U.quizAns=null;
+    if(roundDone(U.round)){U.roundEnd=true}else{let k=U.quizIdx;do{k=(k+1)%ROUND}while(U.stamps.has(U.round*ROUND+k));U.quizIdx=k}
+    fullRender()};
+  const nr=$("#nextRound");if(nr)nr.onclick=()=>{U.round++;U.quizIdx=0;U.roundEnd=false;U.quizAns=null;fullRender()};
+  document.querySelectorAll("[data-enroll]").forEach(b=>b.onclick=()=>{const c=S.courses.find(x=>x.id===b.dataset.enroll);if(!c.left)return;c.left--;S.enrolled.add(c.id);buzz(40);toast("sms",`已報名〈${c.name}〉`,c.when==="weekend"?`${c.day} ${c.date} ${c.clock} 在台北文創門市上課，前一天傳簡訊提醒你。`:`今天 ${c.clock} 在門市等候區上課，開課前 5 分鐘傳簡訊提醒。`);fullRender()});
+  document.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{const c=S.courses.find(x=>x.id===b.dataset.cancel);c.left++;S.enrolled.delete(c.id);fullRender()});
+}
+function bindLearn(){bindClassroom();bindVideos()}
+
+/* ================= flat fallback character (no WebGL) ================= */
+function hash(s){let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return h}
+function char(o={}){
+  const ink="#15142a",sw=6;
+  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#ffcf2e",shirtS=o.shirtS||"#d9a91c";
+  const wave=o.wave||0,bob=o.bob||0,blink=o.blink;
+  const S=`stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"`;
+  const eye=blink?`<rect x="62" y="124" width="16" height="5" fill="${ink}"/><rect x="104" y="124" width="16" height="5" fill="${ink}"/>`:`<rect x="64" y="114" width="12" height="20" rx="2" fill="${ink}"/><rect x="106" y="114" width="12" height="20" rx="2" fill="${ink}"/>`;
+  const glasses=o.glasses?`<rect x="52" y="106" width="34" height="34" rx="4" fill="none" stroke="${ink}" stroke-width="5"/><rect x="96" y="106" width="34" height="34" rx="4" fill="none" stroke="${ink}" stroke-width="5"/><path d="M86 120h10" stroke="${ink}" stroke-width="5"/>`:"";
+  const mouth=o.open?`<path d="M80 150 q11 16 22 0 z" fill="${ink}"/>`:`<path d="M80 152 q11 10 22 0" fill="none" stroke="${ink}" stroke-width="5" stroke-linecap="round"/>`;
+  let hairSvg="";
+  const st=o.style||"short";
+  if(st==="short"||st==="bob"||st==="long"){hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="28" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 ${st==="short"?92:150} L142 ${st==="short"?98:176} Z" fill="${hair}" ${S}/>`;
+    if(st!=="short")hairSvg+=`<rect x="22" y="70" width="18" height="${st==="bob"?90:120}" fill="${hair}" ${S}/>`;}
+  if(st==="bun")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="22" fill="${hair}" ${S}/><rect x="84" y="14" width="44" height="34" fill="${hair}" ${S}/>`;
+  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#e8402f" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#e8402f" ${S}/>`;
+  const TOP=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/>`;
+  if(st==="spiky")hairSvg=`<path d="M46 52 L60 18 L78 46 L94 14 L110 44 L128 16 L140 44 L162 24 L164 50 Z" fill="${hair}" ${S}/>`+TOP+`<path d="M30 96 L30 70 L142 70 L142 96 L128 84 L114 96 L100 84 L86 96 L72 84 L58 96 L44 84 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 88 L142 96 Z" fill="${hair}" ${S}/>`;
+  if(st==="ponytail")hairSvg=`<path d="M170 58 q34 24 14 84 q-14-34-14-48 z" fill="${hair}" ${S}/>`+TOP+`<rect x="30" y="70" width="112" height="24" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 100 L142 110 Z" fill="${hair}" ${S}/>`;
+  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#3a4fd6"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#ffcf2e" ${S}/>`;
+  if(st==="bald")hairSvg=`<rect x="30" y="96" width="10" height="34" fill="${hair}"/><path d="M142 96 L150 90 L150 124 L142 130 Z" fill="${hair}"/>`;
+  if(st==="side")hairSvg=TOP+`<path d="M30 70 L142 70 L142 88 Q90 80 60 110 L30 110 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 92 L142 98 Z" fill="${hair}" ${S}/>`;
+  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#ffcf2e" ${S}/>`:"");
+  const dots=`<pattern id="dt${o.id||0}" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1.8" fill="rgba(0,0,0,.18)"/></pattern>`;
+  const armR=`<g transform="rotate(${-wave} 140 200)"><rect x="140" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>${o.phone?`<rect x="146" y="246" width="22" height="34" rx="4" fill="${ink}"/><rect x="150" y="250" width="14" height="22" fill="#6dc7e6"/>`:""}</g>`;
+  return `<svg viewBox="0 0 200 310" width="${o.w||200}" height="${(o.w||200)*1.55}" style="overflow:visible"><defs>${dots}</defs><g transform="translate(0 ${bob})">
+   <rect x="58" y="262" width="24" height="36" fill="#2d2f4a" ${S}/><rect x="98" y="262" width="24" height="36" fill="#2d2f4a" ${S}/>
+   <rect x="52" y="292" width="36" height="14" rx="3" fill="#fff" ${S}/><rect x="92" y="292" width="36" height="14" rx="3" fill="#fff" ${S}/>
+   <rect x="32" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>
+   <path d="M118 194 L138 178 L138 248 L118 266 Z" fill="${shirtS}" ${S}/>
+   <rect x="52" y="194" width="66" height="72" fill="${shirt}" ${S}/>
+   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#e8402f" stroke="${ink}" stroke-width="3"/>`:""}
+   ${armR}
+   <path d="M142 70 L172 44 L172 152 L142 178 Z" fill="${skinS}" ${S}/><path d="M142 70 L172 44 L172 152 L142 178 Z" fill="url(#dt${o.id||0})"/>
+   <path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${skin}" ${S}/>
+   <rect x="30" y="70" width="112" height="108" fill="${skin}" ${S}/>
+   ${eye}${glasses}${mouth}
+   <circle cx="50" cy="150" r="9" fill="rgba(232,64,47,.35)"/><circle cx="124" cy="150" r="9" fill="rgba(232,64,47,.35)"/>
+   ${hairSvg}${ACC}
+  </g></svg>`;
+}
+/* fallback (no WebGL): the same cube-head cast, drawn as isometric SVG */
+const ISO_STY=["short","bob","spiky","bun","cap","ponytail","beanie","long","side"];
+const ISO_SH=["#ffcf2e","#3ec46d","#f2711c","#ffffff","#e8402f","#b9bff2","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6"];
+const ISO_SK=["#f3d6b8","#e8c09a","#c99a6e","#f6e2cf","#a8774f"];
+const ISO_HC=[["#1d1b2b","#3a3850"],["#5b3a29","#7a5440"],["#c9c9d6","#e2e2ea"],["#2a2f6b","#454b8f"],["#8a4b2a","#a8653f"],["#d9a91c","#f0c64a"]];
+const isoShade=(hex,f)=>{const n=parseInt(hex.slice(1),16);return "#"+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*(1+f)))).toString(16).padStart(2,"0")).join("")};
+const isoOf=new Map();let isoN=0;
+function isoSpec(id){if(!isoOf.has(id)){const i=40+(id==="GUIDE"?3:isoN++),st=ISO_STY[i%ISO_STY.length],sh=ISO_SH[(i*3+1)%ISO_SH.length],sk=ISO_SK[(i*2+i%3)%ISO_SK.length],hc=ISO_HC[(i*5)%ISO_HC.length];
+  isoOf.set(id,{id:900+isoOf.size,style:st,shirt:sh,shirtS:isoShade(sh,-.18),skin:sk,skinS:isoShade(sk,-.13),hair:hc[0],hairT:hc[1],hat:["#3a4fd6","#e8402f","#3ec46d"][i%3],hatT:["#2a3ab0","#b8301f","#2b9a52"][i%3],glasses:i%4===1,tie:sh==="#ffffff",beard:st==="short"&&i%3===0,phones:i%7===4?"#e8402f":null,earring:st==="bob"||st==="ponytail"})}
+  return isoOf.get(id)}
+function flatChar(id){return char({...isoSpec(id),w:200})}
+
+/* ================= 3D characters (three.js) ================= */
+const Q3=(()=>{
+  const ok=(()=>{try{if(!window.THREE)return false;const c=document.createElement("canvas");return !!(c.getContext("webgl")||c.getContext("experimental-webgl"))}catch(e){return false}})();
+  if(!ok)return {ok:false,mount(el){fallbackMount(el)},sync(){const s=$("#scene");if(s&&s.querySelector(".flat"))fallbackMount(s)},portrait:id=>flatChar(id)};
+  const T=THREE,INK=0x15142a,OUT=0.045;
+  const outMat=new T.MeshBasicMaterial({color:INK,side:T.BackSide});
+  const gm=new T.DataTexture(new Uint8Array([110,110,110,255,190,190,190,255,255,255,255,255]),3,1,T.RGBAFormat);gm.minFilter=gm.magFilter=T.NearestFilter;gm.needsUpdate=true;
+  const toon=(color,map)=>new T.MeshToonMaterial({color,gradientMap:gm,map:map||null});
+  function dots(base,dot){const c=document.createElement("canvas");c.width=c.height=64;const g=c.getContext("2d");g.fillStyle=base;g.fillRect(0,0,64,64);g.fillStyle=dot;for(let y=0;y<8;y++)for(let x=0;x<8;x++){g.beginPath();g.arc(x*8+(y%2?4:0)+2,y*8+4,1.6,0,7);g.fill()}const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(2,2);return t}
+  function box(w,h,d,mat,x=0,y=0,z=0,t=OUT){
+    const g=new T.Group();
+    const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat);
+    const o=new T.Mesh(new T.BoxGeometry(w+t*2,h+t*2,d+t*2),outMat);
+    g.add(o,m);g.position.set(x,y,z);g.userData.mesh=m;return g;
+  }
+  function faceTex(skin,o){
+    const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
+    g.fillStyle=skin;g.fillRect(0,0,128,128);
+    g.fillStyle="rgba(0,0,0,.06)";for(let y=0;y<16;y++)for(let x=0;x<16;x++){g.beginPath();g.arc(x*8+4,y*8+4,1.4,0,7);g.fill()}
+    g.fillStyle="#15142a";
+    if(o.sleepy){g.fillRect(34,60,18,5);g.fillRect(76,60,18,5)}else{g.fillRect(38,52,10,16);g.fillRect(80,52,10,16)}
+    g.fillStyle="rgba(232,64,47,.35)";g.beginPath();g.arc(30,80,9,0,7);g.arc(98,80,9,0,7);g.fill();
+    if(o.beard){g.fillStyle=o.beard;g.beginPath();g.moveTo(14,96);g.quadraticCurveTo(64,140,114,96);g.lineTo(114,128);g.lineTo(14,128);g.fill()}
+    g.strokeStyle=o.beard?"#fffaf0":"#15142a";g.lineWidth=5;g.beginPath();
+    if(o.smile){g.arc(64,82,10,0.15*Math.PI,0.85*Math.PI)}else{g.moveTo(56,90);g.lineTo(72,90)}g.stroke();
+    g.strokeStyle="#15142a";
+    if(o.glasses){g.lineWidth=4;g.strokeRect(28,46,30,26);g.strokeRect(70,46,30,26);g.beginPath();g.moveTo(58,58);g.lineTo(70,58);g.stroke()}
+    return new T.CanvasTexture(c);
+  }
+  /* queue cast: same design system as the video characters, but its own set (no repeats with the videos) */
+  const shadeHex=(hex,f)=>{const n=parseInt(hex.slice(1),16);return "#"+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*(1+f)))).toString(16).padStart(2,"0")).join("")};
+  const STY=["short","bob","spiky","bun","cap","ponytail","beanie","long","fedora","side"];
+  const SHIRT=["#ffcf2e","#3ec46d","#f2711c","#ffffff","#e8402f","#b9bff2","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6","#f5e6c8"];
+  const SKIN=["#f3d6b8","#e8c09a","#c99a6e","#f6e2cf","#a8774f"];
+  const HAIRC=["#1d1b2b","#5b3a29","#c9c9d6","#2a2f6b","#8a4b2a","#d9a91c"];
+  const HATS=["#3a4fd6","#e8402f","#3ec46d"];
+  const PANTS=["#2d2f4a","#3a4f8f","#7b6a9a","#5b3a29"];
+  const SPEC=k=>{const i=28+k,st=STY[i%STY.length],sh=SHIRT[(i*4+1)%SHIRT.length];
+    return {st,shirt:sh,skin:SKIN[(i*2+i%3)%SKIN.length],hair:HAIRC[(i*5)%HAIRC.length],hat:HATS[i%3],pants:PANTS[(i>>1)%4],
+      glasses:i%4===1||(st==="bun"&&i%2===0),tie:sh==="#ffffff",beard:(st==="fedora"||st==="short")&&i%3===0,phones:i%7===4?"#e8402f":(i%7===6?"#3a4fd6":null),earring:st==="bob"||st==="ponytail",bag:i%5===2,phone:i%3===1}};
+  const specOf=new Map();let specN=0;
+  const specFor=id=>{if(!specOf.has(id))specOf.set(id,SPEC(id==="GUIDE"?3:(specN++%30)));return specOf.get(id)};
+  const CH_SCALE=.86;
+  function makeChar(id){
+    const h=hash(id),sp=specFor(id);
+    const root=new T.Group();root.userData.no=id;
+    const body=new T.Group();root.add(body);
+    const pants=toon(sp.pants);
+    body.add(box(.22,.42,.24,pants,-.15,.33,0),box(.22,.42,.24,pants,.15,.33,0));
+    const shoe=toon(0xffffff);body.add(box(.26,.12,.32,shoe,-.15,.08,.04),box(.26,.12,.32,shoe,.15,.08,.04));
+    const plain=sp.shirt==="#ffffff"||sp.shirt==="#f5e6c8";
+    body.add(box(.72,.62,.44,toon(sp.shirt,plain?null:dots(sp.shirt,shadeHex(sp.shirt,-.18))),0,.86,0));
+    if(sp.tie)body.add(box(.12,.4,.04,toon(0xe8402f),0,.92,.24,.025));
+    const arm=toon(sp.shirt);const la=box(.18,.52,.22,arm,-.47,.86,0),ra=box(.18,.52,.22,arm,.47,.86,0);body.add(la,ra);root.userData.arms=[la,ra];
+    if(sp.phone)body.add(box(.12,.2,.04,toon(0x15142a),.47,.62,.16,.02));
+    if(sp.bag)body.add(box(.14,.36,.46,toon(0x5b3a29),.6,.7,0));
+    const face=faceTex(sp.skin,{glasses:sp.glasses,smile:(h>>11)%2===0,sleepy:(h>>12)%7===0,beard:sp.beard?sp.hair:null});
+    const sk=toon(new T.Color(sp.skin));const fm=toon(0xffffff,face);
+    const head=new T.Group();head.position.set(0,1.62,0);
+    head.add(new T.Mesh(new T.BoxGeometry(1+OUT*2.4,1+OUT*2.4,1+OUT*2.4),outMat));
+    head.add(new T.Mesh(new T.BoxGeometry(1,1,1),[sk,sk,sk,sk,fm,sk]));
+    const hair=toon(sp.hair,dots(sp.hair,shadeHex(sp.hair,.25)));const hat=toon(sp.hat);const st=sp.st;
+    if(st==="short"){head.add(box(1.06,.24,1.06,hair,0,.46,0));head.add(box(1.06,.5,.16,hair,0,.22,-.5))}
+    if(st==="bob"){head.add(box(1.08,.32,1.08,hair,0,.42,0));head.add(box(1.08,.9,.18,hair,0,.05,-.5));head.add(box(.16,.7,1.08,hair,-.52,.12,0),box(.16,.7,1.08,hair,.52,.12,0))}
+    if(st==="long"){head.add(box(1.08,.28,1.08,hair,0,.44,0));head.add(box(1.08,1.3,.2,hair,0,-.12,-.52))}
+    if(st==="bun"){head.add(box(1.06,.24,1.06,hair,0,.46,0));head.add(box(.4,.32,.4,hair,0,.72,-.1))}
+    if(st==="cap"){head.add(box(1.08,.3,1.08,hat,0,.46,0));head.add(box(1,.08,.42,hat,0,.34,.7))}
+    if(st==="spiky"){head.add(box(1.06,.2,1.06,hair,0,.44,0));for(let k=0;k<4;k++){const sb=box(.26,.26,.26,hair,-.36+k*.24,.62,0);sb.rotation.z=Math.PI/4;head.add(sb)}}
+    if(st==="ponytail"){head.add(box(1.06,.24,1.06,hair,0,.46,0));head.add(box(1.06,.5,.16,hair,0,.22,-.5));head.add(box(.24,.6,.24,hair,0,-.05,-.7))}
+    if(st==="beanie"){head.add(box(1.12,.4,1.12,hat,0,.4,0));head.add(box(.26,.26,.26,toon(0xffcf2e),0,.72,0))}
+    if(st==="fedora"){head.add(box(1.06,.2,1.06,hair,0,.42,0));head.add(box(1.5,.08,1.5,hat,0,.56,0));head.add(box(.9,.36,.9,hat,0,.76,0));head.add(box(.92,.1,.92,toon(0x15142a),0,.62,0,.02))}
+    if(st==="side"){head.add(box(1.06,.22,1.06,hair,0,.46,0));head.add(box(.6,.24,.12,hair,-.22,.32,.5));head.add(box(1.06,.5,.16,hair,0,.22,-.5))}
+    if(sp.phones){const pm=toon(sp.phones);head.add(box(1.2,.1,.16,pm,0,.6,0));head.add(box(.14,.36,.3,pm,-.6,.05,0),box(.14,.36,.3,pm,.6,.05,0))}
+    if(sp.earring)head.add(box(.06,.1,.06,toon(0xffcf2e),.54,-.2,.2,.02));
+    body.add(head);root.userData.head=head;
+    root.userData.phase=(h%100)/100*Math.PI*2;
+    root.scale.setScalar(CH_SCALE);
+    return root;
+  }
+  function labelSprite(text,me){
+    const c=document.createElement("canvas");c.width=192;c.height=64;const g=c.getContext("2d");
+    g.fillStyle=me?"#ffcf2e":"#15142a";g.strokeStyle="#15142a";g.lineWidth=6;
+    const r=14;g.beginPath();g.moveTo(r+3,3);g.arcTo(189,3,189,61,r);g.arcTo(189,61,3,61,r);g.arcTo(3,61,3,3,r);g.arcTo(3,3,189,3,r);g.fill();g.stroke();
+    g.fillStyle=me?"#15142a":"#ffffff";g.font="34px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(text,96,34);
+    const s=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false}));s.scale.set(.96/CH_SCALE,.32/CH_SCALE,1);s.renderOrder=10;return s;
+  }
+  // main renderer
+  const renderer=new T.WebGLRenderer({antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  const scene=new T.Scene();
+  scene.add(new T.AmbientLight(0xffffff,.55));
+  const sun=new T.DirectionalLight(0xffffff,.75);sun.position.set(4,8,6);scene.add(sun);
+  const cam=new T.OrthographicCamera(-4,4,2,-2,.1,100);
+  // street
+  const ground=box(60,.2,3.6,toon(0x6a6f8f),20,-.1,0,.05);scene.add(ground);
+  scene.add(box(60,.16,1.1,toon(0x9da2bd),20,.02,-2.2,.04));
+  for(let i=0;i<20;i++)scene.add(box(.7,.02,.12,toon(0xc9cce0),i*3-6,.01,1.3,.01));
+  // buildings
+  const bgreen=toon(0x3ec46d,dots("#3ec46d","#25964f"));
+  [[-4,2.6],[ -2.2,3.6],[-.6,2.2],[1.2,4.2],[3,2.8],[4.8,3.4],[6.6,2.4],[8.4,3.8],[10.2,2.6],[12,3.2],[13.8,4],[15.6,2.4],[17.4,3.4],[19.2,2.8],[21,3.6]].forEach(([x,hh],i)=>scene.add(box(1.5,hh,1,i%3===1?toon(0x25964f):bgreen,x,hh/2,-3.4)));
+  // counter
+  const desk=box(1.6,.38,.8,toon(0xfdf0d2),-2.2,.19,.1);scene.add(desk);
+  scene.add(box(1.7,.08,.9,toon(0xf2711c),-2.2,.42,.1));
+  // store clerk in uniform (orange polo, white collar, name badge) behind the counter
+  specOf.set("CLERK",{st:"side",shirt:"#ffffff",skin:"#f3d6b8",hair:"#1d1b2b",hat:"#3a4fd6",pants:"#2d2f4a",glasses:false,tie:false,beard:false,phones:null,earring:false,bag:false,phone:false});
+  const clerk=makeChar("CLERK");
+  // uniform: white tee, black shoulder yoke, orange sleeve stripes, name badge
+  clerk.add(box(.74,.22,.46,toon(0x15142a),0,1.07,0,.015));
+  clerk.add(box(.2,.2,.24,toon(0x15142a),-.47,1.04,0,.012),box(.2,.2,.24,toon(0x15142a),.47,1.04,0,.012));
+  clerk.add(box(.2,.07,.24,toon(0xf2711c),-.47,.86,0,.012),box(.2,.07,.24,toon(0xf2711c),.47,.86,0,.012));
+  { // name badge: "Denise"
+    const nc=document.createElement("canvas");nc.width=256;nc.height=80;const g=nc.getContext("2d");
+    g.fillStyle="#ffffff";g.fillRect(0,0,256,80);g.fillStyle="#f2711c";g.fillRect(0,0,30,80);
+    g.fillStyle="#15142a";g.font="bold 46px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText("Denise",143,43);
+    const nt=new T.CanvasTexture(nc);const nm=new T.MeshBasicMaterial({map:nt});const side=toon(0xffffff);
+    const badge=new T.Group();badge.add(new T.Mesh(new T.BoxGeometry(.58,.18,.03),[side,side,side,side,nm,side]));
+    badge.position.set(0,1.08,.25);clerk.add(badge);
+    if(document.fonts&&document.fonts.load)document.fonts.load("bold 46px 'Archivo Black'").then(()=>{g.fillStyle="#ffffff";g.fillRect(30,0,226,80);g.fillStyle="#15142a";g.fillText("Denise",143,43);nt.needsUpdate=true}).catch(()=>{});
+  }
+  clerk.position.set(-2.2,0,-.55);
+  const clerkLbl=labelSprite("店員",false);clerkLbl.position.set(0,2.55,0);clerk.add(clerkLbl);
+  scene.add(clerk);
+  const chars=new Map();let host=null,camX=.2,targetCamX=.2,visible=true,running=false,last=0;
+  const SP=1.8;
+  function layout(){
+    const people=[...S.serving.filter(Boolean),...S.queue];
+    const keep=new Set(people.map(t=>t.no));
+    for(const [no,c] of chars){if(!keep.has(no)){c.userData.leaving=true}}
+    people.forEach((t,i)=>{
+      let c=chars.get(t.no);
+      if(!c){c=makeChar(t.no);c.position.set(i*SP+10,0,0);c.userData.label=labelSprite(t.me?"你 "+t.no:t.no,t.me);c.userData.label.position.set(0,2.55,0);c.add(c.userData.label);scene.add(c);chars.set(t.no,c)}
+      c.userData.tx=i*SP;c.userData.serving=i<S.serving.filter(Boolean).length;
+      c.rotation.y=0;
+    });
+  }
+  function resize(){if(!host)return;const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);const vh=5.1,vw=vh*w/h;cam.left=-vw/2;cam.right=vw/2;cam.top=vh/2;cam.bottom=-vh/2;cam.updateProjectionMatrix()}
+  function frame(ts){
+    if(!running)return;requestAnimationFrame(frame);
+    if(!visible||document.hidden||!host||!host.isConnected)return;
+    const t=ts/1000,dt=Math.min(.05,(ts-last)/1000||.016);last=ts;
+    clerk.userData.head.rotation.z=Math.sin(t*1.3)*.05;
+    for(const [no,c] of chars){
+      const u=c.userData;
+      if(u.leaving){ // served: turn toward the counter and walk off screen, same size
+        c.rotation.y+=(-Math.PI/2-c.rotation.y)*Math.min(1,dt*8);c.position.x-=dt*2.4;c.position.z+=(1.3-c.position.z)*Math.min(1,dt*4);
+        c.children[0].position.y=Math.abs(Math.sin(t*10+u.phase))*.1;
+        if(u.arms){u.arms[0].rotation.x=Math.sin(t*10)*.6;u.arms[1].rotation.x=-Math.sin(t*10)*.6}
+        if(u.label)u.label.visible=false;
+        if(c.position.x<camX-7){scene.remove(c);chars.delete(no)}continue}
+      const dx=u.tx-c.position.x;c.position.x+=dx*Math.min(1,dt*3);
+      const walking=Math.abs(dx)>.05;
+      const b=walking?Math.abs(Math.sin(t*10+u.phase))*.12:Math.sin(t*3+u.phase)*.03;
+      c.children[0].position.y=b;
+      if(u.arms){u.arms[0].rotation.x=walking?Math.sin(t*10+u.phase)*.6:0;u.arms[1].rotation.x=walking?-Math.sin(t*10+u.phase)*.6:0}
+      if(u.jump){u.jump-=dt;c.children[0].position.y+=Math.sin(Math.max(0,u.jump)*Math.PI/.5)*.5}
+    }
+    camX+=(targetCamX-camX)*Math.min(1,dt*5);
+    cam.position.set(camX+5,4.6,8);cam.lookAt(camX,1.75,0);
+    renderer.render(scene,cam);
+  }
+  // interaction: drag to pan, tap to pick
+  const ray=new T.Raycaster(),pt=new T.Vector2();let down=null;
+  function onDown(e){down={x:e.clientX,cx:targetCamX,moved:false};renderer.domElement.setPointerCapture&&renderer.domElement.setPointerCapture(e.pointerId)}
+  function onMove(e){if(!down)return;const dx=e.clientX-down.x;if(Math.abs(dx)>6)down.moved=true;const per=(cam.right-cam.left)/host.clientWidth;targetCamX=Math.max(-.6,Math.min(Math.max(2.6,(chars.size-3)*SP),down.cx-dx*per*1.15))}
+  function onUp(e){if(!down)return;const moved=down.moved;down=null;if(moved)return;
+    const r=renderer.domElement.getBoundingClientRect();pt.x=(e.clientX-r.left)/r.width*2-1;pt.y=-(e.clientY-r.top)/r.height*2+1;
+    ray.setFromCamera(pt,cam);const hits=ray.intersectObjects([...chars.values()],true);
+    for(const hh of hits){let o=hh.object;while(o&&!o.userData.no)o=o.parent;if(o){o.userData.jump=.5;showBubble(o.userData.no);return}}
+    showBubble(null);
+  }
+  renderer.domElement.addEventListener("pointerdown",onDown);
+  renderer.domElement.addEventListener("pointermove",onMove);
+  renderer.domElement.addEventListener("pointerup",onUp);
+  renderer.domElement.setAttribute("aria-hidden","true");
+  const io="IntersectionObserver" in window?new IntersectionObserver(es=>{visible=es[0].isIntersecting}):null;
+  window.addEventListener("resize",resize);
+  // portraits (second small renderer, cached)
+  let pr=null;const pcache=new Map();
+  function portrait(id){
+    if(pcache.has(id))return pcache.get(id);
+    try{
+      if(!pr){pr=new T.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});pr.setSize(192,192,false)}
+      const ps=new T.Scene();ps.add(new T.AmbientLight(0xffffff,.6));const l=new T.DirectionalLight(0xffffff,.7);l.position.set(3,5,6);ps.add(l);
+      const c=makeChar(id);c.rotation.y=-.45;ps.add(c);
+      const pc=new T.OrthographicCamera(-1,1,1,-1,.1,50);pc.position.set(0,1.7,6);pc.lookAt(0,1.45,0);
+      pr.setClearColor(id==="GUIDE"?0xf2711c:0xf2711c,1);pr.render(ps,pc);
+      const html=`<img alt="" src="${pr.domElement.toDataURL()}">`;pcache.set(id,html);return html;
+    }catch(e){return flatChar(id)}
+  }
+  if(document.fonts&&document.fonts.load){document.fonts.load("34px 'Archivo Black'").then(()=>{
+    for(const [no,c] of chars){const old=c.userData.label;if(!old||c.userData.leaving)continue;
+      const t=[...S.serving,...S.queue].find(x=>x&&x.no===no),me=!!(t&&t.me);
+      const nl=labelSprite(me?"你 "+no:no,me);nl.position.copy(old.position);c.remove(old);c.add(nl);c.userData.label=nl}
+  }).catch(()=>{})}
+  return {ok:true,
+    mount(el){host=el;el.insertBefore(renderer.domElement,el.firstChild);resize();layout();
+      if(io){io.disconnect();io.observe(el)}
+      targetCamX=camX=Math.max(-.5,targetCamX);
+      if(!running){running=true;requestAnimationFrame(frame)}
+      if(U.bubble)showBubble(U.bubble);
+    },
+    sync(){layout();if(S.me){const i=[...S.serving.filter(Boolean),...S.queue].indexOf(S.me);if(i>=0&&U.tab==="queue")targetCamX=Math.max(.2,i*SP-1)}},
+    portrait};
+})();
+function portrait(id){return Q3.portrait(id)}
+function fallbackMount(el){
+  let f=el.querySelector(".flat");if(!f){f=document.createElement("div");f.className="flat";el.appendChild(f)}
+  const people=[...S.serving.filter(Boolean),...S.queue];
+  f.innerHTML=`<div class="line"><div class="clerk">${char({style:"side",shirt:"#ffffff",shirtS:"#d9d9e3",skin:"#f3d6b8",skinS:"#d9b494",hair:"#1d1b2b",hairT:"#3a3850",w:200})}<span class="no">店員</span></div>${people.map(t=>`<button data-no="${t.no}">${flatChar(t.no)}<span class="no">${t.me?"你 ":""}${t.no}</span></button>`).join("")}</div>`;
+  f.querySelectorAll("button").forEach(b=>b.onclick=()=>showBubble(b.dataset.no));
+}
+
+/* ================= finish detection ================= */
+// when my counter gets reassigned after I was called, I'm done -> show rating
+const origTick=tick;
+tick=function(){const wasCalled=meState()==="called";origTick();if(wasCalled&&meState()==="done"){U.tab="mine";fullRender();renderTabs()}};
+function restartTick2(){clearInterval(tickTimer);tickTimer=setInterval(()=>tick(),TICK_MS)}
+restartTick=restartTick2;
+
+reset();
+</script>
