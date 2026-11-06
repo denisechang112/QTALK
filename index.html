@@ -478,6 +478,12 @@ html.is-phone .phone.big .mq .pin{font-size:14px}
 html.is-phone .phone.big .tabbar button{font-size:14.5px}
 html.is-phone .phone.big .tabbar svg{width:23px;height:23px}
 html.is-phone .phone.big .chipgrid{grid-template-columns:1fr}
+/* iPhone 放大字時，輸入框的提示字會跑出格子：改用自己畫的提示字 */
+.tawrap{position:relative}
+.taph{display:none}
+html.is-phone #say::placeholder{color:transparent}
+html.is-phone .taph{display:block;position:absolute;left:13px;right:13px;top:11px;color:#8a8ca6;font-size:15px;line-height:1.6;pointer-events:none;overflow-wrap:anywhere}
+html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.taph,html.is-phone #say:focus+.taph{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -1082,7 +1088,7 @@ function takeHTML(){
       <div class="starters chipgrid">${STARTERS.map(x=>chipHTML(x)).join("")}</div>
       ${(()=>{const iv=KNOW_VIDEOS.filter(v=>(U.chips||[]).includes(v.ask));return iv.length?`<div class="chiplbl">✓ 影片有興趣：${iv.map(v=>esc(v.short)).join("、")}</div>`:""})()}
       ${(U.chips||[]).length&&!U.writeOpen?`<div class="picked-say"><span>點選即可，不用打字</span><button class="linkbtn" id="writeMore" type="button">✎ 想自己補充</button></div>`:""}
-      <textarea id="say" maxlength="60" ${(U.chips||[]).length&&!U.writeOpen?"hidden":""} placeholder="例如：合約下個月到期，想問有沒有家庭方案">${esc(U.draft)}</textarea>
+      <div class="tawrap"><textarea id="say" maxlength="60" ${(U.chips||[]).length&&!U.writeOpen?"hidden":""} placeholder="例如：合約下個月到期，想問有沒有家庭方案">${esc(U.draft)}</textarea><span class="taph" aria-hidden="true">例如：合約下個月到期，想問有沒有家庭方案</span></div>
       <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。</p></div>
     <div class="step"><div class="lbl"><i>3</i>手機號碼 <em>快輪到你時傳簡訊</em></div>
       <input type="tel" id="phoneIn" inputmode="numeric" autocomplete="tel" placeholder="0912345678" value="${esc(U.phone)}">
