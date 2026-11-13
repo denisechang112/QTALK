@@ -87,7 +87,7 @@ button:focus-visible{outline:calc(var(--u)*.3) solid var(--yellow);outline-offse
       <div class="card wait"><div class="n"><span id="waitN">0</span><small>組等候中</small></div><div class="nx"><small>接下來</small><div id="nextNos"></div></div></div>
     </div>
   </div>
-  <div class="foot"><span>取號時先寫下想辦的事，櫃台會先幫你準備好。</span><span style="display:flex;gap:calc(var(--u)*.8)"><button id="sndBtn">🔇 叫號聲：關</button><button id="fsBtn">⛶ 全螢幕</button></span></div>
+  <div class="foot"><span>取號時先寫下想辦的事，櫃台會先幫你準備好。</span><span style="display:flex;gap:calc(var(--u)*.8)"><button id="tryBtn">▶ 試播叫號聲</button><button id="sndBtn">🔇 叫號聲：關</button><button id="fsBtn">⛶ 全螢幕</button></span></div>
 </div>
 <div id="gate" hidden></div>
 
@@ -117,7 +117,7 @@ function render(){
 let actx=null;const clipIdx={},clipBuf={};
 function ctx(){if(!actx){const C=window.AudioContext||window.webkitAudioContext;if(C)actx=new C()}return actx}
 function chime(){const c=ctx();if(!c)return 0;const t0=c.currentTime+.03;
-  [[659.25,0],[523.25,.32]].forEach(([f,dt])=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t0+dt);g.gain.linearRampToValueAtTime(.35,t0+dt+.02);g.gain.exponentialRampToValueAtTime(.001,t0+dt+.9);o.connect(g);g.connect(c.destination);o.start(t0+dt);o.stop(t0+dt+1)});
+  [[659.25,0],[523.25,.32]].forEach(([f,dt])=>{const o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t0+dt);g.gain.linearRampToValueAtTime(.6,t0+dt+.02);g.gain.exponentialRampToValueAtTime(.001,t0+dt+.9);o.connect(g);g.connect(c.destination);o.start(t0+dt);o.stop(t0+dt+1)});
   return 1100}
 async function clipIndex(l){if(!clipIdx[l]){const r=await fetch("audio/"+l+"/index.json");if(!r.ok)throw new Error("index");clipIdx[l]=await r.json()}return clipIdx[l]}
 function clipChunk(l,ch){const k=l+"/"+ch;if(!clipBuf[k])clipBuf[k]=(async()=>{const r=await fetch("audio/"+k+".mp3");if(!r.ok)throw new Error("chunk");const ab=await r.arrayBuffer();
@@ -133,8 +133,10 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function speakZh(no,desk){return new Promise(res=>{const v=zhVoice();
   if(!v){playClips("zh",[no,"q"+desk,no,"q"+desk]).then(ms=>setTimeout(res,ms),()=>res());return}
   const line=`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`,u=new SpeechSynthesisUtterance(line+" "+line);u.voice=v;u.lang="zh-TW";u.rate=.92;
-  let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,12000);
-  try{speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){fin()}})}
+  let done=false,started=false;const fin=()=>{if(!done){done=true;res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=()=>{if(started)fin()};setTimeout(fin,14000);
+  const clipFallback=()=>{if(started||done)return;try{speechSynthesis.cancel()}catch(e){}playClips("zh",[no,"q"+desk,no,"q"+desk]).then(ms=>setTimeout(fin,ms),fin)};
+  try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();if(speechSynthesis.paused)speechSynthesis.resume();speechSynthesis.speak(u)}catch(e){clipFallback();return}
+  setTimeout(clipFallback,1500)})}   // 內建語音 1.5 秒內沒開始唸，就改播預錄語音
 let chain=Promise.resolve();
 function announce(t){
   const box=$("#call");box.classList.remove("ring");void box.offsetWidth;box.classList.add("ring");
@@ -147,6 +149,7 @@ function announce(t){
 function setSound(on){soundOn=on;$("#sndBtn").textContent=on?"🔊 叫號聲：開":"🔇 叫號聲：關";
   if(on){const c=ctx();if(c&&c.state!=="running")c.resume().catch(()=>{});try{speechSynthesis.getVoices()}catch(e){}clipIndex("zh").then(()=>clipChunk("zh","x")).catch(()=>{})}}
 $("#sndBtn").onclick=()=>{setSound(!soundOn);if(soundOn)chime()};
+$("#tryBtn").onclick=()=>{setSound(true);announce({no:"A101",desk:1,lang:"zh"})};
 $("#fsBtn").onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{})};
 
 /* ---------- 啟動 ---------- */

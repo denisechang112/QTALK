@@ -707,7 +707,7 @@ function nearAlert(){
 }
 function calledAlert(){closePlayer();closeGame();
   const t=S.me,d=S.serving.indexOf(t);
-  buzz([250,100,250,100,250]);say(callLine(t.no,d+1));
+  buzz([250,100,250,100,250]);if(LIVE.on){liveChime();setTimeout(()=>say(callLine(t.no,d+1)),700)}else say(callLine(t.no,d+1));
   if(t.family)toast("sms",`輪到 ${t.no} 了，請到 ${d+1} 號櫃台`,`也已通知${t.family.name}。`);
   modal(`<div class="sheet called" role="alertdialog" aria-labelledby="mh"><p>輪到你了！${t.no}</p><div class="desk">${d+1}</div><h3 id="mh">請到 ${d+1} 號櫃台</h3>
     <p>${U.out?"你還沒回到門市，可以保留一次。":"櫃台已經看過你寫的需求，正在等你。"}</p>
@@ -941,7 +941,15 @@ async function clipIndex(l){if(clipIdx[l])return clipIdx[l];const r=await fetch(
 function clipChunk(l,ch){const key=l+"/"+ch;if(!clipBuf[key])clipBuf[key]=(async()=>{const r=await fetch("audio/"+key+".mp3");if(!r.ok)throw new Error("chunk");const ab=await r.arrayBuffer();
     return await new Promise((res,rej)=>{const p=getCtx().decodeAudioData(ab,res,rej);if(p&&p.catch)p.catch(rej)})})().catch(e=>{delete clipBuf[key];throw e});return clipBuf[key]}
 function clipPrefetch(l){clipIndex(l).then(()=>clipChunk(l,"x")).catch(()=>{})}
-document.addEventListener("pointerdown",()=>{if(!wantClips(PREF.lang))return;const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{});clipPrefetch(PREF.lang)},true);
+document.addEventListener("pointerdown",()=>{const live=typeof LIVE!=="undefined"&&LIVE.on;if(!live&&!wantClips(PREF.lang))return;const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{});clipPrefetch(PREF.lang)},true);
+/* 現場模式：叫號是從網路來的，不是手指點出來的。手機（尤其 iPhone）要先在「點按」時把聲音打開，之後才准自動出聲 */
+let audioPrimed=false;
+function primeAudio(){
+  try{const c=getCtx();if(c){if(c.state!=="running")c.resume().catch(()=>{});const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0)}}catch(e){}
+  try{if(!audioPrimed&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang=TTS_LANG[PREF.lang]||"zh-TW";speechSynthesis.speak(u);audioPrimed=true}}catch(e){}
+  clipPrefetch(PREF.lang)}
+function liveChime(){try{const c=getCtx();if(!c||c.state!=="running")return;const t0=c.currentTime+.02;
+  [[659.25,0],[523.25,.3]].forEach(([f,dt])=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t0+dt);g.gain.linearRampToValueAtTime(.5,t0+dt+.02);g.gain.exponentialRampToValueAtTime(.001,t0+dt+.8);o.connect(g);g.connect(c.destination);o.start(t0+dt);o.stop(t0+dt+.9)})}catch(e){}}
 function clipStop(){clipSrcs.forEach(s=>{try{s.stop()}catch(e){}});clipSrcs=[]}
 async function playClips(l,keys,force,text){const my=++clipSeq;clipStop();
   try{const c=getCtx();if(!c)throw new Error("no audio");if(c.state!=="running")await c.resume();
@@ -958,6 +966,8 @@ function say(text,force,noClip){if(!PREF.voice&&!force)return;
     let started=false;u.onstart=()=>{started=true};
     u.onerror=e=>{if(force&&e.error!=="interrupted"&&e.error!=="canceled")toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)};
     ss.speak(u);
+    /* 現場模式：內建語音 1.5 秒內沒有開始唸（被瀏覽器擋住），就改播預錄語音 */
+    if(typeof LIVE!=="undefined"&&LIVE.on&&!noClip)setTimeout(()=>{if(started)return;const k=clipKeys(PREF.lang,text);if(k){try{ss.cancel()}catch(e){}playClips(PREF.lang,k,force,text)}},1500);
     if(force)setTimeout(()=>{if(!started&&!ss.speaking)toast("info","沒聽到聲音嗎？","請確認手機沒有開靜音（iPhone 側邊靜音鍵）、音量已調高；在 App 內建瀏覽器可能被擋，請用 Safari 或 Chrome 開啟。",6500)},1600)
   }catch(e){if(force)toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)}}
 function callLine(no,desk){const L={zh:`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`,en:`Number ${no}, please go to counter ${desk}.`,ja:`${no} 番の方、${desk} 番窓口へお越しください。`,ko:`${no}번 고객님, ${desk}번 창구로 오세요.`,vi:`Mời khách hàng số ${no}, đến quầy số ${desk}.`,id:`Nomor antrean ${no}, silakan ke loket ${desk}.`}[PREF.lang];return L+" "+L}
@@ -1658,6 +1668,7 @@ function liveSheet(){const st=LIVE.status;
       if(a==="re"&&LIVE.conn)LIVE.conn.resync();
       if(a==="sim"){try{history.replaceState(null,"",location.pathname)}catch(e){}location.reload()}})})}
 function liveStart(){
+  document.addEventListener("click",()=>{try{const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{})}catch(e){}},true);
   S.queue=[];S.serving=[null,null,null];S.me=null;S.lastCalled=null;S.lastDesk=0;S.total=0;
   const lb=$("#liveBadge");if(lb)lb.onclick=liveSheet;liveBadge();
   LIVE.conn=window.QTLive.connect(LIVE.sess.host,LIVE.sess.room,liveSync,st=>{LIVE.status=st;liveBadge()});
@@ -1692,7 +1703,7 @@ function liveSync(room){
   else if(nearNow){const w=waitFor(S.me);toast("info",`快輪到你了，前面剩 ${w.ahead} 組`,`約 ${w.mins} 分鐘後叫到 ${S.me.no}，請回到櫃台附近。`,6500);buzz([150,80,150]);if(U.out)nearAlert()}
 }
 async function liveTake(){
-  if(LIVE.taking)return;LIVE.taking=true;
+  if(LIVE.taking)return;LIVE.taking=true;primeAudio();
   const btn=$("#takeBtn");if(btn){btn.disabled=true;btn.textContent="取號中…"}
   const txt=U.draft.trim().slice(0,50);let sent=txt;
   try{
