@@ -16,14 +16,24 @@
   - iPhone：用 Safari 打開 → 下方「分享」→「加入主畫面」
   - Android：用 Chrome 打開 → 右上角「⋮」→「安裝應用程式」或「加到主畫面」
 
+## 現場同步 Demo（多裝置）
+評審用手機掃 QR Code 取號，門市大螢幕與櫃台即時同步；櫃台叫號時，顧客手機會跳出畫面並播語音。
+- `counter.html`：櫃台叫號台（建立場次、叫下一號、看顧客留言）
+- `screen.html`：門市大螢幕（現在叫號、等候人數、取號 QR Code）
+- 後端使用 Firebase Realtime Database 免費方案；不儲存電話號碼，顧客留言在手機端加密。
+- 設定與當天流程請看 `現場Demo操作步驟.md`。不帶 QR Code 連結開啟 `index.html` 時，仍是原本的單機模擬版。
+
 ## 檔案
 | 路徑 | 說明 |
 |---|---|
 | `index.html` | App 本體 |
 | `games/` | 小遊戲 |
 | `audio/<語言>/` | 預錄叫號語音（電腦上播放；手機有該語言語音時用手機內建語音） |
+| `counter.html`、`screen.html`、`live.js` | 現場同步 Demo 的櫃台、大螢幕與同步核心 |
+| `firebase-rules.json` | Firebase 安全規則 |
 | `media/` | App 內的教學、宣傳與防詐影片及封面圖 |
 
 ## 注意
 - 門市名單、等候時間、後台數據皆為示意。
 - 預錄語音以開源離線語音模型產生（Kokoro、Piper、Mimic3，透過 sherpa-onnx）。
+- QR Code 產生使用 Kazuhiko Arase 的 qrcode-generator（MIT 授權）。

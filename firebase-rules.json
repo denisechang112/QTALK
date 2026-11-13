@@ -1,0 +1,18 @@
+{
+  "rules": {
+    "rooms": {
+      "$room": {
+        ".read": "$room.length >= 16",
+        "meta": {
+          ".write": "$room.length >= 16 && !data.exists()"
+        },
+        "tickets": {
+          ".write": "$room.length >= 16",
+          "$ticket": {
+            ".validate": "newData.hasChildren(['cat', 'st']) && newData.child('cat').isString() && newData.child('cat').val().length <= 40 && newData.child('st').isString() && newData.child('st').val().length <= 2"
+          }
+        }
+      }
+    }
+  }
+}

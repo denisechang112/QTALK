@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#15142a">
+<meta name="robots" content="noindex">
+<title>叫號說・櫃台叫號台</title>
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
+<style>
+:root{--sky:#3a4fd6;--night:#1b2470;--ink:#15142a;--paper:#fffaf0;--cream:#fdf0d2;--orange:#f2711c;--yellow:#ffcf2e;--green:#3ec46d;--red:#e8402f;--lilac:#b9bff2;--muted:#5a5c78;
+  --f:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;--fn:"Archivo Black","Noto Sans TC",Impact,sans-serif;--line:3px solid var(--ink);--sh:4px 4px 0 var(--ink)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--sky);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.top{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px}
+.top h1{margin:0;font-size:17px;font-weight:900;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top h1 small{font-size:12px;color:var(--yellow);font-weight:700;margin-left:6px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:900;border-radius:999px;padding:2px 10px;background:#2a2947;color:#fff;white-space:nowrap}
+.pill i{width:8px;height:8px;border-radius:50%;background:#888}
+.pill.live i{background:var(--green)}.pill.bad i{background:var(--red)}.pill.wait i{background:var(--yellow)}
+.topbtn{border:2px solid var(--yellow);background:var(--yellow);color:var(--ink);border-radius:999px;font-weight:900;font-size:13px;padding:3px 12px;white-space:nowrap}
+.wrap{max-width:1040px;margin:0 auto;padding:14px 14px calc(28px + env(safe-area-inset-bottom,0px));display:grid;gap:14px}
+@media (min-width:860px){.wrap.main{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}.wrap.main .full{grid-column:1/-1}}
+.box{background:var(--paper);border:var(--line);border-radius:18px;box-shadow:var(--sh);padding:14px;display:grid;gap:10px;min-width:0}
+.box h2{margin:0;font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.muted{color:var(--muted);font-size:13px;margin:0}
+.tag{display:inline-block;font-size:12px;font-weight:900;padding:0 8px;border-radius:6px;border:2px solid var(--ink);background:var(--yellow);white-space:nowrap}
+.tag.blue{background:var(--sky);color:#fff}.tag.green{background:var(--green)}.tag.lilac{background:var(--lilac)}.tag.white{background:#fff}.tag.red{background:var(--red);color:#fff}
+.btn{border:var(--line);background:#fff;font-weight:900;padding:8px 14px;border-radius:12px;box-shadow:3px 3px 0 var(--ink);font-size:15px;text-decoration:none;display:inline-block;text-align:center;color:var(--ink)}
+.btn.dark{background:var(--ink);color:var(--yellow)}.btn.sm{font-size:13px;padding:4px 10px}.btn.wide{width:100%}.btn.warn{background:#ffd9d3}
+.btn:active,.cta:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn:disabled,.cta:disabled{opacity:.45;cursor:not-allowed}
+.cta{width:100%;border:var(--line);border-radius:18px;background:var(--yellow);box-shadow:5px 5px 0 var(--ink);font-weight:900;font-size:26px;padding:16px 12px;line-height:1.2;display:grid;gap:2px}
+.cta small{font-size:14px;font-weight:700}
+.cta b{font-family:var(--fn);font-weight:400}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg button{border:var(--line);border-radius:12px;background:#fff;font-weight:900;padding:8px 4px;font-size:15px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+.seg button small{display:block;font-size:11px;font-weight:700;opacity:.8;font-family:var(--fn)}
+.now{background:var(--orange);color:#fff}
+.now .no{font-family:var(--fn);font-size:64px;line-height:1;text-shadow:4px 4px 0 var(--ink)}
+.now h2{color:#fff}
+.say{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:8px 10px;font-weight:700;overflow-wrap:anywhere}
+.say small{display:block;font-size:11px;color:var(--muted);font-weight:900}
+.say.none{background:transparent;border-style:dashed;color:inherit;font-weight:500;opacity:.9}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.q{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;border-top:2px dashed #d8d4c8;padding-top:10px}
+.q:first-of-type{border-top:0;padding-top:0}
+.q .n{font-family:var(--fn);font-size:22px;line-height:1}
+.q .n small{display:block;font-family:var(--f);font-size:11px;color:var(--muted);font-weight:700}
+.q .t{grid-column:1/-1;font-size:14px;font-weight:700;background:#f4f1e6;border-radius:8px;padding:4px 8px;overflow-wrap:anywhere}
+.q .t.none{background:none;padding:0;color:var(--muted);font-weight:500;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 4px}
+.stats b{display:block;font-family:var(--fn);font-size:24px;line-height:1.1;font-weight:400}
+.stats span{font-size:12px;font-weight:700;color:var(--muted)}
+.desks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.desks div{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px;text-align:center;font-size:12px;font-weight:700}
+.desks b{display:block;font-family:var(--fn);font-size:20px;font-weight:400}
+label.f{display:grid;gap:4px;font-weight:900;font-size:14px}
+input[type=text],input[type=url]{border:var(--line);border-radius:12px;padding:10px 12px;background:#fff;width:100%}
+.err{color:var(--red);font-weight:900;font-size:14px;min-height:1.3em;white-space:pre-line}
+.steps{margin:0;padding-left:1.3em;font-size:14px;display:grid;gap:4px}
+/* 場次面板 */
+#sheet{position:fixed;inset:0;z-index:20;background:rgba(13,18,64,.78);display:grid;place-items:center;padding:14px}
+#sheet[hidden]{display:none}
+#sheet .in{width:min(100%,620px);max-height:100%;overflow:auto;background:var(--paper);border:var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--ink);padding:16px;display:grid;gap:14px}
+.qrbox{display:grid;grid-template-columns:132px minmax(0,1fr);gap:12px;align-items:center}
+.qrbox .qr{width:132px;height:132px;border:var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.qrbox .qr svg{width:100%;height:100%;display:block}
+.qrbox h3{margin:0;font-size:16px;font-weight:900}
+.sec{border-top:2px dashed #d8d4c8;padding-top:12px;display:grid;gap:8px}
+#flash{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--ink);color:#fff;font-weight:900;border-radius:999px;padding:8px 18px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.35);max-width:92vw;text-align:center}
+#flash[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>叫號說<small id="storeName">櫃台叫號台</small></h1>
+  <span class="pill wait" id="status" hidden><i></i><span>連線中…</span></span>
+  <button class="topbtn" id="sessBtn" hidden>場次・QR Code</button>
+</header>
+<main id="app"></main>
+<div id="sheet" hidden></div>
+<div id="flash" hidden role="status"></div>
+
+<script src="qrcode.js"></script>
+<script src="live.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const Q=window.QTLive;
+const CATS={"繳費/儲值":"green","續約/換約/新申辦":"","異動/諮詢/維修":"blue","網路取貨/預約取件":"lilac"};
+const PREP={"繳費/儲值":"門號或帳單","續約/換約/新申辦":"身分證、第二證件、原門號 SIM 卡（續約時）","異動/諮詢/維修":"身分證、要維修的手機（維修時）","網路取貨/預約取件":"身分證、取貨簡訊或訂單編號"};
+const LANGS={en:"English",ja:"日本語",ko:"한국어",vi:"Tiếng Việt",id:"Bahasa Indonesia"};
+const SAMPLE=[["續約/換約/新申辦","合約下個月到期，想看看有沒有比較便宜的 5G 方案"],["異動/諮詢/維修","螢幕摔破了，想問維修大概要多久"],["繳費/儲值",""],["網路取貨/預約取件","上週網路訂的手機，來取貨"],["續約/換約/新申辦","幫爸爸續約，想換大字的手機"],["異動/諮詢/維修","出國要用的上網方案怎麼選"]];
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+let sess=null,conn=null,V=Q.view(null),desk=+(ls.get("qt-live-desk")||1),busy=false;
+const plain=new Map();   // 票 id → 解開後的留言
+
+function flash(msg,ms){const f=$("#flash");f.textContent=msg;f.hidden=false;clearTimeout(flash.t);flash.t=setTimeout(()=>f.hidden=true,ms||2600)}
+function setStatus(s){const p=$("#status");p.hidden=false;p.className="pill "+(s==="live"?"live":s==="connecting"||s==="reconnecting"?"wait":"bad");p.lastElementChild.textContent=Q.STATUS_ZH[s]||s}
+const tagOf=c=>`<span class="tag ${CATS[c]||""}">${esc(c)}</span>`;
+const mins=t=>t.t?Math.max(0,Math.round((Date.now()-t.t)/60000)):0;
+const errText=e=>e&&(e.status===401||e.status===403)?"資料庫拒絕寫入。\n請到 Firebase 的「規則」分頁，確認已貼上安全規則並按「發布」。":e&&e.status===404?"找不到這個資料庫，請確認網址是從 Firebase「即時資料庫」頁面複製的。":"連不上資料庫，請檢查網路，或確認資料庫網址沒有貼錯。";
+
+/* ================= 建立場次 ================= */
+function renderSetup(msg){
+  $("#sessBtn").hidden=true;$("#status").hidden=true;$("#storeName").textContent="櫃台叫號台";
+  $("#app").innerHTML=`<div class="wrap" style="max-width:620px">
+    <div class="box"><h2>建立現場場次</h2>
+      <p class="muted">建立後，這台裝置就是櫃台。再用「場次・QR Code」開啟門市大螢幕，顧客掃大螢幕上的 QR Code 就能取號。</p>
+      <label class="f">Firebase 資料庫網址<input type="url" id="host" inputmode="url" autocomplete="off" placeholder="https://你的專案-default-rtdb.asia-southeast1.firebasedatabase.app" value="${esc(ls.get("qt-live-host")||"")}"></label>
+      <label class="f">門市名稱<input type="text" id="store" maxlength="12" value="${esc(ls.get("qt-live-store")||"台北文創門市")}"></label>
+      <div class="err" id="err">${esc(msg||"")}</div>
+      <button class="cta" id="create" style="font-size:22px">建立場次</button>
+      <p class="muted">不會儲存電話號碼。顧客寫給櫃台的話會先在手機上加密，只有櫃台裝置看得到。</p>
+    </div>
+    <div class="box"><h2>還沒有 Firebase 資料庫？</h2>
+      <ol class="steps"><li>到 console.firebase.google.com 建立專案。</li><li>左邊選單「建構 → Realtime Database」→ 建立資料庫（位置選新加坡，鎖定模式）。</li><li>到「規則」分頁貼上安全規則，按「發布」。</li><li>回「資料」分頁，複製上方的資料庫網址，貼到上面。</li></ol>
+      <a class="btn sm" href="./" style="justify-self:start">先用模擬版（不需要網路同步）</a>
+    </div></div>`;
+  $("#create").onclick=async()=>{
+    const host=Q.cleanHost($("#host").value),store=($("#store").value.trim()||"台北文創門市").slice(0,12),err=$("#err"),btn=$("#create");
+    if(!host){err.textContent="這不像是 Firebase 資料庫網址。\n格式像：https://xxxx-default-rtdb.asia-southeast1.firebasedatabase.app";return}
+    if(!Q.crypto.ok){err.textContent="這個瀏覽器不支援加密功能，請改用 Chrome、Edge 或 Safari，並用 https 網址開啟。";return}
+    btn.disabled=true;btn.textContent="建立中…";err.textContent="";
+    const room=Q.rand(22);let c=null;
+    try{const key=await Q.crypto.genStaffKey();
+      c=Q.connect(host,room,()=>{},()=>{});
+      await c.put("/meta",{pub:key.pub,store:store,desks:3,t:Q.TS});c.close();
+      ls.set("qt-live-host",host);ls.set("qt-live-store",store);
+      sess={host,room,d:key.d,pub:key.pub,store};Q.sess.save(sess);start();
+    }catch(e){if(c)c.close();btn.disabled=false;btn.textContent="建立場次";err.textContent=errText(e)}
+  };
+}
+
+/* ================= 櫃台主畫面 ================= */
+function start(){
+  try{history.replaceState(null,"","#"+Q.linkOf(sess,false))}catch(e){}
+  plain.clear();$("#sessBtn").hidden=false;
+  if(conn)conn.close();
+  conn=Q.connect(sess.host,sess.room,room=>{V=Q.view(room);
+    if(V.meta&&V.meta.pub&&!sess.pub){sess.pub=V.meta.pub;Q.sess.save(sess)}
+    if(V.meta&&V.meta.store){sess.store=V.meta.store}
+    decryptNew();render()},setStatus);
+  render();
+}
+async function decryptNew(){
+  let changed=false;
+  for(const t of V.all){if(!t.say||plain.has(t.id))continue;
+    plain.set(t.id,null);   // 佔位，避免重複解
+    const txt=sess.d?await Q.crypto.open(sess.pub||(V.meta&&V.meta.pub),sess.d,t.say):null;
+    plain.set(t.id,txt===null?false:txt);changed=true}
+  if(changed)render();
+}
+function sayHTML(t,cls){
+  if(!t.say)return `<div class="${cls} none">沒有留言，請當面詢問。</div>`;
+  const p=plain.get(t.id);
+  if(p===false||(!sess.d&&p==null))return `<div class="${cls} none">🔒 有留言，但這台裝置沒有櫃台金鑰（請用「其他櫃台裝置加入」的 QR Code 開啟）。</div>`;
+  if(p==null)return `<div class="${cls} none">解密中…</div>`;
+  return cls==="say"?`<div class="say"><small>顧客寫給櫃台的話</small>${esc(p)}</div>`:`<div class="t">${esc(p)}</div>`;
+}
+const extra=t=>`${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
+function render(){
+  if(!sess)return;
+  $("#storeName").textContent=(sess.store||"")+"・櫃台叫號台";
+  const cur=V.desks[desk],next=V.waiting[0],skipped=V.all.filter(t=>t.st==="s").length;
+  $("#app").innerHTML=`<div class="wrap main">
+    <div style="display:grid;gap:14px;min-width:0">
+      <div class="box"><h2>這台裝置是幾號櫃台？</h2>
+        <div class="seg">${[1,2,3].map(d=>`<button data-desk="${d}" aria-pressed="${d===desk}">${d} 號櫃台<small>${V.desks[d]?V.desks[d].no:"—"}</small></button>`).join("")}</div></div>
+      <div class="box now"><h2>${desk} 號櫃台・目前服務</h2>
+        ${cur?`<div class="row" style="justify-content:space-between"><div class="no">${cur.no}</div><div class="row">${tagOf(cur.cat)}${extra(cur)}</div></div>
+          ${sayHTML(cur,"say")}
+          <div class="say" style="font-weight:500"><small>請準備</small>${esc(PREP[cur.cat]||"")}</div>
+          <div class="acts"><button class="btn" data-act="recall">🔊 再叫一次</button><button class="btn" data-act="skip">過號</button><button class="btn dark" data-act="done">辦完了</button></div>`
+        :`<p style="margin:0;font-weight:700">目前沒有服務中的顧客。</p>`}
+      </div>
+      <button class="cta" data-act="next" ${next&&!busy?"":"disabled"}>${next?`叫下一號　<b>${next.no}</b><small>${cur?`會同時把 ${cur.no} 標記為辦完`:"按下後，顧客的手機會跳出叫號畫面"}</small>`:`目前沒有人等候<small>顧客取號後會自動出現在這裡</small>`}</button>
+      <div class="stats"><div><b>${V.waiting.length}</b><span>等候中</span></div><div><b>${V.done}</b><span>已辦完</span></div><div><b>${skipped}</b><span>過號</span></div></div>
+    </div>
+    <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span></h2>
+      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${sayHTML(t,"t")}</div>`).join("")
+      :`<p class="muted">還沒有人取號。請顧客掃大螢幕上的 QR Code；排練時可以到「場次・QR Code」加測試顧客。</p>`}
+    </div>
+  </div>`;
+}
+async function act(fn){if(busy)return;busy=true;render();try{await fn()}catch(e){flash(e&&(e.status===401||e.status===403)?"資料庫拒絕寫入，請檢查安全規則":"沒有送出，請檢查網路後再按一次",4200)}busy=false;render()}
+const closeDesk=async(d,st)=>{for(const t of V.all)if(t.st==="c"&&(t.desk||1)===d)await conn.patch("/tickets/"+t.id,{st:st,dt:Q.TS})};
+const callTicket=async t=>{await closeDesk(desk,"d");await conn.patch("/tickets/"+t.id,{st:"c",desk:desk,ct:Q.TS});flash(`已叫號 ${t.no} → ${desk} 號櫃台`)};
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button,a");if(!b||!sess||!conn)return;
+  if(b.dataset.desk){desk=+b.dataset.desk;ls.set("qt-live-desk",desk);render();return}
+  if(b.dataset.call){const t=V.waiting.find(x=>x.id===b.dataset.call);if(t)act(()=>callTicket(t));return}
+  const a=b.dataset.act,cur=V.desks[desk];
+  if(a==="next"){const t=V.waiting[0];if(t)act(()=>callTicket(t))}
+  if(a==="recall"&&cur)act(async()=>{await conn.patch("/tickets/"+cur.id,{ct:Q.TS,rc:(cur.rc||0)+1});flash(`已再叫一次 ${cur.no}`)});
+  if(a==="skip"&&cur)act(async()=>{await closeDesk(desk,"s");flash(`${cur.no} 已過號`)});
+  if(a==="done"&&cur)act(async()=>{await closeDesk(desk,"d");flash(`${cur.no} 辦完了`)});
+});
+setInterval(()=>{if(sess&&!busy&&$("#sheet").hidden)render()},30000);
+
+/* ================= 場次面板：大螢幕、QR Code、排練、重設 ================= */
+function copy(text,label){(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>flash("已複製"+label),()=>{window.prompt("請手動複製"+label,text)})}
+function openSheet(){
+  const cust=Q.pageUrl("./",sess,false),scr=Q.pageUrl("screen.html",sess,false),staff=Q.pageUrl("counter.html",sess,true);
+  const sh=$("#sheet");sh.hidden=false;
+  sh.innerHTML=`<div class="in" role="dialog" aria-modal="true" aria-label="場次與 QR Code">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:20px;font-weight:900">場次・QR Code</h2><button class="btn sm" data-s="close">關閉</button></div>
+    <div class="qrbox"><div class="qr">${Q.qrSvg(scr)}</div><div style="display:grid;gap:6px"><h3>① 門市大螢幕</h3><p class="muted">用接投影機的電腦開啟，上面會顯示顧客取號用的 QR Code。</p><div class="row"><a class="btn sm dark" href="${esc(scr)}" target="_blank" rel="noopener">在新分頁開啟大螢幕</a><button class="btn sm" data-s="cscr">複製連結</button></div></div></div>
+    <div class="qrbox sec"><div class="qr">${Q.qrSvg(cust)}</div><div style="display:grid;gap:6px"><h3>② 顧客取號</h3><p class="muted">顧客用手機掃這個 QR Code 取號（大螢幕上也有同一個）。</p><div class="row"><button class="btn sm" data-s="ccust">複製連結</button></div></div></div>
+    <div class="qrbox sec"><div class="qr">${sess.d?Q.qrSvg(staff):""}</div><div style="display:grid;gap:6px"><h3>③ 其他櫃台裝置加入</h3><p class="muted">${sess.d?"只給門市同仁掃。掃了就能叫號，也看得到顧客留言，請不要投影出來。":"這台裝置沒有櫃台金鑰，無法邀請其他裝置。"}</p>${sess.d?`<div class="row"><button class="btn sm" data-s="cstaff">複製連結</button></div>`:""}</div></div>
+    <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">排練用</h3>
+      <div class="row"><button class="btn sm" data-s="fake">＋ 加一位測試顧客</button><button class="btn sm warn" data-s="wipe">清空所有號碼，從 A101 重新開始</button></div>
+      <p class="muted">正式上台前按一次「清空」，評審取到的就會是 A101。</p></div>
+    <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">備案</h3>
+      <div class="row"><a class="btn sm" href="./" target="_blank" rel="noopener">開啟模擬版（網路不穩時用）</a><button class="btn sm warn" data-s="new">結束這個場次，建立新的</button></div></div>
+  </div>`;
+  sh.onclick=async e=>{
+    if(e.target===sh){sh.hidden=true;render();return}
+    const b=e.target.closest("[data-s]");if(!b)return;const k=b.dataset.s;
+    if(k==="close"){sh.hidden=true;render()}
+    if(k==="cscr")copy(scr,"大螢幕連結");if(k==="ccust")copy(cust,"顧客取號連結");if(k==="cstaff")copy(staff,"櫃台加入連結");
+    try{
+      if(k==="fake"){const s=SAMPLE[Math.floor(Math.random()*SAMPLE.length)];const sealed=s[1]?await Q.crypto.seal(sess.pub,s[1]):null;
+        const t={cat:s[0],st:"w",t:Q.TS,lang:"zh"};if(sealed)t.say=sealed;await conn.post("/tickets",t);flash("已加入一位測試顧客")}
+      if(k==="wipe"&&confirm("確定清空所有號碼嗎？顧客手機上的號碼也會一起失效。")){await conn.del("/tickets");plain.clear();flash("已清空，下一位會是 A101")}
+    }catch(err){flash("沒有送出，請檢查網路後再試一次",4200)}
+    if(k==="new"&&confirm("確定結束這個場次嗎？目前的 QR Code 會全部失效。")){if(conn)conn.close();conn=null;sess=null;Q.sess.clear();try{history.replaceState(null,"",location.pathname)}catch(e2){}sh.hidden=true;renderSetup()}
+  };
+}
+$("#sessBtn").onclick=openSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sheet").hidden){$("#sheet").hidden=true;render()}});
+
+/* ================= 啟動 ================= */
+(function boot(){
+  const fromLink=Q.parseLink(),saved=Q.sess.load();
+  if(fromLink){sess=saved&&saved.room===fromLink.room?Object.assign({},saved,{d:fromLink.d||saved.d}):fromLink;Q.sess.save(sess)}
+  else sess=saved;
+  if(sess)start();else renderSetup();
+})();
+</script>
+</body>
+</html>

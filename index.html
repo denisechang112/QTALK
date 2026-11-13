@@ -484,6 +484,12 @@ html.is-phone .phone.big .chipgrid{grid-template-columns:1fr}
 html.is-phone #say::placeholder{color:transparent}
 html.is-phone .taph{display:block;position:absolute;left:13px;right:13px;top:11px;color:#8a8ca6;font-size:15px;line-height:1.6;pointer-events:none;overflow-wrap:anywhere}
 html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.taph,html.is-phone #say:focus+.taph{display:none}
+/* 現場同步模式的小標籤 */
+.lg{display:inline-flex;align-items:center;gap:6px;min-width:0}
+#liveBadge{border:0;border-radius:999px;background:#2a2947;color:#fff;font-size:10.5px;font-weight:900;line-height:1;padding:4px 7px 4px 6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex:none}
+#liveBadge[hidden]{display:none}
+#liveBadge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--yellow)}
+#liveBadge.ok::before{background:var(--green)}#liveBadge.bad::before{background:var(--red)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -497,7 +503,7 @@ html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.tap
     <div id="admin" hidden></div>
     <div id="guide"></div>
     <div class="appTop">
-      <div class="title"><span id="logo">叫號說</span><span class="store"><button type="button" class="storebtn" id="storeBtn" aria-label="切換門市，目前：台北文創門市"><span id="storeName">台北文創門市</span> ▾</button><button type="button" class="aa" id="aaBtn" aria-label="大字、語音叫號、語言設定">Aa</button><button class="help" id="help" aria-label="這頁怎麼用">?</button></span></div>
+      <div class="title"><span class="lg"><span id="logo">叫號說</span><button type="button" id="liveBadge" hidden></button></span><span class="store"><button type="button" class="storebtn" id="storeBtn" aria-label="切換門市，目前：台北文創門市"><span id="storeName">台北文創門市</span> ▾</button><button type="button" class="aa" id="aaBtn" aria-label="大字、語音叫號、語言設定">Aa</button><button class="help" id="help" aria-label="這頁怎麼用">?</button></span></div>
       <div class="mq"><div class="pin" id="pin" aria-live="polite"></div><div class="run"><div class="track" id="mqText"><span class="seg"></span><span class="seg" aria-hidden="true"></span></div></div></div>
     </div>
     <div class="appBody" id="appBody"></div>
@@ -506,6 +512,7 @@ html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.tap
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="live.js"></script>
 <script>
 /* videos are stored with the page itself, so they play in every view */
 const KNOW_VIDEOS=[
@@ -709,6 +716,7 @@ function calledAlert(){closePlayer();closeGame();
   });
   /* demo pacing: the call screen stays briefly, then the counter finishes and the rating appears */
   clearTimeout(calledT1);clearTimeout(calledT2);
+  if(LIVE.on)return;   // 現場模式：由櫃台按「辦完了」才結束，不自動跳過
   calledT1=setTimeout(()=>{if($("#modal").innerHTML){U.out=false;closeModal();go("mine")}},3000);
   calledT2=setTimeout(finishMe,8000);
 }
@@ -895,7 +903,7 @@ function deskHTML(){const vids=KNOW_VIDEOS.map(v=>v.ask);
     ${S.queue.map(t=>{const w=waitFor(t);return `<div class="desk"><div class="dn" style="background:#fff;color:var(--ink);border:2px solid var(--ink)"><b>${w.ahead+1}</b>順位</div><div><span class="qn">${t.no}</span>${tag(t.cat)}${marks(t)}<span class="prep" style="margin-left:6px">約 ${w.mins} 分</span>${said(t)}</div></div>`}).join("")}</div>
    <p class="note">顧客寫的內容只在櫃台看板顯示，不會出現在顧客的畫面上。</p>
   </div>`}
-function openDesk(){const a=$("#admin");a.hidden=false;let sig="";
+function openDesk(){if(LIVE.on){toast("info","現場模式","叫號請用櫃台叫號台，這裡的模擬櫃台已關閉。",3200);return}const a=$("#admin");a.hidden=false;let sig="";
   const draw=force=>{const ns=JSON.stringify([DESK_TAB,DESK_PICK,DESK_FLASH,S.serving.map(t=>t&&t.no),S.queue.map(t=>t.no),S.pauseLeft,CLOSED]);if(!force&&ns===sig)return;sig=ns;
     const y=a.scrollTop;a.innerHTML=deskHTML();a.scrollTop=y;$("#adClose").onclick=()=>{clearInterval(deskTimer);a.hidden=true;a.innerHTML="";DESK_TAB="live";DESK_FLASH=""};bindDesk();
     a.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>{const[i,o]=b.dataset.out.split("|");DESK_PICK[+i]=DESK_PICK[+i]===o?null:o;draw()});
@@ -1061,7 +1069,7 @@ function queueHTML(){
     <span class="hint">◀ 拖曳・點角色看排隊狀態 ▶</span>
   </div>
   ${has?"":takeHTML()}
-  ${has?"":resvHTML()}
+  ${has||LIVE.on?"":resvHTML()}
   ${videosHTML(KNOW_VIDEOS,"取號前，先看懂")}`;
 }
 function bindQueue(){
@@ -1089,11 +1097,11 @@ function takeHTML(){
       ${(()=>{const iv=KNOW_VIDEOS.filter(v=>(U.chips||[]).includes(v.ask));return iv.length?`<div class="chiplbl">✓ 影片有興趣：${iv.map(v=>esc(v.short)).join("、")}</div>`:""})()}
       ${(U.chips||[]).length&&!U.writeOpen?`<div class="picked-say"><span>點選即可，不用打字</span><button class="linkbtn" id="writeMore" type="button">✎ 想自己補充</button></div>`:""}
       <div class="tawrap"><textarea id="say" maxlength="60" ${(U.chips||[]).length&&!U.writeOpen?"hidden":""} placeholder="例如：合約下個月到期，想問有沒有家庭方案">${esc(U.draft)}</textarea><span class="taph" aria-hidden="true">例如：合約下個月到期，想問有沒有家庭方案</span></div>
-      <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。</p></div>
-    <div class="step"><div class="lbl"><i>3</i>手機號碼 <em>快輪到你時傳簡訊</em></div>
-      <input type="tel" id="phoneIn" inputmode="numeric" autocomplete="tel" placeholder="0912345678" value="${esc(U.phone)}">
+      <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">${LIVE.on?"🔒 你寫的內容會先在手機上加密，只有櫃台看得到。請不要填姓名、電話等個人資料。":"🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。"}</p></div>
+    <div class="step">${LIVE.on?`<div class="lbl"><i>3</i>叫號通知</div><div class="notice" style="background:var(--cream)"><b>現場體驗不用填手機號碼</b><span style="font-weight:500">輪到你時，這支手機會直接跳出畫面，並用語音叫你。</span></div><input type="hidden" id="phoneIn" value="0912345678">`:`<div class="lbl"><i>3</i>手機號碼 <em>快輪到你時傳簡訊</em></div>
+      <input type="tel" id="phoneIn" inputmode="numeric" autocomplete="tel" placeholder="0912345678" value="${esc(U.phone)}">`}
       <label class="opt prio"><input type="checkbox" id="prioOn" ${U.prio?"checked":""}><span>優先取號<small>長輩（65 歲以上）、孕婦、行動不便者可選。</small></span></label></div>
-    <details class="more" ${U.more?"open":""} id="more"><summary>更多選項</summary>
+    <details class="more" ${U.more?"open":""} id="more" ${LIVE.on?"hidden":""}><summary>更多選項</summary>
       <label class="opt"><input type="checkbox" id="famOn" ${U.familyOn?"checked":""}><span>我是幫家人取號${U.family?`<small>叫號時也會通知 ${esc(U.family.name)}（${maskPhone(U.family.phone)}）・<button class="linkbtn" id="famEdit">修改</button></small>`:"<small>叫號時你和家人都會收到簡訊。</small>"}</span></label>
       <label class="opt"><input type="checkbox" id="consent" ${U.consent?"checked":""}><span>接收跟這次需求有關的門市優惠<small>選填，每次排隊最多 1 則，可隨時取消。</small></span></label>
     </details>
@@ -1116,7 +1124,7 @@ function bindTake(){
     const iv=KNOW_VIDEOS.find(x=>x.ask===st);if(iv&&!on&&!U.picked)U.picked=iv.cat;
     if(!U.writeOpen)say.value=U.chips.join("，");say.dispatchEvent(new Event("input"));U.phone=ph.value;
     const y=$("#appBody").scrollTop;fullRender();$("#appBody").scrollTop=y;
-    if(!on&&/幫爸媽/.test(st)&&!U.familyOn)openFamily()});
+    if(!on&&/幫爸媽/.test(st)&&!U.familyOn&&!LIVE.on)openFamily()});
   const wm=$("#writeMore");if(wm)wm.onclick=()=>{U.writeOpen=true;const y=$("#appBody").scrollTop;fullRender();$("#appBody").scrollTop=y;const t=$("#say");t.focus();t.setSelectionRange(t.value.length,t.value.length)};
   say.oninput=()=>{U.draft=say.value;const n=[...say.value].length;$("#cnt").textContent=`${n} / 50`;$("#cnt").style.color=n>50?"var(--red)":"";
     const g=guess(say.value),sug=$("#sug");
@@ -1148,6 +1156,7 @@ function openFamily(){
   });
 }
 function doTake(){
+  if(LIVE.on)return liveTake();
   const txt=U.draft.trim().slice(0,50),sc=pickScenario();
   S.pauseLeft=0;if(ONDUTY>3){ONDUTY=3;S.serving.length=3}
   if(sc.before)sc.before();
@@ -1249,7 +1258,7 @@ function bindMine(){
   document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{U.rating[b.dataset.r]=+b.dataset.v;fullRender()});
   document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{U.contact=b.dataset.c==="1";fullRender()});
   const sr=$("#sendRate");if(sr)sr.onclick=()=>{U.done="sent";fullRender()};
-  const n=$("#newTicket");if(n)n.onclick=()=>{S.me=null;U.done=null;U.picked=null;go("queue")};
+  const n=$("#newTicket");if(n)n.onclick=()=>{if(LIVE.on)liveForget();S.me=null;U.done=null;U.picked=null;go("queue")};
   if(meState()==="done"&&!U.done)setTimeout(()=>tip("done"),500);
   bindClassroom();bindVideos();
 }
@@ -1630,7 +1639,86 @@ tick=function(){const wasCalled=meState()==="called";origTick();if(wasCalled&&me
 function restartTick2(){clearInterval(tickTimer);tickTimer=setInterval(()=>tick(),TICK_MS)}
 restartTick=restartTick2;
 
+/* ================= 現場同步模式（掃門市大螢幕的 QR Code 進來時啟用；沒有 #l= 就是原本的模擬版） ================= */
+const LIVE={on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
+(function(){const Q=window.QTLive,ss=Q&&Q.parseLink();if(!ss)return;LIVE.on=true;LIVE.sess=ss;
+  try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id){LIVE.myId=m.id;LIVE.myText=m.text||""}}catch(e){}})();
+const simRestartTick=restartTick;
+restartTick=function(){if(LIVE.on){clearInterval(tickTimer);return}simRestartTick()};
+function liveBadge(){const b=$("#liveBadge");if(!b)return;b.hidden=!LIVE.on;const st=LIVE.status,ok=st==="live",wait=st==="connecting"||st==="reconnecting";
+  b.className=ok?"ok":wait?"":"bad";b.textContent=ok?"現場連線":wait?"連線中":"連線中斷";
+  if(!ok&&!wait&&!LIVE.warned){LIVE.warned=true;toast("info","連線中斷，正在重新連線","如果一直連不上，點左上角的「連線中斷」可以改用模擬版。",6500)}
+  if(ok)LIVE.warned=false}
+function liveForget(){LIVE.myId=null;LIVE.myText="";LIVE.calledSig=null;store.set("qt-live-me","null")}
+function liveSheet(){const st=LIVE.status;
+  modal(`<div class="sheet"><h3>現場同步模式</h3><p>${st==="live"?"已連上門市的叫號系統。你取的號碼會出現在大螢幕和櫃台，輪到你時這支手機會跳出畫面並用語音叫你。":"目前連不上門市的叫號系統（"+esc((window.QTLive.STATUS_ZH[st]||st))+"）。"}</p>
+    <p class="fine">不會儲存電話號碼；寫給櫃台的話會先加密，只有櫃台看得到。</p>
+    <div class="acts"><button class="btn dark wide" data-m="ok">知道了</button><button class="btn wide" data-m="re">重新連線</button><button class="btn wide" data-m="sim">改用模擬版（不連線）</button></div></div>`,m=>{
+    m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const a=b.dataset.m;closeModal();
+      if(a==="re"&&LIVE.conn)LIVE.conn.resync();
+      if(a==="sim"){try{history.replaceState(null,"",location.pathname)}catch(e){}location.reload()}})})}
+function liveStart(){
+  S.queue=[];S.serving=[null,null,null];S.me=null;S.lastCalled=null;S.lastDesk=0;S.total=0;
+  const lb=$("#liveBadge");if(lb)lb.onclick=liveSheet;liveBadge();
+  LIVE.conn=window.QTLive.connect(LIVE.sess.host,LIVE.sess.room,liveSync,st=>{LIVE.status=st;liveBadge()});
+  fullRender();Q3.sync();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&S.me&&meState()==="waiting")liveWake()});
+}
+let liveLock=null;
+function liveWake(){try{if(navigator.wakeLock&&!(liveLock&&!liveLock.released))navigator.wakeLock.request("screen").then(l=>{liveLock=l}).catch(()=>{})}catch(e){}}   // 等候時盡量不讓手機螢幕自己關掉
+function liveSync(room){
+  const V=window.QTLive.view(room);LIVE.view=V;LIVE.pub=(V.meta&&V.meta.pub)||null;
+  if(V.meta&&V.meta.store&&V.meta.store!==HOME){if(cityOf(V.meta.store))setHome(V.meta.store);else{const sn=$("#storeName");if(sn)sn.textContent=V.meta.store}}
+  const obj=t=>{let o=LIVE.objs.get(t.id);if(!o){o={id:t.id,me:false,text:"",family:null,held:true};LIVE.objs.set(t.id,o)}
+    o.no=t.no;o.cat=CATS[t.cat]?t.cat:"異動/諮詢/維修";o.prio=!!t.p;return o};
+  const prevState=meState(),prevMe=S.me;
+  S.queue=V.waiting.map(obj);
+  S.serving=[1,2,3].map(d=>V.desks[d]?obj(V.desks[d]):null);
+  if(V.last){S.lastDesk=Math.min(2,Math.max(0,(V.last.desk||1)-1));S.lastCalled={no:V.last.no,desk:S.lastDesk}}else{S.lastCalled=null;S.lastDesk=0}
+  S.total=V.all.length;
+  let called=false,nearNow=false;
+  if(LIVE.myId){const mine=V.all.find(t=>t.id===LIVE.myId);
+    if(!mine){if(Date.now()-LIVE.tookAt>8000){liveForget();S.me=null;if(prevMe)toast("info","場次已重新開始","之前的號碼已失效，請重新取號。",5200)}}
+    else if(mine.st==="s"||mine.st==="x"){liveForget();S.me=null;closeModal();toast("info",`${mine.no} 已過號`,"櫃台叫號時沒有等到你。請重新取號，或直接洽櫃台人員。",7000);buzz([120,60,120])}
+    else{const o=obj(mine);o.me=true;o.text=LIVE.myText||"";S.me=o;
+      if(mine.st==="c"&&S.serving.includes(o)){const sig=mine.id+":"+(mine.ct||0)+":"+(mine.rc||0);if(sig!==LIVE.calledSig){LIVE.calledSig=sig;called=true}}
+      else if(mine.st==="w"){const w=waitFor(o);if(o.start===undefined){o.start=w.ahead;o.n3=w.ahead<=3}
+        if(w.ahead<=3&&!o.n3){o.n3=true;nearNow=true}}}
+  }else S.me=null;
+  const nowState=meState();
+  if(nowState!==prevState||S.me!==prevMe){if(nowState==="done"){closeModal();U.tab="mine"}fullRender();renderTabs();renderMarquee()}else renderApp(true);
+  Q3.sync();
+  if(called)calledAlert();
+  else if(nearNow){const w=waitFor(S.me);toast("info",`快輪到你了，前面剩 ${w.ahead} 組`,`約 ${w.mins} 分鐘後叫到 ${S.me.no}，請回到櫃台附近。`,6500);buzz([150,80,150]);if(U.out)nearAlert()}
+}
+async function liveTake(){
+  if(LIVE.taking)return;LIVE.taking=true;
+  const btn=$("#takeBtn");if(btn){btn.disabled=true;btn.textContent="取號中…"}
+  const txt=U.draft.trim().slice(0,50);let sent=txt;
+  try{
+    if(!LIVE.conn||!LIVE.view)throw new Error("not ready");
+    const t={cat:U.picked,st:"w",t:window.QTLive.TS,lang:PREF.lang};if(U.prio)t.p=true;
+    if(txt){let sealed=null;try{sealed=await window.QTLive.crypto.seal(LIVE.pub,txt)}catch(e){}if(sealed)t.say=sealed;else sent=""}   // 沒辦法加密就不送出留言
+    LIVE.tookAt=Date.now();
+    const id=await LIVE.conn.post("/tickets",t);
+    LIVE.myId=id;LIVE.myText=sent;LIVE.calledSig=null;store.set("qt-live-me",JSON.stringify({room:LIVE.sess.room,id:id,text:sent}));
+    liveSync(LIVE.conn.data);
+    if(!S.me)throw new Error("no ticket");
+    S.me.log=[];
+    U.draft="";U.chips=[];U.writeOpen=false;U.prio=false;U.bubble=S.me.no;U.docs=new Set();U.out=false;U.done=null;U.rating={};U.contact=null;U.fresh=true;
+    Q3.sync();go("mine");buzz(60);liveWake();
+    toast("info",`已取號 ${S.me.no}`,"輪到你時，這支手機會跳出畫面並用語音叫你。請讓這個頁面保持開著。",6500);
+    if(txt&&!sent)setTimeout(()=>toast("info","留言沒有送出","這支手機不支援加密，所以沒有把你寫的話傳給櫃台，請到櫃台時當面說明。",6500),6800);
+  }catch(e){
+    const denied=e&&(e.status===401||e.status===403);
+    toast("info","取號沒有成功",denied?"門市的叫號系統拒絕了這次取號，請洽現場人員。":"網路不太穩，請再按一次「取號」。",5600);
+    const b2=$("#takeBtn");if(b2){b2.disabled=false;b2.textContent="取號"}
+  }
+  LIVE.taking=false;
+}
+
 reset();
+if(LIVE.on)liveStart();
 ;/* qt-lock */if(document.documentElement.classList.contains("is-phone"))/* 手機上鎖住畫面：手指拖曳時，只讓真的能捲的區塊捲動，其他一律不讓整頁（或 App 內瀏覽器的視窗）跟著移動 */
 (function(){var sx=0,sy=0;
 function scrollable(el,axis){var cs=getComputedStyle(el),o=axis==="y"?cs.overflowY:cs.overflowX;
