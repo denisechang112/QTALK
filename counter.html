@@ -244,7 +244,7 @@ function render(){
       </div>
       <button class="cta" data-act="next" ${next&&!busy?"":"disabled"}>${next?`叫下一號　<b>${next.no}</b><small>${cur?`會同時把 ${cur.no} 標記為辦完`:"按下後，顧客的手機會跳出叫號畫面"}</small>`:`目前沒有人等候<small>顧客取號後會自動出現在這裡</small>`}</button>
       <div class="stats"><div><b>${V.waiting.length}</b><span>等候中</span></div><div><b>${V.done}</b><span>已辦完</span></div><div><b>${skipped}</b><span>過號</span></div></div>
-      ${accHTML()}
+      ${accHTML()}${satHTML()}
     </div>
     <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span></h2>
       ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
@@ -259,6 +259,15 @@ function accHTML(){const done=V.all.filter(t=>t.st==="d"&&t.act);
   return `<div class="box acc"><h2>AI 分類準確率<span class="tag white">${done.length} 筆已確認</span></h2>
     <div class="stats"><div><b>${pc(aiOk,ai.length)}</b><span>${AI.key?"AI":"規則"}判斷正確</span></div><div><b>${pc(selfOk,done.length)}</b><span>顧客自選正確</span></div><div><b>${done.filter(t=>t.ai&&t.ai===t.act&&t.cat!==t.act).length}</b><span>AI 幫忙改對</span></div></div>
     <p class="muted">AI 先判斷、人確認，系統越用越準。留言在辦完時已從資料庫刪除。</p></div>`}
+/* 服務滿意度：顧客在 App 或 LINE 辦完後填的評分，即時彙整 */
+function satHTML(){const rs=V.all.filter(t=>t.rate&&t.rate.s);
+  if(!rs.length)return `<div class="box acc"><h2>服務滿意度</h2><p class="muted">顧客辦完後在手機或 LINE 填的評分，會即時出現在這裡。</p></div>`;
+  const avg=k=>(rs.reduce((a,t)=>a+(+t.rate[k]||0),0)/rs.length).toFixed(1),low=rs.filter(t=>t.rate.c||["s","w","r"].some(k=>t.rate[k]&&t.rate[k]<=2));
+  const face={good:"😀",mid:"😐",bad:"😞"};
+  return `<div class="box acc"><h2>服務滿意度<span class="tag white">${rs.length} 份</span></h2>
+    <div class="stats"><div><b>${avg("s")}</b><span>櫃台服務</span></div><div><b>${avg("w")}</b><span>等候時間</span></div><div><b>${avg("r")}</b><span>問題解決</span></div></div>
+    ${low.length?`<div class="say" style="background:#ffe9e5"><small>需要主管關心（${low.length} 位）</small>${low.map(t=>`${t.no}${t.rate.f?face[t.rate.f]||"":""}・服務 ${t.rate.s}／等候 ${t.rate.w}／解決 ${t.rate.r}${t.rate.c?"・<b>希望主管聯絡</b>":""}${t.rate.src==="line"?"・LINE":""}`).join("<br>")}</div>`:""}
+    <p class="muted">滿分 5 分。來源：${rs.filter(t=>t.rate.src==="line").length} 份 LINE、${rs.filter(t=>t.rate.src!=="line").length} 份 App。</p></div>`}
 async function act(fn){if(busy)return;busy=true;render();try{await fn()}catch(e){flash(e&&(e.status===401||e.status===403)?"資料庫拒絕寫入，請檢查安全規則":"沒有送出，請檢查網路後再按一次",4200)}busy=false;render()}
 /* 辦完或過號時，把顧客留言從資料庫刪掉（只留類別與統計） */
 const closeDesk=async(d,st,actual)=>{for(const t of V.all)if(t.st==="c"&&(t.desk||1)===d){

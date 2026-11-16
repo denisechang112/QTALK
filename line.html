@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#1f2a44">
+<meta name="theme-color" content="#f1e4d2">
 <meta name="robots" content="noindex">
-<title>叫號說・LINE 官方帳號取號（概念示意）</title>
+<title>叫號說・LINE 官方帳號（概念示意）</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
-:root{--chat:#8aa6d1;--me:#9ee26b;--ink:#15142a;--muted:#6b7086;--orange:#f2711c;--yellow:#ffcf2e;--sky:#3a4fd6;--green:#06b04f;--red:#e8402f;
+:root{--chat:#efe6da;--me:#9ee26b;--hdr:#f1e4d2;--teal:#f2711c;--ink:#15142a;--muted:#6b7086;--orange:#f2711c;--yellow:#ffcf2e;--sky:#3a4fd6;--green:#06b04f;--red:#e8402f;
   --f:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#1f2a44;font-family:var(--f);color:var(--ink);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
@@ -19,27 +19,28 @@ button:focus-visible,textarea:focus-visible{outline:3px solid var(--yellow);outl
 .phone{position:relative;width:min(100%,420px);height:min(100%,880px);background:var(--chat);display:flex;flex-direction:column;overflow:hidden}
 @media (min-width:600px){.phone{border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.45);height:min(calc(100% - 32px),880px)}}
 html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;border-radius:0}
-.top{background:#1f2a44;color:#fff;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;flex:none}
-.top .back{border:0;background:none;color:#fff;font-size:26px;line-height:1;padding:0 4px}
-.top .av{width:34px;height:34px;border-radius:50%;background:#fff url(icon-192.png) center/cover;flex:none}
+.top{background:var(--hdr);color:var(--ink);display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;flex:none}
+.top .back{border:0;background:none;color:var(--ink);font-size:30px;line-height:1;padding:0 6px 2px 2px}
 .top .nm{flex:1;min-width:0}
-.top .nm b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.top .nm small{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#b9c3dc}
-.top .nm small i{width:7px;height:7px;border-radius:50%;background:#999;display:inline-block}
-.top .nm small.ok i{background:#4cd964}.top .nm small.bad i{background:var(--red)}
-.top .ic{font-size:18px;opacity:.85}
+.top .nm b{display:flex;align-items:center;gap:5px;font-size:17px;white-space:nowrap;overflow:hidden}
+.top .nm b span{overflow:hidden;text-overflow:ellipsis}
+.top .nm b svg{width:18px;height:18px;flex:none}
+.top .nm small{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#5a5446}
+.top .nm small i{width:7px;height:7px;border-radius:50%;background:#aaa;display:inline-block}
+.top .nm small.ok i{background:#06b04f}.top .nm small.bad i{background:var(--red)}
+.top .ic{width:24px;height:24px;flex:none;color:var(--ink)}
 .mock{background:#fff7d6;color:#6b5300;font-size:11.5px;font-weight:700;text-align:center;padding:4px 8px;flex:none}
 .chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:12px 10px 16px;display:flex;flex-direction:column;gap:10px}
-.day{align-self:center;background:rgba(0,0,0,.18);color:#fff;font-size:11px;border-radius:999px;padding:2px 10px}
+.day{align-self:center;background:rgba(0,0,0,.12);color:#fff;font-size:11px;border-radius:999px;padding:2px 10px}
 .m{display:flex;gap:6px;align-items:flex-end;max-width:100%}
-.m .av{width:32px;height:32px;border-radius:50%;background:#fff url(icon-192.png) center/cover;flex:none;align-self:flex-start}
+.m .av{width:32px;height:32px;border-radius:50%;background:#fff url(icon-192.png) center/cover;box-shadow:0 0 0 1px #e2d6c4;flex:none;align-self:flex-start}
 .m .col{display:grid;gap:3px;min-width:0;max-width:78%}
-.m .who{font-size:11px;color:#21325a}
-.b{background:#fff;border-radius:16px;padding:9px 12px;font-size:15px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-line}
+.m .who{font-size:11px;color:#5a5446}
+.b{background:#fff;border-radius:18px;padding:9px 12px;font-size:15px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-line}
 .m.me{flex-direction:row-reverse}
 .m.me .b{background:var(--me)}
-.tm{font-size:10px;color:#2c3e66;white-space:nowrap}
-.card{background:#fff;border-radius:16px;overflow:hidden;width:min(270px,72vw)}
+.tm{font-size:10px;color:#6f6656;white-space:nowrap;text-align:right;line-height:1.3}
+.card{background:#fff;border-radius:16px;overflow:hidden;width:min(275px,74vw);box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .card .hd{padding:10px 14px;color:#fff;font-weight:900;font-size:13px;background:var(--sky)}
 .card.or .hd{background:var(--orange)}.card.gr .hd{background:var(--green)}.card.gy .hd{background:#7a7f95}
 .card .bd{padding:10px 14px;display:grid;gap:6px}
@@ -54,28 +55,47 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .card .ft button:last-child{border-bottom:0}
 .card .ft button:disabled{color:#aaa}
 .qr{display:flex;gap:6px;overflow-x:auto;padding:6px 10px;flex:none;background:var(--chat);scrollbar-width:none}
-.qr button{flex:none;border:1px solid #fff;background:rgba(255,255,255,.92);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:#21325a}
+.qr button{flex:none;border:1px solid #d9cdb9;background:#fff;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:#21325a}
 .qr:empty{display:none}
-.bar{background:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;flex:none;border-top:1px solid #d9dde8}
-.bar .kb{font-size:20px;opacity:.6}
-.bar .fake{flex:1;background:#f0f2f6;border-radius:999px;padding:7px 12px;color:#9aa0b2;font-size:14px}
-.bar .tog{border:0;background:none;font-weight:700;font-size:13px;color:#21325a;white-space:nowrap}
-.menu{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;flex:none;padding-bottom:env(safe-area-inset-bottom,0px);border-top:1px solid #e1e4ec}
+.menu{background:#eceef1;flex:none;border-top:1px solid #ddd2c2}
 .menu[hidden]{display:none}
-.menu button{border:0;border-right:1px solid #e9ebf2;background:linear-gradient(#fff,#f6f7fb);padding:14px 4px 12px;display:grid;justify-items:center;gap:4px;font-weight:900;font-size:13.5px;color:var(--ink)}
-.menu button:last-child{border-right:0}
-.menu button i{font-style:normal;font-size:26px;line-height:1}
-.menu button.main{background:linear-gradient(#ffe68a,var(--yellow))}
+.rmtabs{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:6px 6px 0}
+.rmtabs button{border:0;font-weight:900;font-size:15px;letter-spacing:.06em;padding:9px 4px;color:#fff;background:#b9bcc4;border-radius:14px 14px 0 0}
+.rmtabs button[aria-selected="true"]{background:var(--teal)}
+.rmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 10px 12px;border-top:3px solid var(--teal)}
+.rmgrid button{border:0;background:#fff;border-radius:14px;padding:12px 4px 10px;display:grid;justify-items:center;gap:6px;font-weight:700;font-size:14.5px;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.rmgrid button svg{width:38px;height:38px;color:var(--teal)}
+.rmgrid button:active{background:#fff3e9}
+.bar{background:#e4ddd2;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));flex:none}
+.bar .kb{border:0;background:none;padding:0;width:32px;height:32px;color:var(--ink);flex:none}
+.bar .kb svg{width:30px;height:30px}
+.bar .tog{flex:1;border:0;background:none;font-weight:900;font-size:16px;color:var(--ink);white-space:nowrap}
+.bar .tog span{display:inline-block;font-size:11px;transition:transform .2s}
+.bar .tog.closed span{transform:rotate(180deg)}
+.typing{flex:1;display:flex;gap:6px}.typing[hidden]{display:none}
+.typing input{flex:1;min-width:0;border:0;border-radius:999px;padding:8px 13px;font-size:16px;background:#fff}
+.typing button{border:0;background:var(--teal);color:#fff;border-radius:999px;font-weight:900;padding:0 14px}
+.card .sname{font-size:19px;font-weight:900;line-height:1.3}
+.card .no.sm{font-size:30px}
+.card p.demo,.note.demo{font-size:11.5px;color:#7a5a00;background:#fff7d6;border-radius:8px;padding:4px 7px}
+.card .grid3{grid-template-columns:repeat(3,1fr);text-align:center;font-size:12.5px;font-weight:700}
+.card .grid3 span{display:grid;justify-items:center;gap:4px;background:#f3f4f6;border-radius:10px;padding:8px 2px}
+.card .grid3 svg{width:28px;height:28px;color:var(--teal)}
+.slist .w em{font-style:normal;font-size:15px;font-weight:900;color:var(--ink)}
+.yn.f3 button{font-size:13px;padding:7px 2px}
+.muted{color:var(--muted);font-size:12px}
+#liff .sh small a{color:#2a6fd6;font-weight:700}
 /* LIFF 取號畫面 */
 #liff{position:absolute;inset:0;z-index:20;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}
 #liff[hidden]{display:none}
 #liff .sheet{width:100%;height:92%;background:#fff;border-radius:16px 16px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:up .28s ease-out}
 @keyframes up{from{transform:translateY(100%)}}
+#liff .sheet.noanim{animation:none}
 #liff .sh{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #e6e8ef;flex:none}
 #liff .sh b{flex:1;font-size:16px}
 #liff .sh small{font-size:11px;color:var(--muted);display:block;font-weight:500}
 #liff .sh button{border:0;background:#f0f2f6;border-radius:50%;width:32px;height:32px;font-size:16px}
-#liff .sb{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:grid;gap:14px;align-content:start}
+#liff .sb{flex:1;grid-auto-rows:max-content;overflow-y:auto;overscroll-behavior:contain;padding:14px;display:grid;gap:14px;align-content:start}
 .lbl{font-weight:900;font-size:15px;display:flex;align-items:center;gap:8px}
 .lbl i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--yellow);display:grid;place-items:center;font-size:12px}
 .lbl em{font-style:normal;font-weight:500;font-size:12px;color:var(--muted)}
@@ -94,45 +114,103 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 .go{border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:900;font-size:18px;padding:14px;width:100%}
 .go:disabled{opacity:.45}
 .err{color:var(--red);font-size:13px;font-weight:700;min-height:1em}
+.cities{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.cities button{flex:none;border:1.5px solid #c9cedd;border-radius:999px;background:#fff;font-size:13px;font-weight:700;padding:3px 11px}
+.cities button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.search{width:100%;border:2px solid #d5d9e6;border-radius:12px;padding:8px 11px;font-size:16px}
+.slist{display:grid;gap:8px}
+.slist button{border:1.5px solid #d5d9e6;border-radius:12px;background:#fff;text-align:left;padding:9px 11px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center}
+.slist button[aria-pressed="true"]{border-color:var(--green);background:#e9f9ef}
+.slist b{font-size:15px}.slist small{grid-column:1;font-size:12px;color:var(--muted)}
+.slist .w{grid-row:1/3;grid-column:2;font-size:12px;font-weight:700;color:#21325a;text-align:right;white-space:nowrap}
+.slist .live{display:inline-block;font-size:10.5px;font-weight:900;color:#fff;background:var(--green);border-radius:999px;padding:0 6px;margin-left:4px;vertical-align:2px}
+.card .ft a{display:block;text-align:center;color:#2a6fd6;font-weight:700;font-size:14px;padding:10px;border-bottom:1px solid #e4e6ee;text-decoration:none}
+.card .ft a:last-child{border-bottom:0}
+.faces{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #e4e6ee}
+.faces button{border:0;border-right:1px solid #e4e6ee;background:none;font-size:13px;font-weight:700;padding:10px 4px;display:grid;justify-items:center;gap:2px;color:#21325a}
+.faces button:last-child{border-right:0}.faces button i{font-style:normal;font-size:26px}
+.faces button:disabled{opacity:.4}
+.rq{display:grid;gap:6px}
+.rq b{font-size:15px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.scale button{border:2px solid #d5d9e6;border-radius:10px;background:#fff;font-weight:900;font-size:18px;padding:6px 0}
+.scale button[aria-pressed="true"]{border-color:var(--green);background:var(--green);color:#fff}
+.scale-l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.yn{display:flex;gap:8px}.yn button{flex:1;border:2px solid #d5d9e6;border-radius:10px;background:#fff;font-weight:700;padding:7px}
+.yn button[aria-pressed="true"]{border-color:var(--orange);background:#fff1e6}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap"><div class="phone" id="phone">
-  <div class="top"><button class="back" aria-label="返回" id="backBtn">‹</button><div class="av" aria-hidden="true"></div>
-    <div class="nm"><b id="title">台灣大哥大・叫號說</b><small id="st"><i></i><span>官方帳號</span></small></div><span class="ic" aria-hidden="true">☰</span></div>
-  <div class="mock" id="mock">概念示意：在 LINE 官方帳號裡取號、收叫號通知</div>
+  <div class="top"><button class="back" aria-label="返回" id="backBtn">‹</button>
+    <div class="nm"><b><svg viewBox="0 0 20 20" aria-label="認證官方帳號"><path d="M10 1.5l7 2.6v5.2c0 4.3-3 7.6-7 9.2-4-1.6-7-4.9-7-9.2V4.1z" fill="#06b04f"/><path d="M6.4 10.2l2.5 2.4 4.8-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="title">台灣大哥大・叫號說</span></b><small id="st"><i></i><span>此官方帳號正在自動回覆訊息</span></small></div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21M11 7.5V11l2.4 1.6"/></svg>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+  <div class="mock" id="mock">概念示意：在 LINE 官方帳號裡選門市、取號、收叫號通知、填滿意度</div>
   <div class="chat" id="chat" aria-live="polite"></div>
   <div class="qr" id="qr"></div>
-  <div class="bar"><span class="kb" aria-hidden="true">⌨︎</span><span class="fake">輸入訊息</span><button class="tog" id="menuTog" aria-expanded="true">選單 ▾</button></div>
-  <div class="menu" id="menu">
-    <button class="main" data-menu="take"><i>🎫</i>線上取號</button>
-    <button data-menu="mine"><i>🔢</i>我的號碼</button>
-    <button data-menu="store"><i>🏪</i>門市現況</button>
-  </div>
+  <div class="menu" id="menu"><div class="rmtabs" id="rmTabs" role="tablist"></div><div class="rmgrid" id="rmGrid"></div></div>
+  <div class="bar"><button class="kb" id="kbBtn" aria-label="切換鍵盤輸入"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="7" width="26" height="19" rx="4"/><path d="M8 12h.01M12.5 12h.01M17 12h.01M21.5 12h.01M8 16.5h.01M12.5 16.5h.01M17 16.5h.01M21.5 16.5h.01M11 21h10" stroke-width="2.4"/></svg></button>
+    <button class="tog" id="menuTog" aria-expanded="true">服務專區 <span aria-hidden="true">▾</span></button>
+    <div class="typing" id="typing" hidden><input id="msg" placeholder="輸入訊息（例如：取號）" enterkeyhint="send"><button id="sendBtn">傳送</button></div></div>
   <div id="liff" hidden></div>
 </div></div>
 
 <script src="live.js"></script>
+<script src="stores.js"></script>
 <script>
 "use strict";
 (function(){try{const u=navigator.userAgent;if(/iPhone|iPod|iPad|Android|Mobile/i.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1))document.documentElement.classList.add("is-phone")}catch(e){}})();
-const $=s=>document.querySelector(s),Q=window.QTLive;
+const $=s=>document.querySelector(s),Q=window.QTLive,ST=window.QTStores||null;
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const CATS={"繳費/儲值":{t:4,docs:["門號或帳單"]},"續約/換約/新申辦":{t:18,docs:["身分證","第二證件（健保卡或駕照）"]},"異動/諮詢/維修":{t:10,docs:["身分證","要維修的手機（維修時）"]},"網路取貨/預約取件":{t:5,docs:["身分證","取貨簡訊或訂單編號"]}};
 const STARTERS=["合約快到期了","想問家庭方案","手機摔壞了","來取網路訂的手機","想把 SIM 卡轉 eSIM"];
 const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
+const OA="台灣大哥大・叫號說";
+
+/* ---------- 線條圖示（仿官方帳號圖文選單） ---------- */
+const IC={
+  take:'<rect x="5" y="9" width="30" height="22" rx="4"/><path d="M5 17a3 3 0 0 1 0 6M35 17a3 3 0 0 0 0 6"/><path d="M14 18h12M14 23h8"/>',
+  mine:'<rect x="6" y="8" width="28" height="22" rx="4"/><path d="M12 30v3h16v-3"/><text x="20" y="23" text-anchor="middle" font-size="9" font-weight="900" stroke-width=".6" fill="currentColor">123</text>',
+  store:'<path d="M20 34s-10-9.5-10-17a10 10 0 0 1 20 0c0 7.5-10 17-10 17z"/><circle cx="20" cy="17" r="3.6"/>',
+  now:'<circle cx="20" cy="20" r="13"/><path d="M20 12v8l6 4"/>',
+  rate:'<circle cx="20" cy="20" r="13"/><path d="M14.5 23.5c1.4 2 3.3 3 5.5 3s4.1-1 5.5-3"/><path d="M15 16.5h.01M25 16.5h.01" stroke-width="3.4"/>',
+  more:'<circle cx="20" cy="20" r="13"/><path d="M20 13v14M13 20h14"/>',
+  gift:'<rect x="7" y="16" width="26" height="17" rx="2"/><path d="M5 12h30v5H5zM20 12v21M20 12c-2-5-8-6-8-2s8 2 8 2zm0 0c2-5 8-6 8-2s-8 2-8 2z"/>',
+  phone:'<rect x="12" y="5" width="16" height="30" rx="3"/><path d="M18 30h4"/>',
+  family:'<circle cx="14" cy="14" r="4"/><circle cx="27" cy="15" r="3.4"/><path d="M6 32c0-5 4-8.5 8-8.5s8 3.5 8 8.5M22 32c.3-4 2.4-6.5 5-6.5s5 2.5 5 6.5"/>',
+  point:'<circle cx="20" cy="20" r="13"/><path d="M16.5 26V14h4.5a3.5 3.5 0 0 1 0 7h-4.5"/>',
+  five:'<path d="M8 16a17 17 0 0 1 24 0M12 21a11 11 0 0 1 16 0M16 26a5 5 0 0 1 8 0"/><circle cx="20" cy="30" r="1.6" fill="currentColor"/>',
+  cal:'<rect x="7" y="9" width="26" height="24" rx="3"/><path d="M7 16h26M14 6v6M26 6v6M13 22h4M22 22h4M13 27h4"/>'
+};
+const svg=k=>`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+const MENU={
+  svc:[["take","線上取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["more","更多服務"]],
+  promo:[["phone","新機預購"],["family","家庭方案"],["five","5G 吃到飽"],["point","會員點數"],["gift","續約好禮"],["cal","門市活動"]]
+};
+
+/* ---------- 門市清單（直接用叫號說 App 的門市資料） ---------- */
+const STORE_LIST=ST?Object.entries(ST.ALL_STORES).flatMap(([c,a])=>a.map(n=>({n,c,addr:ST.STORE_ADDR[n]||""}))):[{n:"台北文創門市",c:"台北市",addr:""}];
+const CITIES=ST?Object.keys(ST.ALL_STORES):["台北市"];
+const addrOf=n=>(ST&&ST.STORE_ADDR[n])||"";
+const mapUrl=n=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("台灣大哥大 "+n+" "+addrOf(n));
 
 /* ---------- 場次：有 QR Code 連結就是現場連線，沒有就是示範模式 ---------- */
 const sess=Q.parseLink();
 const DEMO=!sess;
 const ROOM=sess?sess.room:"demo";
 const KEY="qt-line-"+ROOM;
-let state={msgs:[],myId:null,notified:{},calledSig:null,doneShown:false};
+let state={msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null};
 try{const o=JSON.parse(ls.get(KEY)||"null");if(o&&Array.isArray(o.msgs))state=Object.assign(state,o)}catch(e){}
-const save=()=>ls.set(KEY,JSON.stringify({msgs:state.msgs.slice(-60),myId:state.myId,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown}));
-let V=Q.view(null),conn=null,storeName="台北文創門市",quick=[];
+const save=()=>ls.set(KEY,JSON.stringify({msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone}));
+if(state.myId&&!state.tkLive){state.myId=null;save()}          // 示範號碼不跨重新整理
+let VL=Q.view(null),VD=Q.view(null),conn=null,liveStore=DEMO?null:"台北文創門市",quick=[];
+const isLive=n=>!DEMO&&!!n&&n===liveStore;
+const myStore=()=>state.store||liveStore||"台北文創門市";
+const VT=()=>state.tkLive?VL:VD;                                   // 我那張號碼所在的佇列
+const VS=()=>isLive(myStore())?VL:VD;                              // 目前選的門市的佇列
 
 /* ---------- 聊天室 ---------- */
 function bot(html,opts){state.msgs.push({w:"bot",h:html,t:now(),k:opts&&opts.k});save();draw(true)}
@@ -140,59 +218,125 @@ function me(text){state.msgs.push({w:"me",h:esc(text),t:now()});save();draw(true
 function draw(scroll){
   const c=$("#chat");
   c.innerHTML=`<div class="day">今天</div>`+state.msgs.map(m=>m.w==="me"
-    ?`<div class="m me"><div class="col"><div class="b">${m.h}</div></div><span class="tm">${m.t}</span></div>`
-    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">台灣大哥大・叫號說</span>${m.h.startsWith("<div class=\"card")?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
+    ?`<div class="m me"><div class="col"><div class="b">${m.h}</div></div><span class="tm">已讀<br>${m.t}</span></div>`
+    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">${OA}</span>${m.h.startsWith("<div class=\"card")?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
   liveButtons();
   if(scroll)c.scrollTop=c.scrollHeight;
-  $("#qr").innerHTML=quick.map((q,i)=>`<button data-q="${i}">${esc(q[0])}</button>`).join("");
+  setQuick(quick);
 }
 function setQuick(list){quick=list||[];$("#qr").innerHTML=quick.map((q,i)=>`<button data-q="${i}">${esc(q[0])}</button>`).join("")}
+
+/* ---------- 圖文選單 ---------- */
+let tab="svc";
+function drawMenu(){
+  $("#rmTabs").innerHTML=[["promo","精 選 活 動"],["svc","服 務 專 區"]].map(([k,l])=>`<button data-tab="${k}" aria-selected="${tab===k}" role="tab">${l}</button>`).join("");
+  $("#rmGrid").innerHTML=MENU[tab].map(([k,l])=>`<button data-menu="${tab==="svc"?k:"promo:"+l}">${svg(k)}<span>${l}</span></button>`).join("");
+  $("#menuTog").innerHTML=(tab==="svc"?"服務專區":"精選活動")+" <span aria-hidden=\"true\">▾</span>";
+}
+function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
+$("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};
+$("#kbBtn").onclick=()=>{const t=$("#typing");const on=t.hidden;t.hidden=!on;$("#menuTog").hidden=on;showMenu(!on);if(on)$("#msg").focus()};
+$("#sendBtn").onclick=sendTyped;
+$("#msg").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendTyped()}});
+function sendTyped(){const v=$("#msg").value.trim();if(!v)return;$("#msg").value="";
+  const k=/取號|抽號|排隊/.test(v)?"take":/號碼|進度|輪到/.test(v)?"mine":/門市|分店|地址|哪裡/.test(v)?"store":/滿意|評分|問卷/.test(v)?"rate":null;
+  if(k){menu(k,v);return}
+  me(v);bot("我是自動回覆小幫手 🤖\n可以打「取號」、「我的號碼」、「選門市」或「滿意度」，或直接點下方的選單。");}
+
 document.addEventListener("click",e=>{
   const q=e.target.closest("[data-q]");if(q){const it=quick[+q.dataset.q];setQuick([]);if(it){me(it[0]);it[1]()}return}
+  const tb=e.target.closest("[data-tab]");if(tb){tab=tb.dataset.tab;drawMenu();return}
   const m=e.target.closest("[data-menu]");if(m){menu(m.dataset.menu);return}
-  const b=e.target.closest("[data-card]");if(b&&!b.disabled){const a=b.dataset.card;if(a==="hold")doHold();if(a==="mine")menu("mine");if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}return}
+  const f=e.target.closest("[data-face]");if(f&&!f.disabled){openSurvey(f.dataset.face,f.dataset.tid);return}
+  const b=e.target.closest("[data-card]");if(b&&!b.disabled){const a=b.dataset.card;
+    if(a==="hold")doHold();if(a==="mine")menu("mine");if(a==="take")menu("take");if(a==="stores")menu("store");
+    if(a==="survey")openSurvey(null,b.dataset.tid);
+    if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}return}
 });
-$("#menuTog").onclick=()=>{const m=$("#menu");m.hidden=!m.hidden;$("#menuTog").textContent=m.hidden?"選單 ▴":"選單 ▾";$("#menuTog").setAttribute("aria-expanded",String(!m.hidden))};
 $("#backBtn").onclick=()=>{if(!$("#liff").hidden)closeLiff()};
 
 /* ---------- 我的號碼狀態 ---------- */
-function mine(){return state.myId?V.all.find(t=>t.id===state.myId)||null:null}
-function waitOf(t){const i=V.waiting.findIndex(x=>x.id===t.id),a=i<0?[]:V.waiting.slice(0,i);return {ahead:a.length,mins:Math.max(1,Math.round(a.reduce((s,x)=>s+(CATS[x.cat]?CATS[x.cat].t:10),0)/3+2))}}
+function mine(){return state.myId?VT().all.find(t=>t.id===state.myId)||null:null}
+const active=t=>t&&(t.st==="w"||t.st==="c");
+function waitOf(t,v){v=v||VT();const i=v.waiting.findIndex(x=>x.id===t.id),a=i<0?[]:v.waiting.slice(0,i);return {ahead:a.length,mins:Math.max(1,Math.round(a.reduce((s,x)=>s+(CATS[x.cat]?CATS[x.cat].t:10),0)/3+2))}}
+function qMins(v){return Math.max(2,Math.round(v.waiting.reduce((s,x)=>s+(CATS[x.cat]?CATS[x.cat].t:10),0)/3+2))}
+function storeMins(n){if(isLive(n))return qMins(VL);return ST?Math.max(2,ST.storeWait(n)):8}
+const demoTag=n=>isLive(n)||DEMO?"":`<p class="demo">示意：這間門市還沒接上叫號系統，用模擬的隊伍展示流程。</p>`;
 function ticketCard(t,title){const w=waitOf(t),docs=(CATS[t.cat]||CATS["異動/諮詢/維修"]).docs;
-  return `<div class="card"><div class="hd">${title||"取號成功"}・${esc(storeName)}</div><div class="bd"><div class="no">${t.no}</div><p>${esc(t.cat)}</p>
+  return `<div class="card"><div class="hd">${title||"取號成功"}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><p>${esc(t.cat)}</p>
     <div class="row2"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div>
-    <p>📋 請先準備：${docs.map(esc).join("、")}</p><p style="font-size:12px;color:#6b7086">輪到你時，會在這裡傳訊息通知你。不用一直盯著。</p></div>
+    <p>📋 請先準備：${docs.map(esc).join("、")}</p><p style="font-size:12px;color:#6b7086">輪到你時，會在這裡傳訊息通知你。不用一直盯著。</p>${state.tkLive||DEMO?"":demoTag(state.tkStore)}</div>
     <div class="ft"><button data-card="mine">查看最新進度</button><button data-card="hold" data-hold="${t.id}">我需要晚一點（往後延 2 組）</button></div></div>`}
-function liveButtons(){const t=mine();document.querySelectorAll("[data-hold]").forEach(b=>{b.disabled=!t||t.held||!(t.st==="w"||t.st==="c")||b.dataset.hold!==state.myId;if(t&&t.held&&b.dataset.hold===state.myId)b.textContent="已延後過（只能用一次）"})}
-function menu(k){
-  if(k==="take"){me("線上取號");const t=mine();if(t&&(t.st==="w"||t.st==="c")){bot(`你已經有號碼 ${t.no} 囉！辦完這次才能再取號。`);return}openLiff();return}
-  if(k==="mine"){me("我的號碼");const t=mine();
-    if(!t||!(t.st==="w"||t.st==="c")){bot("你目前沒有號碼。點下方「線上取號」，先說說你要辦什麼，櫃台會先幫你準備。");return}
+function liveButtons(){const t=mine();document.querySelectorAll("[data-hold]").forEach(b=>{b.disabled=!t||t.held||!active(t)||b.dataset.hold!==state.myId;if(t&&t.held&&b.dataset.hold===state.myId)b.textContent="已延後過（只能用一次）"});
+  document.querySelectorAll("[data-face],[data-card=survey]").forEach(b=>{if(state.rated[b.dataset.tid])b.disabled=true})}
+function storeCard(n,title){const live=isLive(n),v=live?VL:null;
+  return `<div class="card"><div class="hd">${title||"🏪 已選擇門市"}</div><div class="bd"><div class="sname">${esc(n)}${live?'<span class="live">現場連線</span>':""}</div>
+    <p>📍 ${esc(addrOf(n)||"（地址請洽門市）")}</p>
+    <div class="row2"><div>現在等候<b>${live?v.waiting.length+" 組":"約 "+Math.max(1,Math.round(storeMins(n)/4))+" 組"}</b></div><div>預估等候<b>${storeMins(n)} 分</b></div></div>
+    ${demoTag(n)}</div>
+    <div class="ft"><button data-card="take">在這間線上取號</button><a href="${mapUrl(n)}" target="_blank" rel="noopener">Google 地圖導航</a><button data-card="stores">換一間門市</button></div></div>`}
+function menu(k,said){
+  if(k.startsWith("promo:")){me(k.slice(6));bot(`📣 ${esc(k.slice(6))}\n（概念示意：這裡會放官方帳號的行銷活動連結）\n\n要到門市辦理的話，點「服務專區 › 線上取號」先排隊，不用在現場抽號碼牌。`);return}
+  if(k==="take"){me(said||"線上取號");const t=mine();if(active(t)){bot(`你已經有號碼 ${t.no}（${esc(state.tkStore)}）囉！辦完這次才能再取號。`);return}
+    if(!state.store&&!liveStore){bot(`請先選一間要去的門市 👇`);openStores();return}
+    openLiff();return}
+  if(k==="mine"){me(said||"我的號碼");const t=mine();
+    if(!active(t)){bot("你目前沒有號碼。點下方「線上取號」，先說說你要辦什麼，櫃台會先幫你準備。");return}
     if(t.st==="c"){bot(calledCard(t,"輪到你了"));return}
     bot(ticketCard(t,"目前進度"));return}
-  if(k==="store"){me("門市現況");const d=[1,2,3].map(n=>V.desks[n]?`${n} 號櫃台：${V.desks[n].no}`:`${n} 號櫃台：—`).join("\n");
-    bot(`🏪 ${esc(storeName)}\n現在等候：${V.waiting.length} 組\n${d}\n\n點「線上取號」就能排隊，不用在現場抽號碼牌。`)}
+  if(k==="store"){me(said||"選擇門市");if(active(mine())){bot(`你正在 ${esc(state.tkStore)} 排隊（${mine().no}）。\n辦完或過號之後才能換門市喔。`);return}openStores();return}
+  if(k==="now"){me("門市現況");const n=myStore();
+    if(isLive(n)){const d=[1,2,3].map(i=>VL.desks[i]?`${i} 號櫃台：${VL.desks[i].no}`:`${i} 號櫃台：—`).join("\n");bot(`🏪 ${esc(n)}（現場連線）\n現在等候：${VL.waiting.length} 組，約 ${qMins(VL)} 分\n${d}`)}
+    else bot(storeCard(n,"🏪 門市現況"));return}
+  if(k==="rate"){me("滿意度調查");const id=state.lastDone;if(id&&!state.rated[id]){openSurvey(null,id);return}
+    bot(id?"這次的服務你已經評過分了，謝謝你 🙏":"辦完業務之後，這裡會請你幫櫃台的服務打個分數。");return}
+  if(k==="more"){me("更多服務");bot(`<div class="card"><div class="hd">更多服務</div><div class="bd grid3">${[["mine","帳單查詢"],["point","會員點數"],["phone","維修進度"]].map(([i,l])=>`<span>${svg(i)}${l}</span>`).join("")}</div><div class="ft"><button data-card="take">要到門市辦？先線上取號</button></div></div>`);return}
 }
-function calledCard(t,title){return `<div class="card or"><div class="hd">🔔 ${title}・${esc(storeName)}</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${t.desk||1} 號櫃台</div><p>櫃台已經看過你寫的需求，正在等你。</p></div><div class="ft"><button data-card="here">我到了</button><button data-card="hold" data-hold="${t.id}">我還要 5 分鐘（往後延 2 組）</button></div></div>`}
+function calledCard(t,title){return `<div class="card or"><div class="hd">🔔 ${title}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${t.desk||1} 號櫃台</div><p>櫃台已經看過你寫的需求，正在等你。</p></div><div class="ft"><button data-card="here">我到了</button><button data-card="hold" data-hold="${t.id}">我還要 5 分鐘（往後延 2 組）</button></div></div>`}
 
-/* ---------- LIFF 取號畫面 ---------- */
+/* ---------- LIFF：選擇門市 ---------- */
+let city=null;
+function openStores(){
+  const cur=myStore();city=city||(ST&&ST.cityOf(cur))||"台北市";
+  const L=$("#liff");L.hidden=false;
+  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="選擇門市"><div class="sh"><div style="flex:1"><b>選擇門市</b><small>共 ${STORE_LIST.length} 間・等候時間跟叫號說 App 同步</small></div><button id="lx" aria-label="關閉">✕</button></div>
+    <div class="sb">
+      <input class="search" id="sq" type="search" placeholder="搜尋門市或地址，例如：西門町" autocomplete="off">
+      <div class="cities" id="cities">${CITIES.map(c=>`<button data-city="${esc(c)}" aria-pressed="${c===city}">${esc(c)}</button>`).join("")}</div>
+      <div class="slist" id="slist"></div>
+    </div></div>`;
+  $("#lx").onclick=closeLiff;
+  const list=()=>{const q=$("#sq").value.trim();
+    let a=q?STORE_LIST.filter(s=>(s.n+s.addr+s.c).includes(q)):STORE_LIST.filter(s=>s.c===city);
+    a=a.slice().sort((x,y)=>(isLive(y.n)-isLive(x.n))||(storeMins(x.n)-storeMins(y.n))).slice(0,40);
+    $("#slist").innerHTML=a.length?a.map(s=>`<button data-store="${esc(s.n)}" aria-pressed="${s.n===cur}"><b>${esc(s.n)}${isLive(s.n)?'<span class="live">現場連線</span>':""}</b><small>${esc(s.addr||s.c)}</small><span class="w">現在約<br><em>${storeMins(s.n)} 分</em></span></button>`).join(""):`<p class="muted">找不到符合的門市</p>`;
+    L.querySelectorAll("[data-store]").forEach(b=>b.onclick=()=>pickStore(b.dataset.store))};
+  $("#sq").oninput=list;
+  L.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;$("#sq").value="";L.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",x===b));list()});
+  const sel=L.querySelector("[data-city][aria-pressed=true]");if(sel)sel.scrollIntoView({inline:"center",block:"nearest"});
+  list();
+}
+function pickStore(n){closeLiff();state.store=n;save();me(`選擇門市：${n}`);bot(storeCard(n))}
+
+/* ---------- LIFF：取號 ---------- */
 let F={cat:null,text:"",p:false};
 function openLiff(){
-  F={cat:null,text:"",p:false};
+  F={cat:null,text:"",p:false};const n=myStore(),v=VS();
   const L=$("#liff");L.hidden=false;
-  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="線上取號"><div class="sh"><div style="flex:1"><b>叫號說・線上取號</b><small>${esc(storeName)}・由台灣大哥大官方帳號開啟</small></div><button id="lx" aria-label="關閉">✕</button></div>
+  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="線上取號"><div class="sh"><div style="flex:1"><b>叫號說・線上取號</b><small>${esc(n)}・<a href="#" id="chg">換門市</a></small></div><button id="lx" aria-label="關閉">✕</button></div>
     <div class="sb">
       <div class="lbl"><i>1</i>你要辦什麼？</div>
-      <div class="cats">${Object.keys(CATS).map(c=>`<button data-c="${c}" aria-pressed="false">${c}<small>約 ${catWait(c)} 分</small></button>`).join("")}</div>
+      <div class="cats">${Object.keys(CATS).map(c=>`<button data-c="${c}" aria-pressed="false">${c}<small>約 ${catWait(c,n,v)} 分</small></button>`).join("")}</div>
       <div class="lbl"><i>2</i>用一句話告訴櫃台 <em>選填，50 字內</em></div>
       <div class="chips">${STARTERS.map(s=>`<button data-st="${esc(s)}">＋ ${esc(s)}</button>`).join("")}</div>
       <textarea id="say" maxlength="50" placeholder="例如：合約下個月到期，想看家庭方案"></textarea><div class="cnt" id="cnt">0 / 50</div>
       <label class="chk"><input type="checkbox" id="prio"><span>優先取號<small>長輩（65 歲以上）、孕婦、行動不便者可選</small></span></label>
       <div class="note">📩 不用填手機號碼。輪到你時，官方帳號會直接傳訊息叫你。<br>🔒 你寫的話會先加密，只有櫃台看得到，辦完就刪除。</div>
+      ${isLive(n)||DEMO?"":`<div class="note demo">示意：${esc(n)} 還沒接上叫號系統，這次取號會用模擬的隊伍。</div>`}
       <div class="err" id="err"></div>
       <button class="go" id="go" disabled>取號</button>
     </div></div>`;
-  $("#lx").onclick=closeLiff;
+  $("#lx").onclick=closeLiff;$("#chg").onclick=e=>{e.preventDefault();openStores()};
   L.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{F.cat=b.dataset.c;L.querySelectorAll("[data-c]").forEach(x=>x.setAttribute("aria-pressed",x===b));$("#go").disabled=false});
   L.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{const t=$("#say");t.value=(t.value?t.value+"，":"")+b.dataset.st;t.value=t.value.slice(0,50);t.dispatchEvent(new Event("input"))});
   $("#say").oninput=e=>{F.text=e.target.value;$("#cnt").textContent=F.text.length+" / 50";
@@ -201,7 +345,44 @@ function openLiff(){
   $("#go").onclick=take;
 }
 function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
-function catWait(c){const base=V.waiting.reduce((s,x)=>s+(CATS[x.cat]?CATS[x.cat].t:10),0)/3+2;return Math.max(2,Math.round(base))}
+function catWait(c,n,v){return isLive(n)?qMins(v):storeMins(n)}
+
+/* ---------- LIFF：服務滿意度調查（跟叫號說 App 同一份題目，結果寫回門市） ---------- */
+const QS=[["s","櫃台人員的服務"],["w","等候時間"],["r","問題處理的結果"]];
+const FACE={good:"😀 解決了",mid:"😐 普通",bad:"😞 沒解決"};
+let R={};
+function openSurvey(face,tid){
+  tid=tid||state.lastDone;if(!tid||state.rated[tid])return;
+  R={f:face||null,s:0,w:0,r:0,c:null,tid};
+  const L=$("#liff");L.hidden=false;
+  let first=true;
+  const draw2=()=>{const sc=L.querySelector(".sb"),top=sc?sc.scrollTop:0,low=QS.some(([k])=>R[k]&&R[k]<=2),ok=R.f&&QS.every(([k])=>R[k])&&(!low||R.c!==null);
+    L.innerHTML=`<div class="sheet${first?"":" noanim"}" role="dialog" aria-modal="true" aria-label="服務滿意度調查"><div class="sh"><div style="flex:1"><b>服務滿意度調查</b><small>${esc(state.tkStore||myStore())}・約 10 秒</small></div><button id="lx" aria-label="關閉">✕</button></div>
+      <div class="sb">
+        <div class="rq"><b>今天的問題解決了嗎？</b><div class="yn f3">${Object.entries(FACE).map(([k,l])=>`<button data-rf="${k}" aria-pressed="${R.f===k}">${l}</button>`).join("")}</div></div>
+        ${QS.map(([k,l])=>`<div class="rq"><b>${l}</b><div class="scale">${[1,2,3,4,5].map(n=>`<button data-rk="${k}" data-rv="${n}" aria-pressed="${R[k]===n}" aria-label="${l} ${n} 分">${n}</button>`).join("")}</div><div class="scale-l"><span>很不滿意</span><span>非常滿意</span></div></div>`).join("")}
+        ${low?`<div class="rq"><b>需要門市主管聯絡你嗎？</b><div class="yn"><button data-rc="1" aria-pressed="${R.c===true}">好，請聯絡我</button><button data-rc="0" aria-pressed="${R.c===false}">不用了</button></div><small class="muted">會透過這個官方帳號傳訊息給你，不需要留電話。</small></div>`:""}
+        <div class="note">📊 你的評分會直接送到門市櫃台的後台，跟叫號說 App 的評分放在一起看。不會記錄你的姓名或電話。</div>
+        <div class="err" id="err"></div>
+        <button class="go" id="rgo" ${ok?"":"disabled"}>送出評分</button>
+      </div></div>`;
+    $("#lx").onclick=closeLiff;
+    L.querySelectorAll("[data-rf]").forEach(b=>b.onclick=()=>{R.f=b.dataset.rf;draw2()});
+    L.querySelectorAll("[data-rk]").forEach(b=>b.onclick=()=>{R[b.dataset.rk]=+b.dataset.rv;if(!QS.some(([k])=>R[k]&&R[k]<=2))R.c=null;draw2()});
+    L.querySelectorAll("[data-rc]").forEach(b=>b.onclick=()=>{R.c=b.dataset.rc==="1";draw2()});
+    $("#rgo").onclick=sendSurvey;first=false;L.querySelector(".sb").scrollTop=top};
+  draw2();
+}
+async function sendSurvey(){const g=$("#rgo");g.disabled=true;g.textContent="送出中…";
+  const rate={f:R.f,s:R.s,w:R.w,r:R.r,c:R.c===true,src:"line",t:DEMO||!state.tkLive?Date.now():Q.TS};
+  try{if(state.tkLive&&conn)await conn.patch("/tickets/"+R.tid,{rate});else if(VD.all.some(t=>t.id===R.tid)&&demo.tickets[R.tid])demo.tickets[R.tid].rate=rate;
+    state.rated[R.tid]=1;save();closeLiff();
+    me(`${FACE[R.f]}｜服務 ${R.s}・等候 ${R.w}・處理結果 ${R.r}`);
+    bot(rate.c?"謝謝你的回饋 🙇\n很抱歉這次沒讓你滿意，門市主管會在 3 天內透過這個官方帳號跟你聯絡。":R.f==="good"?"謝謝你的評分 🙏\n很高興幫上忙，下次需要也可以直接在這裡線上取號！":"謝謝你的評分 🙏\n我們會把你的意見交給門市，持續改進。")}
+  catch(e){$("#err").textContent="網路不太穩，評分沒有送出，請再按一次。";g.disabled=false;g.textContent="送出評分"}}
+function doneCard(t){return `<div class="card gr"><div class="hd">✅ 已辦理完成・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no sm">${t.no}</div><p>謝謝光臨！今天的問題解決了嗎？點表情告訴我們，接著 3 題快速評分。</p></div>
+  <div class="faces">${Object.entries(FACE).map(([k,l])=>`<button data-face="${k}" data-tid="${t.id}"><i>${l.split(" ")[0]}</i>${l.split(" ")[1]}</button>`).join("")}</div>
+  <div class="ft"><button data-card="survey" data-tid="${t.id}">填寫服務滿意度調查</button></div></div>`}
 
 /* ---------- 聲音：取號那一下先把聲音打開，叫號時才能自動出聲 ---------- */
 let actx=null;const clipIdx={},clipBuf={};
@@ -223,56 +404,57 @@ function announce(no,desk){chime();try{navigator.vibrate&&navigator.vibrate([250
 /* ---------- 取號、延後 ---------- */
 async function take(){
   const go=$("#go");go.disabled=true;go.textContent="取號中…";prime();
-  const text=F.text.trim().slice(0,50);
+  const text=F.text.trim().slice(0,50),n=myStore(),live=isLive(n);
   try{
-    if(DEMO){demoTake(text);}
+    state.tkStore=n;state.tkLive=live;state.notified={};state.calledSig=null;state.doneShown=false;
+    if(!live){demoTake(text,n);}
     else{
       const t={cat:F.cat,st:"w",t:Q.TS,lang:"zh",src:"line"};if(F.p)t.p=true;
-      if(text){const pub=V.meta&&V.meta.pub;let sealed=null;try{sealed=await Q.crypto.seal(pub,text)}catch(e){}if(sealed)t.say=sealed}
-      const id=await conn.post("/tickets",t);state.myId=id;state.notified={};state.calledSig=null;state.doneShown=false;save();
-      V=Q.view(conn.data);
+      if(text){const pub=VL.meta&&VL.meta.pub;let sealed=null;try{sealed=await Q.crypto.seal(pub,text)}catch(e){}if(sealed)t.say=sealed}
+      const id=await conn.post("/tickets",t);state.myId=id;save();
+      VL=Q.view(conn.data);
     }
     closeLiff();if(text)me(`我要辦：${F.cat}\n「${text}」`);else me(`我要辦：${F.cat}`);
     const t=mine();if(t)bot(ticketCard(t));
   }catch(e){$("#err").textContent=e&&(e.status===401||e.status===403)?"門市的叫號系統拒絕了這次取號，請洽現場人員。":"網路不太穩，請再按一次「取號」。";go.disabled=false;go.textContent="取號"}
 }
 async function doHold(){const t=mine();if(!t||t.held)return;me("我需要晚一點");
-  if(t.st==="w"){const i=V.waiting.findIndex(x=>x.id===t.id);if(i>=V.waiting.length-1){bot("你後面目前沒有其他人，不用延後喔！輪到你時會在這裡通知你 🙂");return}}
-  try{if(DEMO)demoHold();else await conn.patch("/tickets/"+t.id,Q.holdPatch(V,t.id,2));
+  if(t.st==="w"){const v=VT(),i=v.waiting.findIndex(x=>x.id===t.id);if(i>=v.waiting.length-1){bot("你後面目前沒有其他人，不用延後喔！輪到你時會在這裡通知你 🙂");return}}
+  try{if(!state.tkLive)demoHold();else await conn.patch("/tickets/"+t.id,Q.holdPatch(VL,t.id,2));
     state.calledSig=null;state.notified={};save();bot("沒問題，已幫你往後延 2 組 👍\n快輪到你時會再通知你。（延後只能用一次）")}
   catch(e){bot("網路不太穩，沒有延後成功，請再按一次。")}}
 
 /* ---------- 狀態變化 → 官方帳號主動傳訊息 ---------- */
 function onData(){
-  if(V.meta&&V.meta.store)storeName=V.meta.store;
   const t=mine();
   if(state.myId&&!t){if(!state.notified.gone){state.notified.gone=1;bot("門市的叫號已重新開始，之前的號碼失效了。需要的話請重新取號。");state.myId=null;save()}}
   else if(t){
     if(t.st==="w"){const w=waitOf(t);if(w.ahead<=2&&!state.notified.near){state.notified.near=1;save();bot(`⏰ 快輪到你了！\n${t.no} 前面剩 ${w.ahead} 組，約 ${w.mins} 分鐘。\n請回到櫃台附近，先把證件準備好。`);try{navigator.vibrate&&navigator.vibrate([150,80,150])}catch(e){}}}
     if(t.st==="c"){const sig=t.id+":"+(t.ct||0)+":"+(t.rc||0);if(sig!==state.calledSig){const re=!!state.calledSig&&state.calledSig.split(":")[0]===t.id;state.calledSig=sig;save();bot(calledCard(t,re?"再次提醒":"輪到你了"));announce(t.no,t.desk||1)}}
-    if(t.st==="d"&&!state.doneShown){state.doneShown=true;save();bot(`✅ ${t.no} 已辦理完成，謝謝光臨！\n今天的問題解決了嗎？點下面的表情告訴我們。`);
-      setQuick([["😀 解決了",()=>bot("太好了！謝謝你的回饋 🙏")],["😐 普通",()=>bot("謝謝回饋，我們會持續改進。")],["😞 沒解決",()=>bot("很抱歉讓你不滿意 🙇 門市主管會在 3 天內透過官方帳號聯絡你。")]])}
+    if(t.st==="d"&&!state.doneShown){state.doneShown=true;state.lastDone=t.id;save();bot(doneCard(t))}
     if(t.st==="s"&&!state.notified.skip){state.notified.skip=1;save();bot(`😢 ${t.no} 已過號。櫃台叫號時沒有等到你。\n可以重新取號，或直接洽櫃台人員。`)}
   }
   liveButtons();
 }
 
-/* ---------- 示範模式（沒有連線時，用來展示流程） ---------- */
+/* ---------- 模擬隊伍（示範模式，或選了還沒接系統的門市） ---------- */
 let demo={tickets:{},seq:0,timer:null};
-function demoView(){V=Q.view({meta:{store:"台北文創門市"},tickets:demo.tickets});onData()}
-function demoSeed(){const base=Date.now()-600000;[["續約/換約/新申辦"],["繳費/儲值"],["異動/諮詢/維修"]].forEach((c,i)=>demo.tickets["-d"+(++demo.seq+100)]={cat:c[0],st:i===0?"c":"w",desk:1,ct:base+i,t:base+i*1000})}
-function demoTake(text){const id="-d"+(++demo.seq+100);demo.tickets[id]={cat:F.cat,st:"w",t:Date.now(),src:"line",p:F.p||undefined};state.myId=id;state.notified={};state.calledSig=null;state.doneShown=false;save();V=Q.view({meta:{store:"台北文創門市"},tickets:demo.tickets});demoRun()}
-function demoHold(){const p=Q.holdPatch(V,state.myId,2);Object.assign(demo.tickets[state.myId],p);if(demo.tickets[state.myId].desk===null)delete demo.tickets[state.myId].desk;demoView()}
+function demoView(){VD=Q.view({meta:{store:state.tkStore||myStore()},tickets:demo.tickets});onData()}
+function demoSeed(n){demo.tickets={};clearInterval(demo.timer);const k=Math.min(6,Math.max(2,Math.round(storeMins(n)/5))),base=Date.now()-600000,cs=Object.keys(CATS);
+  for(let i=0;i<k;i++)demo.tickets["-d"+(++demo.seq+100)]={cat:cs[(i*3+1)%4],st:i===0?"c":"w",desk:1,ct:base+i,t:base+i*1000};VD=Q.view({tickets:demo.tickets})}
+function demoTake(text,n){demoSeed(n);const id="-d"+(++demo.seq+100);demo.tickets[id]={cat:F.cat,st:"w",t:Date.now(),src:"line",p:F.p||undefined};state.myId=id;save();VD=Q.view({meta:{store:n},tickets:demo.tickets});demoRun()}
+function demoHold(){const p=Q.holdPatch(VD,state.myId,2);Object.assign(demo.tickets[state.myId],p);if(demo.tickets[state.myId].desk===null)delete demo.tickets[state.myId].desk;demoView()}
 function demoRun(){clearInterval(demo.timer);demo.timer=setInterval(()=>{   // 每 6 秒櫃台叫下一位
   const cur=Object.entries(demo.tickets).find(([,t])=>t.st==="c");if(cur){cur[1].st="d"}
   const v=Q.view({tickets:demo.tickets}),nx=v.waiting[0];if(nx){demo.tickets[nx.id].st="c";demo.tickets[nx.id].desk=1+(demo.seq%3);demo.tickets[nx.id].ct=Date.now()}
-  demoView();const m=demo.tickets[state.myId];if(!m||m.st==="d"||!nx)clearInterval(demo.timer)},6000)}
+  demoView();const m=demo.tickets[state.myId];if(!m||m.st==="d"||!nx)clearInterval(demo.timer)},window.QT_DEMO_MS||6000)}
 
 /* ---------- 啟動 ---------- */
-function setStatus(s){const el=$("#st");el.className=s==="live"?"ok":s==="connecting"||s==="reconnecting"?"":"bad";el.lastElementChild.textContent=s==="live"?"官方帳號・已連上門市":(Q.STATUS_ZH[s]||s)}
-if(!state.msgs.length){bot(`歡迎加入台灣大哥大官方帳號 👋\n現在可以直接在這裡線上取號：點下方「線上取號」，先用一句話說說你要辦什麼，櫃台會先幫你準備好。\n輪到你時，我們會在這裡傳訊息叫你。`)}
-if(DEMO){$("#mock").textContent="概念示意・示範模式（沒有連線，櫃台每 6 秒自動叫下一位）";$("#st").lastElementChild.textContent="官方帳號";demoSeed();demoView()}
-else{conn=Q.connect(sess.host,sess.room,room=>{V=Q.view(room);onData();draw(false)},setStatus)}
+function setStatus(s){const el=$("#st");el.className=s==="live"?"ok":s==="connecting"||s==="reconnecting"?"":"bad";el.lastElementChild.textContent=s==="live"?`已連上 ${liveStore}・自動回覆訊息中`:(Q.STATUS_ZH[s]||s)}
+drawMenu();
+if(!state.msgs.length){bot(`歡迎加入台灣大哥大官方帳號 👋\n現在可以直接在這裡線上取號：\n① 點下方「選擇門市」挑一間門市\n② 點「線上取號」，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
+if(DEMO){$("#mock").textContent="概念示意・示範模式（沒有連線，櫃台每 6 秒自動叫下一位）"}
+else{conn=Q.connect(sess.host,sess.room,room=>{VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
 draw(true);
 </script>
 <script id="qt-lock">

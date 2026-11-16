@@ -1325,7 +1325,10 @@ function bindMine(){
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{U.done=b.dataset.f;fullRender()});
   document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{U.rating[b.dataset.r]=+b.dataset.v;fullRender()});
   document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{U.contact=b.dataset.c==="1";fullRender()});
-  const sr=$("#sendRate");if(sr)sr.onclick=()=>{U.done="sent";fullRender()};
+  const sr=$("#sendRate");if(sr)sr.onclick=()=>{
+    if(LIVE.on&&LIVE.conn&&S.me&&S.me.id){const r=U.rating;   // 現場模式：滿意度寫回門市，櫃台即時看得到
+      LIVE.conn.patch("/tickets/"+S.me.id,{rate:{f:U.done,s:r.service||0,w:r.wait||0,r:r.solved||0,c:U.contact===true,src:"app",t:window.QTLive.TS}}).catch(()=>toast("info","評分沒有送出","網路不太穩，請稍後再試。",4200))}
+    U.done="sent";fullRender()};
   const n=$("#newTicket");if(n)n.onclick=()=>{if(LIVE.on)liveForget();S.me=null;U.done=null;U.picked=null;go("queue")};
   if(meState()==="done"&&!U.done)setTimeout(()=>tip("done"),500);
   bindClassroom();bindVideos();
