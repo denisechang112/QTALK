@@ -87,6 +87,8 @@
   /* st：w 等候、c 已叫號、d 完成、s 過號、x 取消 */
   function view(room) {
     var all = order(room && room.tickets), waiting = all.filter(function (t) { return t.st === "w"; });
+    var key = function (t) { return typeof t.sk === "number" ? t.sk : (typeof t.t === "number" ? t.t : 0); };   // sk：顧客按「晚一點」後的新位置
+    waiting.sort(function (x, y) { return key(x) - key(y) || (x.id < y.id ? -1 : 1); });
     waiting = waiting.filter(function (t) { return t.p; }).concat(waiting.filter(function (t) { return !t.p; }));   // 優先號排前面
     var called = all.filter(function (t) { return t.st === "c"; }).sort(function (a, b) { return (a.ct || 0) - (b.ct || 0); });
     var desks = {}; called.forEach(function (t) { desks[t.desk || 1] = t; });   // 每個櫃台只留最新叫的那一位
@@ -178,7 +180,21 @@
     for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) d += "M" + c + "," + r + "h1v1h-1z";
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 ' + (n + 6) + " " + (n + 6) + '" shape-rendering="crispEdges" role="img" aria-label="QR Code"><rect x="-3" y="-3" width="' + (n + 6) + '" height="' + (n + 6) + '" fill="#fff"/><path d="' + d + '" fill="#15142a"/></svg>';
   }
+  /* 「我需要晚一點」：把自己排到目前位置後面 n 位（只能用一次）。回傳要寫回資料庫的欄位 */
+  function holdPatch(v, id, n) {
+    var w = v.waiting.filter(function (t) { return t.id !== id; });
+    var me = v.all.filter(function (t) { return t.id === id; })[0]; if (!me) return null;
+    var idx = v.waiting.map(function (t) { return t.id; }).indexOf(id); if (idx < 0) idx = 0;   // 已被叫號的，從最前面往後算
+    var key = function (t) { return typeof t.sk === "number" ? t.sk : (typeof t.t === "number" ? t.t : 0); };
+    var pool = w.filter(function (t) { return !!t.p === !!me.p; });
+    var pos = Math.min(pool.length, idx + n), prev = pool[pos - 1], next = pool[pos];
+    var sk = prev ? (next ? (key(prev) + key(next)) / 2 : key(prev) + 1000) : (next ? key(next) - 1000 : Date.now());
+    return { st: "w", sk: sk, held: true, desk: null, ct: null };
+  }
+  /* 留言用的簡單規則判斷（沒有 AI 時使用） */
+  var RULES = [["繳費/儲值", /繳費|儲值|繳帳單|帳單|欠費|帳款/], ["網路取貨/預約取件", /取貨|取件|網路訂|訂單|預購|預約取/], ["異動/諮詢/維修", /壞|破|維修|故障|摔|改|異動|諮詢|問|斷線|收訊|訊號|設定|詐騙|eSIM|esim|轉卡|漫遊|出國/], ["續約/換約/新申辦", /續約|換約|到期|合約|新辦|申辦|方案|門號|攜碼|家庭|換手機|新機/]];
+  function ruleGuess(text) { for (var i = 0; i < RULES.length; i++) if (RULES[i][1].test(text || "")) return RULES[i][0]; return null; }
   var TS = { ".sv": "timestamp" };
   var STATUS_ZH = { connecting: "連線中…", live: "已連線", reconnecting: "重新連線中…", offline: "連不上網路", denied: "資料庫拒絕存取（請檢查安全規則）", notfound: "找不到資料庫（請檢查網址）" };
-  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, TS: TS, STATUS_ZH: STATUS_ZH };
+  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH };
 })();

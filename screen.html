@@ -87,7 +87,7 @@ button:focus-visible{outline:calc(var(--u)*.3) solid var(--yellow);outline-offse
       <div class="card wait"><div class="n"><span id="waitN">0</span><small>組等候中</small></div><div class="nx"><small>接下來</small><div id="nextNos"></div></div></div>
     </div>
   </div>
-  <div class="foot"><span>取號時先寫下想辦的事，櫃台會先幫你準備好。</span><span style="display:flex;gap:calc(var(--u)*.8)"><button id="tryBtn">▶ 試播叫號聲</button><button id="sndBtn">🔇 叫號聲：關</button><button id="fsBtn">⛶ 全螢幕</button></span></div>
+  <div class="foot"><span>取號時先寫下想辦的事，櫃台會先幫你準備好。</span><span style="display:flex;gap:calc(var(--u)*.8)"><button id="qrBtn">QR：網頁版</button><button id="tryBtn">▶ 試播叫號聲</button><button id="sndBtn">🔇 叫號聲：關</button><button id="fsBtn">⛶ 全螢幕</button></span></div>
 </div>
 <div id="gate" hidden></div>
 
@@ -157,7 +157,9 @@ function gate(html,bind){const g=$("#gate");g.hidden=false;g.innerHTML=`<div cla
 if(!sess){
   gate(`<h2>還沒有場次</h2><p>請先到「櫃台叫號台」建立場次，再從「場次・QR Code」開啟大螢幕。</p><a href="counter.html">前往櫃台叫號台</a>`);
 }else{
-  $("#qr").innerHTML=Q.qrSvg(Q.pageUrl("./",sess,false));
+  let qrLine=false;const drawQr=()=>{$("#qr").innerHTML=Q.qrSvg(Q.pageUrl(qrLine?"line.html":"./",sess,false));$("#qrBtn").textContent=qrLine?"QR：LINE 版":"QR：網頁版";
+    document.querySelector(".take h2").textContent=qrLine?"掃一下，在 LINE 官方帳號取號":"手機掃一下，線上取號"};
+  drawQr();$("#qrBtn").onclick=()=>{qrLine=!qrLine;drawQr()};
   gate(`<h2>門市大螢幕準備好了</h2><p>按下面的按鈕開始。叫號時，這台電腦會發出「叮咚」並唸出號碼，請把喇叭打開。</p><button id="go">開始，並開啟叫號聲</button><button id="goMute" style="background:#fff;font-size:calc(var(--u)*1.8)">先不要聲音</button>`,g=>{
     g.querySelector("#go").onclick=()=>{setSound(true);chime();g.hidden=true};
     g.querySelector("#goMute").onclick=()=>{g.hidden=true}});

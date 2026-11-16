@@ -624,6 +624,10 @@ const guess=t=>{for(const[c,re]of GUESS)if(re.test(t))return c;return null};
 const baseWait=()=>S.queue.reduce((s,x)=>s+CATS[x.cat].t,0)/effDesks()+3;
 const catWait=c=>Math.max(2,Math.round(baseWait()*CATS[c].w));
 function waitFor(t){const i=S.queue.indexOf(t),a=S.queue.slice(0,i);return{ahead:a.length,mins:Math.max(1,Math.round(a.reduce((s,x)=>s+CATS[x.cat].t,0)/effDesks()+2))}}
+/* 預估時間的依據：前面各類業務幾位、幾個櫃台同時服務 */
+function waitWhy(t){const i=S.queue.indexOf(t),a=S.queue.slice(0,i);if(!a.length)return "前面沒有人，下一位就是你";
+  const c={};a.forEach(x=>{const k=x.cat.split("/")[0];c[k]=(c[k]||0)+1});
+  return "前面："+Object.entries(c).map(([k,n])=>`${k} ${n} 位`).join("、")+`・${effDesks()} 個櫃台同時服務`}
 function meState(){const t=S.me;if(!t)return"none";if(S.serving.includes(t))return"called";if(S.queue.includes(t))return"waiting";return"done"}
 
 /* ================= toast / modal / guide ================= */
@@ -693,6 +697,9 @@ function tick(){
         if(U.out)nearAlert();
       }}
   }
+  /* 「我需要晚一點」按鈕：後面有人排之後才出現 */
+  const hb=!!document.querySelector("#holdLater"),hw=S.me&&meState()==="waiting"&&!S.me.held&&S.queue.indexOf(S.me)<S.queue.length-1;
+  if(U.tab==="mine"&&!!hw!==hb){fullRender();Q3.sync();return}
   renderApp(true);Q3.sync();
 }
 function restartTick(){clearInterval(tickTimer);tickTimer=setInterval(tick,TICK_MS)}
@@ -734,6 +741,7 @@ function finishMe(){
   U.tab="mine";fullRender();renderTabs();Q3.sync();
 }
 function holdMe(){
+  if(LIVE.on)return liveHold();
   const t=S.me;t.held=true;const d=S.serving.indexOf(t);let pos=2;
   if(d>=0){S.serving[d]=S.queue.shift()||null;S.lastDesk=d}else{const i=S.queue.indexOf(t);S.queue.splice(i,1);pos=i+2}
   S.queue.splice(Math.min(S.queue.length,pos),0,t);t.n3=false;
@@ -1154,7 +1162,7 @@ function takeHTML(){
       ${(()=>{const iv=KNOW_VIDEOS.filter(v=>(U.chips||[]).includes(v.ask));return iv.length?`<div class="chiplbl">✓ 影片有興趣：${iv.map(v=>esc(v.short)).join("、")}</div>`:""})()}
       ${(U.chips||[]).length&&!U.writeOpen?`<div class="picked-say"><span>點選即可，不用打字</span><button class="linkbtn" id="writeMore" type="button">✎ 想自己補充</button></div>`:""}
       <div class="tawrap"><textarea id="say" maxlength="60" ${(U.chips||[]).length&&!U.writeOpen?"hidden":""} placeholder="例如：合約下個月到期，想問有沒有家庭方案">${esc(U.draft)}</textarea><span class="taph" aria-hidden="true">例如：合約下個月到期，想問有沒有家庭方案</span></div>
-      <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">${LIVE.on?"🔒 你寫的內容會先在手機上加密，只有櫃台看得到。請不要填姓名、電話等個人資料。":"🔒 你寫的內容只給櫃台看，去識別化後用於改善服務說明。"}</p></div>
+      <div class="count"><div class="suggest" id="sug"></div><span id="cnt">${n} / 50</span></div><p class="privacy">${LIVE.on?"🔒 你寫的內容會先在手機上加密，只有櫃台看得到，辦完就刪除。請不要填姓名、電話等個人資料。":"🔒 你寫的內容只給櫃台看，當天關帳後自動刪除，只保留去識別化的統計。"}</p></div>
     <div class="step">${LIVE.on?`<div class="lbl"><i>3</i>叫號通知</div><div class="notice" style="background:var(--cream)"><b>現場體驗不用填手機號碼</b><span style="font-weight:500">輪到你時，這支手機會直接跳出畫面，並用語音叫你。</span></div><input type="hidden" id="phoneIn" value="0912345678">`:`<div class="lbl"><i>3</i>手機號碼 <em>快輪到你時傳簡訊</em></div>
       <input type="tel" id="phoneIn" inputmode="numeric" autocomplete="tel" placeholder="0912345678" value="${esc(U.phone)}">`}
       <label class="opt prio"><input type="checkbox" id="prioOn" ${U.prio?"checked":""}><span>優先取號<small>長輩（65 歲以上）、孕婦、行動不便者可選。</small></span></label></div>
@@ -1282,6 +1290,8 @@ function mineHTML(){
   const near=st==="waiting"&&w.ahead<=3;U.wasNear=near;
   return `<div id="calledWrap">${calledInner()}</div>
   <div class="ticket ${pop?"pop":""}" id="ticketWrap">${ticketInner()}</div>
+  ${st==="waiting"?`<p class="note why" style="margin-top:-8px">⏱ 預估依據：${waitWhy(t)}</p>`:""}
+  ${st==="waiting"&&!t.held&&S.queue.indexOf(t)<S.queue.length-1?`<button class="btn wide" id="holdLater">我需要晚一點（往後延 2 組，只能用一次）</button>`:""}
   ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，先把下面的證件準備好。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
   ${st==="waiting"&&!near?`<button class="btn wide away ${U.out?"on":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>
   <p class="note" style="margin-top:-8px">${U.out?"放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。":"不想乾等可以先去附近逛，快到了會叫你。"}</p>`:""}
@@ -1309,6 +1319,7 @@ function doneHTML(){
 function bindMine(){
   const g=$("#goTake");if(g)g.onclick=()=>go("queue");
   const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
+  const hl=$("#holdLater");if(hl)hl.onclick=()=>{holdMe();fullRender()};
   const a=$("#away");if(a)a.onclick=()=>{U.out=!U.out;if(U.out)toast("info","放心去逛","前面剩 3 組時會傳簡訊並跳出提醒。");fullRender()};
   document.querySelectorAll("[data-doc]").forEach(b=>b.onclick=()=>{const i=+b.dataset.doc;U.docs.has(i)?U.docs.delete(i):U.docs.add(i);buzz(20);fullRender()});
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{U.done=b.dataset.f;fullRender()});
@@ -1728,7 +1739,7 @@ function liveSync(room){
   const V=window.QTLive.view(room);LIVE.view=V;LIVE.pub=(V.meta&&V.meta.pub)||null;
   if(V.meta&&V.meta.store&&V.meta.store!==HOME){if(cityOf(V.meta.store))setHome(V.meta.store);else{const sn=$("#storeName");if(sn)sn.textContent=V.meta.store}}
   const obj=t=>{let o=LIVE.objs.get(t.id);if(!o){o={id:t.id,me:false,text:"",family:null,held:true};LIVE.objs.set(t.id,o)}
-    o.no=t.no;o.cat=CATS[t.cat]?t.cat:"異動/諮詢/維修";o.prio=!!t.p;return o};
+    o.no=t.no;o.cat=CATS[t.cat]?t.cat:"異動/諮詢/維修";o.prio=!!t.p;o.held=!!t.held;return o};
   const prevState=meState(),prevMe=S.me;
   S.queue=V.waiting.map(obj);
   S.serving=[1,2,3].map(d=>V.desks[d]?obj(V.desks[d]):null);
@@ -1744,10 +1755,17 @@ function liveSync(room){
         if(w.ahead<=3&&!o.n3){o.n3=true;nearNow=true}}}
   }else S.me=null;
   const nowState=meState();
-  if(nowState!==prevState||S.me!==prevMe){if(nowState==="done"){closeModal();U.tab="mine"}fullRender();renderTabs();renderMarquee()}else renderApp(true);
+  const qsig=S.queue.map(x=>x.id).join(",")+"|"+(S.me?S.me.held:"");const qChanged=qsig!==LIVE.qsig;LIVE.qsig=qsig;
+  if(nowState!==prevState||S.me!==prevMe||(qChanged&&nowState==="waiting"&&U.tab==="mine"&&!$("#modal").innerHTML)){if(nowState==="done"){closeModal();U.tab="mine"}fullRender();renderTabs();renderMarquee()}else renderApp(true);
   Q3.sync();
   if(called)calledAlert();
   else if(nearNow){const w=waitFor(S.me);toast("info",`快輪到你了，前面剩 ${w.ahead} 組`,`約 ${w.mins} 分鐘後叫到 ${S.me.no}，請回到櫃台附近。`,6500);buzz([150,80,150]);if(U.out)nearAlert()}
+}
+async function liveHold(){
+  if(!LIVE.conn||!LIVE.view||!LIVE.myId)return;
+  const p=window.QTLive.holdPatch(LIVE.view,LIVE.myId,2);if(!p)return;
+  try{await LIVE.conn.patch("/tickets/"+LIVE.myId,p);if(S.me){S.me.held=true;S.me.n3=false}toast("info","已幫你往後延 2 組","櫃台會先叫後面的顧客。保留只能用一次。");LIVE.calledSig=null;fullRender()}
+  catch(e){toast("info","沒有延後成功","網路不太穩，請再按一次。",4200)}
 }
 async function liveTake(){
   if(LIVE.taking)return;LIVE.taking=true;primeAudio();
@@ -1755,7 +1773,7 @@ async function liveTake(){
   const txt=U.draft.trim().slice(0,50);let sent=txt;
   try{
     if(!LIVE.conn||!LIVE.view)throw new Error("not ready");
-    const t={cat:U.picked,st:"w",t:window.QTLive.TS,lang:PREF.lang};if(U.prio)t.p=true;
+    const t={cat:U.picked,st:"w",t:window.QTLive.TS,lang:PREF.lang,src:"app"};if(U.prio)t.p=true;
     if(txt){let sealed=null;try{sealed=await window.QTLive.crypto.seal(LIVE.pub,txt)}catch(e){}if(sealed)t.say=sealed;else sent=""}   // 沒辦法加密就不送出留言
     LIVE.tookAt=Date.now();
     const id=await LIVE.conn.post("/tickets",t);

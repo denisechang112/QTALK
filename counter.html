@@ -65,7 +65,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(-
 .desks div{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px;text-align:center;font-size:12px;font-weight:700}
 .desks b{display:block;font-family:var(--fn);font-size:20px;font-weight:400}
 label.f{display:grid;gap:4px;font-weight:900;font-size:14px}
-input[type=text],input[type=url]{border:var(--line);border-radius:12px;padding:10px 12px;background:#fff;width:100%}
+input[type=text],input[type=url],input[type=password]{border:var(--line);border-radius:12px;padding:10px 12px;background:#fff;width:100%}
 .err{color:var(--red);font-weight:900;font-size:14px;min-height:1.3em;white-space:pre-line}
 .steps{margin:0;padding-left:1.3em;font-size:14px;display:grid;gap:4px}
 /* 場次面板 */
@@ -77,6 +77,17 @@ input[type=text],input[type=url]{border:var(--line);border-radius:12px;padding:1
 .qrbox .qr svg{width:100%;height:100%;display:block}
 .qrbox h3{margin:0;font-size:16px;font-weight:900}
 .sec{border-top:2px dashed #d8d4c8;padding-top:12px;display:grid;gap:8px}
+.ai{border:2px solid var(--ink);border-radius:12px;background:#eef0ff;padding:6px 10px;display:grid;gap:3px;font-size:13px;color:var(--ink)}
+.ai small{font-size:11px;font-weight:900;color:#4a52a8}
+.ai b{font-size:14px}
+.ai.big{font-size:14px}.ai.big b{font-size:16px}
+.q .ai{grid-column:1/-1}
+.diff{font-size:11px;font-weight:900;color:#a3200f}.diff.ok{color:#1d7a40}
+.confirm{background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:12px;padding:10px;display:grid;gap:8px}
+.confirm small{color:var(--muted);font-size:12px;margin-top:-6px}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cgrid .btn{white-space:normal;line-height:1.3}
+.acc h2{font-size:16px}
 #flash{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--ink);color:#fff;font-weight:900;border-radius:999px;padding:8px 18px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.35);max-width:92vw;text-align:center}
 #flash[hidden]{display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -156,12 +167,53 @@ function start(){
     decryptNew();render()},setStatus);
   render();
 }
+/* ================= AI 分類：顧客留言 → 業務類別、重點、要先準備什麼 =================
+   金鑰只存在這台櫃台裝置（localStorage），不會寫進資料庫，也不會出現在網頁原始碼。沒有金鑰時改用規則判斷。 */
+const AI={key:ls.get("qt-ai-key")||"",model:ls.get("qt-ai-model")||"gemini-2.5-flash"};
+const aiInfo=new Map();   // 票 id → {cat,sum,prep,mins,by:"ai"|"rule"}
+const CAT_LIST=Object.keys(CATS);
+let aiQueue=Promise.resolve();
+async function geminiClassify(text,chosen){
+  const prompt=`你是台灣大哥大電信門市的櫃台助理。顧客取號時寫了一句話，請整理給櫃台人員。
+業務類別只能是以下四種之一：${CAT_LIST.join("、")}。
+請只輸出 JSON，格式：{"cat":"業務類別","summary":"15 字內的重點","prep":["櫃台叫號前要先準備的事，1 到 3 項，每項 12 字內"],"mins":預估服務分鐘數(整數)}
+顧客自己選的類別：${chosen}
+顧客寫的話：「${text}」`;
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(AI.model)}:generateContent`,{method:"POST",
+    headers:{"Content-Type":"application/json","x-goog-api-key":AI.key},
+    body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{temperature:.2,responseMimeType:"application/json"}})});
+  if(!r.ok){let m="HTTP "+r.status;try{m=(await r.json()).error.message||m}catch(e){}throw new Error(m)}
+  const j=await r.json(),txt=(((j.candidates||[])[0]||{}).content||{parts:[]}).parts.map(x=>x.text||"").join("");
+  const o=JSON.parse(txt.replace(/^```(json)?|```$/g,"").trim());
+  return {cat:CAT_LIST.includes(o.cat)?o.cat:chosen,sum:String(o.summary||"").slice(0,30),prep:(Array.isArray(o.prep)?o.prep:[]).slice(0,3).map(x=>String(x).slice(0,20)),mins:Math.max(1,Math.min(60,parseInt(o.mins)||CATS_T[chosen]||10)),by:"ai"};
+}
+const CATS_T={"繳費/儲值":4,"續約/換約/新申辦":18,"異動/諮詢/維修":10,"網路取貨/預約取件":5};
+function ruleInfo(text,chosen){const g=Q.ruleGuess(text)||chosen;return {cat:g,sum:"",prep:[],mins:CATS_T[g]||10,by:"rule"}}
+function classify(t){
+  if(aiInfo.has(t.id))return;
+  const text=plain.get(t.id);
+  if(!t.say){aiInfo.set(t.id,{cat:t.cat,sum:"",prep:[],mins:CATS_T[t.cat]||10,by:"none"});return}
+  if(typeof text!=="string")return;
+  if(!AI.key){aiInfo.set(t.id,ruleInfo(text,t.cat));return}
+  aiInfo.set(t.id,{pending:true});
+  aiQueue=aiQueue.then(async()=>{try{aiInfo.set(t.id,await geminiClassify(text,t.cat))}catch(e){const r=ruleInfo(text,t.cat);r.err=String(e.message||e).slice(0,80);aiInfo.set(t.id,r)}
+    if($("#sheet").hidden)render()});
+}
+function aiHTML(t,big){
+  const a=aiInfo.get(t.id);if(!a||a.by==="none")return "";
+  if(a.pending)return `<div class="ai ${big?"big":""}"><small>🤖 AI 整理中…</small></div>`;
+  const diff=a.cat!==t.cat;
+  return `<div class="ai ${big?"big":""}"><small>${a.by==="ai"?"🤖 AI 判斷":"規則判斷"}${a.err?"（AI 暫時連不上，改用規則）":""}</small>
+    <div class="row">${tagOf(a.cat)}${diff?`<span class="diff">顧客選的是「${esc(t.cat)}」</span>`:`<span class="diff ok">和顧客選的一致</span>`}${a.by==="ai"?`<span class="diff">約 ${a.mins} 分</span>`:""}</div>
+    ${a.sum?`<b>${esc(a.sum)}</b>`:""}${a.prep&&a.prep.length?`<span>先準備：${a.prep.map(esc).join("、")}</span>`:""}</div>`;
+}
 async function decryptNew(){
   let changed=false;
   for(const t of V.all){if(!t.say||plain.has(t.id))continue;
     plain.set(t.id,null);   // 佔位，避免重複解
     const txt=sess.d?await Q.crypto.open(sess.pub||(V.meta&&V.meta.pub),sess.d,t.say):null;
     plain.set(t.id,txt===null?false:txt);changed=true}
+  for(const t of V.all)if(t.st==="w"||t.st==="c")classify(t);
   if(changed)render();
 }
 function sayHTML(t,cls){
@@ -171,7 +223,7 @@ function sayHTML(t,cls){
   if(p==null)return `<div class="${cls} none">解密中…</div>`;
   return cls==="say"?`<div class="say"><small>顧客寫給櫃台的話</small>${esc(p)}</div>`:`<div class="t">${esc(p)}</div>`;
 }
-const extra=t=>`${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
+const extra=t=>`${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
 function render(){
   if(!sess)return;
   $("#storeName").textContent=(sess.store||"")+"・櫃台叫號台";
@@ -182,22 +234,39 @@ function render(){
         <div class="seg">${[1,2,3].map(d=>`<button data-desk="${d}" aria-pressed="${d===desk}">${d} 號櫃台<small>${V.desks[d]?V.desks[d].no:"—"}</small></button>`).join("")}</div></div>
       <div class="box now"><h2>${desk} 號櫃台・目前服務</h2>
         ${cur?`<div class="row" style="justify-content:space-between"><div class="no">${cur.no}</div><div class="row">${tagOf(cur.cat)}${extra(cur)}</div></div>
-          ${sayHTML(cur,"say")}
-          <div class="say" style="font-weight:500"><small>請準備</small>${esc(PREP[cur.cat]||"")}</div>
-          <div class="acts"><button class="btn" data-act="recall">🔊 再叫一次</button><button class="btn" data-act="skip">過號</button><button class="btn dark" data-act="done">辦完了</button></div>`
+          ${sayHTML(cur,"say")}${aiHTML(cur,true)}
+          <div class="say" style="font-weight:500"><small>請準備</small>${esc(PREP[(aiInfo.get(cur.id)||{}).cat||cur.cat]||PREP[cur.cat]||"")}</div>
+          ${confirmFor===cur.id?`<div class="confirm"><b>這位實際辦了什麼？</b><small>用來計算 AI 分類準確率</small>
+            <div class="cgrid">${CAT_LIST.map(c=>`<button class="btn sm ${c===((aiInfo.get(cur.id)||{}).cat||cur.cat)?"dark":""}" data-actual="${c}">${c}</button>`).join("")}</div>
+            <div class="row"><button class="btn sm" data-actual="-">略過</button><button class="btn sm" data-act="cancelDone">返回</button></div></div>`
+          :`<div class="acts"><button class="btn" data-act="recall">🔊 再叫一次</button><button class="btn" data-act="skip">過號</button><button class="btn dark" data-act="done">辦完了</button></div>`}`
         :`<p style="margin:0;font-weight:700">目前沒有服務中的顧客。</p>`}
       </div>
       <button class="cta" data-act="next" ${next&&!busy?"":"disabled"}>${next?`叫下一號　<b>${next.no}</b><small>${cur?`會同時把 ${cur.no} 標記為辦完`:"按下後，顧客的手機會跳出叫號畫面"}</small>`:`目前沒有人等候<small>顧客取號後會自動出現在這裡</small>`}</button>
       <div class="stats"><div><b>${V.waiting.length}</b><span>等候中</span></div><div><b>${V.done}</b><span>已辦完</span></div><div><b>${skipped}</b><span>過號</span></div></div>
+      ${accHTML()}
     </div>
     <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span></h2>
-      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${sayHTML(t,"t")}</div>`).join("")
+      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
       :`<p class="muted">還沒有人取號。請顧客掃大螢幕上的 QR Code；排練時可以到「場次・QR Code」加測試顧客。</p>`}
     </div>
   </div>`;
 }
+/* AI 分類準確率：櫃台確認過「實際辦了什麼」的票，比對 AI 判斷與顧客自選 */
+function accHTML(){const done=V.all.filter(t=>t.st==="d"&&t.act);
+  if(!done.length)return `<div class="box acc"><h2>AI 分類準確率</h2><p class="muted">櫃台按「辦完了」並確認實際業務後，這裡會比較 AI 判斷和顧客自選的準確度。${AI.key?"":"目前沒有設定 AI 金鑰，使用規則判斷（到「場次・QR Code」設定）。"}</p></div>`;
+  const ai=done.filter(t=>t.ai),aiOk=ai.filter(t=>t.ai===t.act).length,selfOk=done.filter(t=>t.cat===t.act).length,pc=(a,b)=>b?Math.round(a/b*100)+"%":"—";
+  return `<div class="box acc"><h2>AI 分類準確率<span class="tag white">${done.length} 筆已確認</span></h2>
+    <div class="stats"><div><b>${pc(aiOk,ai.length)}</b><span>${AI.key?"AI":"規則"}判斷正確</span></div><div><b>${pc(selfOk,done.length)}</b><span>顧客自選正確</span></div><div><b>${done.filter(t=>t.ai&&t.ai===t.act&&t.cat!==t.act).length}</b><span>AI 幫忙改對</span></div></div>
+    <p class="muted">AI 先判斷、人確認，系統越用越準。留言在辦完時已從資料庫刪除。</p></div>`}
 async function act(fn){if(busy)return;busy=true;render();try{await fn()}catch(e){flash(e&&(e.status===401||e.status===403)?"資料庫拒絕寫入，請檢查安全規則":"沒有送出，請檢查網路後再按一次",4200)}busy=false;render()}
-const closeDesk=async(d,st)=>{for(const t of V.all)if(t.st==="c"&&(t.desk||1)===d)await conn.patch("/tickets/"+t.id,{st:st,dt:Q.TS})};
+/* 辦完或過號時，把顧客留言從資料庫刪掉（只留類別與統計） */
+const closeDesk=async(d,st,actual)=>{for(const t of V.all)if(t.st==="c"&&(t.desk||1)===d){
+  const a=aiInfo.get(t.id),patch={st:st,dt:Q.TS,say:null};
+  if(a&&a.cat&&!a.pending)patch.ai=a.cat;
+  if(actual)patch.act=actual;
+  await conn.patch("/tickets/"+t.id,patch)}};
+let confirmFor=null;   // 正在確認「實際辦了什麼」的票
 const callTicket=async t=>{await closeDesk(desk,"d");await conn.patch("/tickets/"+t.id,{st:"c",desk:desk,ct:Q.TS});flash(`已叫號 ${t.no} → ${desk} 號櫃台`)};
 document.addEventListener("click",e=>{
   const b=e.target.closest("button,a");if(!b||!sess||!conn)return;
@@ -207,20 +276,28 @@ document.addEventListener("click",e=>{
   if(a==="next"){const t=V.waiting[0];if(t)act(()=>callTicket(t))}
   if(a==="recall"&&cur)act(async()=>{await conn.patch("/tickets/"+cur.id,{ct:Q.TS,rc:(cur.rc||0)+1});flash(`已再叫一次 ${cur.no}`)});
   if(a==="skip"&&cur)act(async()=>{await closeDesk(desk,"s");flash(`${cur.no} 已過號`)});
-  if(a==="done"&&cur)act(async()=>{await closeDesk(desk,"d");flash(`${cur.no} 辦完了`)});
+  if(a==="done"&&cur){confirmFor=cur.id;render();return}
+  if(b.dataset.actual&&cur){const v=b.dataset.actual;confirmFor=null;act(async()=>{await closeDesk(desk,"d",v==="-"?null:v);flash(`${cur.no} 辦完了`)});return}
+  if(a==="cancelDone"){confirmFor=null;render()}
 });
 setInterval(()=>{if(sess&&!busy&&$("#sheet").hidden)render()},30000);
 
 /* ================= 場次面板：大螢幕、QR Code、排練、重設 ================= */
 function copy(text,label){(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>flash("已複製"+label),()=>{window.prompt("請手動複製"+label,text)})}
 function openSheet(){
-  const cust=Q.pageUrl("./",sess,false),scr=Q.pageUrl("screen.html",sess,false),staff=Q.pageUrl("counter.html",sess,true);
+  const cust=Q.pageUrl("./",sess,false),scr=Q.pageUrl("screen.html",sess,false),staff=Q.pageUrl("counter.html",sess,true),line=Q.pageUrl("line.html",sess,false);
   const sh=$("#sheet");sh.hidden=false;
   sh.innerHTML=`<div class="in" role="dialog" aria-modal="true" aria-label="場次與 QR Code">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:20px;font-weight:900">場次・QR Code</h2><button class="btn sm" data-s="close">關閉</button></div>
     <div class="qrbox"><div class="qr">${Q.qrSvg(scr)}</div><div style="display:grid;gap:6px"><h3>① 門市大螢幕</h3><p class="muted">用接投影機的電腦開啟，上面會顯示顧客取號用的 QR Code。</p><div class="row"><a class="btn sm dark" href="${esc(scr)}" target="_blank" rel="noopener">在新分頁開啟大螢幕</a><button class="btn sm" data-s="cscr">複製連結</button></div></div></div>
     <div class="qrbox sec"><div class="qr">${Q.qrSvg(cust)}</div><div style="display:grid;gap:6px"><h3>② 顧客取號</h3><p class="muted">顧客用手機掃這個 QR Code 取號（大螢幕上也有同一個）。</p><div class="row"><button class="btn sm" data-s="ccust">複製連結</button></div></div></div>
+    <div class="qrbox sec"><div class="qr">${Q.qrSvg(line)}</div><div style="display:grid;gap:6px"><h3>②-2 LINE 官方帳號取號（概念示意）</h3><p class="muted">同一個場次，改用「LINE 官方帳號」的介面取號，叫號時收到官方帳號訊息。大螢幕右下角也能切換成這個 QR Code。</p><div class="row"><a class="btn sm" href="${esc(line)}" target="_blank" rel="noopener">開啟 LINE 版</a><button class="btn sm" data-s="cline">複製連結</button></div></div></div>
     <div class="qrbox sec"><div class="qr">${sess.d?Q.qrSvg(staff):""}</div><div style="display:grid;gap:6px"><h3>③ 其他櫃台裝置加入</h3><p class="muted">${sess.d?"只給門市同仁掃。掃了就能叫號，也看得到顧客留言，請不要投影出來。":"這台裝置沒有櫃台金鑰，無法邀請其他裝置。"}</p>${sess.d?`<div class="row"><button class="btn sm" data-s="cstaff">複製連結</button></div>`:""}</div></div>
+    <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">🤖 AI 分類（Gemini）</h3>
+      <p class="muted">顧客留言會由 AI 判斷業務類別、整理重點和要準備的事。金鑰只存在這台裝置，不會上傳到資料庫。沒有設定時改用規則判斷。</p>
+      <label class="f">Gemini API 金鑰<input type="password" id="aiKey" autocomplete="off" placeholder="貼上 AI Studio 的 API 金鑰" value="${esc(AI.key)}"></label>
+      <label class="f">模型<input type="text" id="aiModel" autocomplete="off" value="${esc(AI.model)}"></label>
+      <div class="row"><button class="btn sm dark" data-s="aiSave">儲存並測試</button>${AI.key?`<button class="btn sm" data-s="aiClear">移除金鑰</button>`:""}<span id="aiMsg" class="muted"></span></div></div>
     <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">排練用</h3>
       <div class="row"><button class="btn sm" data-s="fake">＋ 加一位測試顧客</button><button class="btn sm warn" data-s="wipe">清空所有號碼，從 A101 重新開始</button></div>
       <p class="muted">正式上台前按一次「清空」，評審取到的就會是 A101。</p></div>
@@ -231,7 +308,14 @@ function openSheet(){
     if(e.target===sh){sh.hidden=true;render();return}
     const b=e.target.closest("[data-s]");if(!b)return;const k=b.dataset.s;
     if(k==="close"){sh.hidden=true;render()}
-    if(k==="cscr")copy(scr,"大螢幕連結");if(k==="ccust")copy(cust,"顧客取號連結");if(k==="cstaff")copy(staff,"櫃台加入連結");
+    if(k==="aiClear"){AI.key="";ls.set("qt-ai-key","");aiInfo.clear();openSheet();flash("已移除 AI 金鑰，改用規則判斷")}
+    if(k==="aiSave"){const key=$("#aiKey").value.trim(),model=$("#aiModel").value.trim()||"gemini-2.5-flash",msg=$("#aiMsg");
+      AI.key=key;AI.model=model;ls.set("qt-ai-key",key);ls.set("qt-ai-model",model);aiInfo.clear();
+      if(!key){msg.textContent="沒有金鑰，使用規則判斷。";return}
+      msg.textContent="測試中…";
+      try{const r=await geminiClassify("合約下個月到期，想看看有沒有比較便宜的 5G 方案","異動/諮詢/維修");msg.textContent=`✓ 可以用！測試結果：${r.cat}・${r.sum}`;decryptNew()}
+      catch(err){msg.textContent="✗ 連不上 AI："+String(err.message||err).slice(0,90)}}
+    if(k==="cscr")copy(scr,"大螢幕連結");if(k==="cline")copy(line,"LINE 版取號連結");if(k==="ccust")copy(cust,"顧客取號連結");if(k==="cstaff")copy(staff,"櫃台加入連結");
     try{
       if(k==="fake"){const s=SAMPLE[Math.floor(Math.random()*SAMPLE.length)];const sealed=s[1]?await Q.crypto.seal(sess.pub,s[1]):null;
         const t={cat:s[0],st:"w",t:Q.TS,lang:"zh"};if(sealed)t.say=sealed;await conn.post("/tickets",t);flash("已加入一位測試顧客")}
