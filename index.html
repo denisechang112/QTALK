@@ -356,6 +356,13 @@ details.more[open] summary::before{content:"－ "}
 #admin .raw{font-size:12px;color:var(--muted);font-weight:700}
 #admin .geo{font-size:14px;font-weight:900;margin:3px 0 6px}
 #admin .st{display:inline-block;font-size:11px;font-weight:900;border:2px solid var(--ink);border-radius:999px;padding:0 8px;margin-right:4px}
+#admin .fchips{display:flex;flex-wrap:wrap;gap:6px}
+#admin .fchips button{border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:12px;font-weight:900;padding:2px 10px;color:var(--ink)}
+#admin .fchips button[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
+#admin .agemix{grid-column:1/-1;font-style:normal;font-size:11px;color:var(--muted);font-weight:700;margin-top:-1px}
+#admin .rtab td{vertical-align:top;font-size:12px;line-height:1.45;font-family:inherit!important;text-align:left!important}
+#admin .rtab td:first-child{width:74px;white-space:nowrap}
+#admin .rtab td small{display:block;font-size:10px;color:var(--muted)}
 #admin .st.gap{background:#ffd9d3}#admin .st.ok{background:#d6f5df}#admin .st.ch{background:#e2e5f7}
 #admin .flow{display:grid;gap:6px}
 #admin .flow div{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;font-size:13px;font-weight:700;line-height:1.45}
@@ -797,29 +804,69 @@ function videoCard(v,solo){
 function carousel(list,key){return `<div class="vcar" data-car="${key}"><div class="vwrap"><div class="vids">${list.map(v=>videoCard(v)).join("")}</div></div><div class="vnav"><button class="varrow" data-vs="-1" aria-label="上一支影片" disabled>‹</button><div class="vdots">${list.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div><button class="varrow" data-vs="1" aria-label="下一支影片">›</button></div></div>`}
 function videosHTML(list=PROMO_VIDEOS,title="排隊時先看一下"){return `<div class="h2"><span>影片</span><h3>${title}</h3></div>${carousel(list,"main")}`}
 
-/* ---- 員工後台：問題洞察（連點標題 3 下） ---- */
-const INSIGHT={week:"10/14–10/20",kpi:[["412","收到的顧客問題"],["38","AI 歸納成"],["9","官網還缺答案",1]],
-  top:[["合約到期怎麼續約最划算",86,"+12%"],["iPhone Duo 怎麼把 SIM 卡轉成 eSIM",64,"+310%"],["出國上網要選漫遊還是 eSIM",51,"+8%"],["家庭方案怎麼算、可以幾人",47,"−3%"],["接到自稱客服的電話該怎麼辦",33,"+41%"]],
-  geo:[
-    {raw:"「新手機沒有卡槽，我的門號要怎麼搬？」",q:"iPhone Duo 沒有 SIM 卡槽，台灣大哥大門號怎麼轉 eSIM？",st:["gap","官網未有答案"],ch:"官網 FAQ・YouTube 教學影片"},
-    {raw:"「合約快到了，續約跟攜碼哪個划算？」",q:"台灣大哥大合約到期前多久可以續約？續約和攜碼差在哪？",st:["ok","官網已有，需改寫成問答"],ch:"官網 FAQ・門市商家檔案問答"},
-    {raw:"「接到電話說要解除分期，是真的嗎？」",q:"接到「客服要你到 ATM 解除分期」的電話，是詐騙嗎？",st:["gap","官網未有答案"],ch:"官網防詐專區・165 宣導合作"},
-    {raw:"「下個月去日本，網路怎麼用最省？」",q:"去日本旅遊，台灣大哥大漫遊和 eSIM 上網卡怎麼選？",st:["ok","已發佈"],ch:"官網 FAQ・旅遊上網專頁"}]};
-function openAdmin(){const a=$("#admin");a.hidden=false;const I=INSIGHT,mx=Math.max(...I.top.map(t=>t[1]));
-  a.innerHTML=`<div class="ahd"><h3>問題洞察後台<small>${HOME}・${I.week}</small></h3><button type="button" id="adClose">✕ 關閉</button></div>
+/* ---- 員工後台：問題洞察（連點標題 3 下）・可依區域、年齡層切換（示意數據） ---- */
+const REGIONS={north:{n:"北區",c:["基隆市","台北市","新北市","桃園市","新竹"]},central:{n:"中區",c:["苗栗縣","台中市","彰化縣","南投縣","雲林縣"]},south:{n:"南區",c:["嘉義","台南市","高雄市","屏東縣"]},east:{n:"東區・離島",c:["宜蘭縣","花蓮縣","台東縣","澎湖縣","金門縣"]}};
+const AGES=[["all","全部年齡"],["y","18–34 歲"],["m","35–54 歲"],["s","55–64 歲"],["e","65 歲以上"]];
+/* 問題題庫：每題在各區、各年齡層的提問次數（y/m/s/e） */
+const QBANK={
+  esim:{t:"iPhone Duo 怎麼把 SIM 卡轉成 eSIM",g:"iPhone Duo 沒有 SIM 卡槽，台灣大哥大門號怎麼轉 eSIM？",st:["gap","官網未有答案"],ch:"官網 FAQ・YouTube 教學影片",raw:"「新手機沒有卡槽，我的門號要怎麼搬？」",
+    d:{north:[38,26,6,2],central:[16,13,4,1],south:[14,11,4,1],east:[5,4,1,0]},tr:"+310%"},
+  renew:{t:"合約到期怎麼續約最划算",g:"台灣大哥大合約到期前多久可以續約？續約和攜碼差在哪？",st:["ok","官網已有，需改寫成問答"],ch:"官網 FAQ・門市商家檔案問答",raw:"「合約快到了，續約跟攜碼哪個划算？」",
+    d:{north:[22,34,14,6],central:[14,26,12,6],south:[13,24,12,7],east:[4,8,5,3]},tr:"+12%"},
+  roam:{t:"出國上網要選漫遊還是 eSIM",g:"去日本旅遊，台灣大哥大漫遊和 eSIM 上網卡怎麼選？",st:["ok","已發佈"],ch:"官網 FAQ・旅遊上網專頁",raw:"「下個月去日本，網路怎麼用最省？」",
+    d:{north:[24,20,7,2],central:[9,10,4,1],south:[10,10,5,2],east:[3,3,1,1]},tr:"+8%"},
+  family:{t:"家庭方案怎麼算、可以幾人",g:"台灣大哥大家庭方案可以幾個門號一起辦？每人月租怎麼算？",st:["ok","官網已有，需改寫成問答"],ch:"官網方案頁・門市商家檔案問答",raw:"「家裡三支門號，可以一起辦便宜一點嗎？」",
+    d:{north:[6,22,8,3],central:[5,24,10,4],south:[5,20,9,4],east:[2,7,3,2]},tr:"−3%"},
+  scam:{t:"接到自稱客服的電話該怎麼辦",g:"接到「客服要你到 ATM 解除分期」的電話，是詐騙嗎？",st:["gap","官網未有答案"],ch:"官網防詐專區・165 宣導合作",raw:"「接到電話說要解除分期，是真的嗎？」",
+    d:{north:[3,7,9,14],central:[2,6,9,16],south:[2,7,11,21],east:[1,2,4,8]},tr:"+41%"},
+  senior:{t:"長輩手機怎麼放大字、設定 LINE 視訊",g:"長輩用的手機怎麼把字放大、設定 LINE 視訊通話？",st:["gap","官網未有答案"],ch:"YouTube 教學影片・門市小教室",raw:"「幫我媽把字調大，她看不到 LINE。」",
+    d:{north:[1,4,6,12],central:[1,5,8,15],south:[1,5,9,19],east:[0,2,4,9]},tr:"+22%"},
+  invest:{t:"LINE 投資群組說保證獲利，可以信嗎",g:"LINE 投資群組說「老師帶操、保證獲利」是詐騙嗎？怎麼檢舉？",st:["gap","官網未有答案"],ch:"官網防詐專區・165 宣導合作",raw:"「群組老師說穩賺，我爸已經匯錢了…」",
+    d:{north:[2,5,6,7],central:[1,4,7,9],south:[2,5,9,13],east:[0,2,3,5]},tr:"+57%"},
+  prepaid:{t:"外籍朋友怎麼辦預付卡、儲值",g:"外籍人士在台灣怎麼辦台灣大哥大預付卡？需要哪些證件？",st:["ok","官網已有，需多語版"],ch:"官網多語頁面・Google 商家檔案",raw:"「我的移工朋友要辦門號，要帶什麼？」",
+    d:{north:[6,4,1,0],central:[9,6,1,0],south:[10,7,1,0],east:[4,3,1,0]},tr:"+15%"},
+  signal:{t:"山區、海邊收訊不好怎麼辦",g:"台灣大哥大在花東山區、離島的收訊怎麼樣？訊號不好可以怎麼處理？",st:["gap","官網未有答案"],ch:"官網涵蓋地圖・Google 商家檔案問答",raw:"「回部落老家都收不到訊號，可以改善嗎？」",
+    d:{north:[1,2,1,1],central:[1,3,2,1],south:[2,3,2,2],east:[6,9,5,4]},tr:"+9%"},
+  bb:{t:"家用寬頻和 5G 分享器怎麼選",g:"家裡上網要裝光纖寬頻還是 5G 分享器？台灣大哥大方案比較",st:["ok","已發佈"],ch:"官網方案頁・YouTube 比較影片",raw:"「搬新家，網路要牽線還是用 5G 就好？」",
+    d:{north:[9,12,3,1],central:[6,13,4,1],south:[5,11,4,1],east:[3,5,2,1]},tr:"+5%"}
+};
+const AGE_I={y:0,m:1,s:2,e:3};
+function insightData(reg,age){
+  const regs=reg==="all"?Object.keys(REGIONS):[reg];
+  const rows=Object.entries(QBANK).map(([k,q])=>{const n=regs.reduce((s,r)=>s+(age==="all"?q.d[r].reduce((a,b)=>a+b,0):q.d[r][AGE_I[age]]),0);
+    const ages=[0,1,2,3].map(i=>regs.reduce((s,r)=>s+q.d[r][i],0));return {k,q,n,ages}}).filter(r=>r.n>0).sort((a,b)=>b.n-a.n);
+  const total=rows.reduce((s,r)=>s+r.n,0);
+  return {rows,total,top:rows.slice(0,5),geo:rows.filter(r=>r.q.st[0]==="gap").slice(0,3).concat(rows.filter(r=>r.q.st[0]!=="gap").slice(0,1))}}
+const ageMain=ages=>{const i=ages.indexOf(Math.max(...ages));return AGES[i+1][1]};
+let INS_REG=null,INS_AGE="all";
+function regionOf(store){const c=cityOf(store);return Object.keys(REGIONS).find(r=>REGIONS[r].c.includes(c))||"north"}
+function openAdmin(){const a=$("#admin");a.hidden=false;if(!INS_REG)INS_REG=regionOf(HOME);
+  const D=insightData(INS_REG,INS_AGE),mx=Math.max(1,...D.top.map(t=>t.n)),regName=INS_REG==="all"?"全台":REGIONS[INS_REG].n,ageName=AGES.find(x=>x[0]===INS_AGE)[1];
+  const gaps=D.rows.filter(r=>r.q.st[0]==="gap").length;
+  /* 各區比較：每區最常被問的前 2 題（依目前選的年齡層） */
+  const cmp=Object.keys(REGIONS).map(r=>{const d=insightData(r,INS_AGE);return `<tr><td><b>${REGIONS[r].n}</b><small>${d.total} 則</small></td><td>${d.top.slice(0,2).map(t=>esc(t.q.t)).join("<br>")}</td></tr>`}).join("");
+  a.innerHTML=`<div class="ahd"><h3>問題洞察後台<small>${INS_REG==="all"?"全台門市":regName+"門市"}・10/14–10/20</small></h3><button type="button" id="adClose">✕ 關閉</button></div>
   <div class="staff">員工專用・顧客看不到這一頁（示意數據）</div>
   <div class="ab">
-   <div class="kpi">${I.kpi.map(k=>`<div class="${k[2]?"warn":""}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join("").replace("<span>AI 歸納成</span>","<span>AI 歸納成題</span>")}</div>
-   <div class="card"><h4>本週熱門問題<em>次數・較上週</em></h4>${I.top.map(t=>`<div class="bar"><span>${t[0]}</span><small>${t[1]} 次 <span class="${/^\+/.test(t[2])&&parseInt(t[2].slice(1))>=40?"up":""}">${t[2]}</span></small><i style="--w:${Math.round(t[1]/mx*100)}%"></i></div>`).join("")}</div>
-   <div class="card"><h4>GEO 建議問句<em>顧客原話 → AI 搜尋問法</em></h4>${I.geo.map(g=>`<div class="q"><div class="raw">顧客原話：${g.raw}</div><div class="geo">${g.q}</div><span class="st ${g.st[0]}">${g.st[1]}</span><span class="st ch">發佈到：${g.ch}</span></div>`).join("")}</div>
+   <div class="card"><h4>看哪一區、哪個年齡層？</h4>
+     <div class="fchips" role="group" aria-label="區域">${[["all","全台"]].concat(Object.entries(REGIONS).map(([k,v])=>[k,v.n])).map(([k,n])=>`<button type="button" data-reg="${k}" aria-pressed="${k===INS_REG}">${n}</button>`).join("")}</div>
+     <div class="fchips" role="group" aria-label="年齡層" style="margin-top:6px">${AGES.map(([k,n])=>`<button type="button" data-age="${k}" aria-pressed="${k===INS_AGE}">${n}</button>`).join("")}</div>
+     <p class="raw" style="margin:6px 0 0">年齡層來自會員資料（只用年齡區間、去識別化），沒有會員資料的顧客不列入年齡分析。</p></div>
+   <div class="kpi"><div><b>${D.total}</b><span>收到的顧客問題</span></div><div><b>${D.rows.length}</b><span>AI 歸納成題</span></div><div class="warn"><b>${gaps}</b><span>官網還缺答案</span></div></div>
+   <div class="card"><h4>${regName}・${ageName}熱門問題<em>次數・較上週</em></h4>${D.top.map(t=>`<div class="bar"><span>${esc(t.q.t)}</span><small>${t.n} 次 <span class="${/^\+/.test(t.q.tr)&&parseInt(t.q.tr.slice(1))>=40?"up":""}">${t.q.tr}</span></small><i style="--w:${Math.round(t.n/mx*100)}%"></i>${INS_AGE==="all"?`<em class="agemix">主要提問族群：${ageMain(t.ages)}</em>`:""}</div>`).join("")}</div>
+   <div class="card"><h4>各區最關心的問題<em>${ageName}・前 2 名</em></h4><table class="ctab rtab"><tbody>${cmp}</tbody></table>
+     ${INS_AGE==="all"?`<p class="raw" style="margin:6px 0 0">同一個問題，各區問法和關心的點不一樣：北區多問 eSIM、出國上網；中南部多問家庭方案、長輩手機與詐騙；東區、離島多問收訊。</p>`:""}</div>
+   <div class="card"><h4>GEO 建議問句<em>${regName}・${ageName}優先處理</em></h4>${D.geo.map(r=>`<div class="q"><div class="raw">顧客原話：${r.q.raw}</div><div class="geo">${r.q.g}</div><span class="st ${r.q.st[0]}">${r.q.st[1]}</span><span class="st ch">發佈到：${r.q.ch}</span>${INS_REG!=="all"?`<span class="st ch">在地化：${regName}門市商家檔案</span>`:""}</div>`).join("")}</div>
    <div class="card"><h4>怎麼讓 AI 搜得到？</h4><div class="flow">
-     <div><b>1</b><span>門市問題去識別化、AI 歸納成題<small>顧客原話只留在系統內，不公開</small></span></div>
-     <div><b>2</b><span>把答案發佈到公開頁面<small>官網 FAQ（加上 FAQ 結構化資料）、YouTube 影片標題與說明、Google 商家檔案問答</small></span></div>
+     <div><b>1</b><span>門市問題去識別化、AI 歸納成題<small>顧客原話只留在系統內，不公開；依區域、年齡層分組</small></span></div>
+     <div><b>2</b><span>把答案發佈到公開頁面<small>官網 FAQ（加上 FAQ 結構化資料）、YouTube 影片標題與說明、各區門市的 Google 商家檔案問答</small></span></div>
      <div><b>3</b><span>AI 搜尋引用官網答案<small>顧客問 ChatGPT、Gemini、Google 時，看到台灣大哥大的答案</small></span></div>
      <div><b>4</b><span>每月追蹤 AI 有沒有引用<small>沒被引用的題目，回頭改寫內容</small></span></div></div></div>
    <p class="note">叫號系統本身是封閉的，AI 搜不到也不該搜到；公開的是整理後的答案。</p>
   </div>`;
-  $("#adClose").onclick=()=>{a.hidden=true;a.innerHTML=""};a.scrollTop=0;clearInterval(deskTimer)}
+  a.querySelectorAll("[data-reg]").forEach(b=>b.onclick=()=>{INS_REG=b.dataset.reg;const y=a.scrollTop;openAdmin();a.scrollTop=y});
+  a.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{INS_AGE=b.dataset.age;const y=a.scrollTop;openAdmin();a.scrollTop=y});
+  $("#adClose").onclick=()=>{a.hidden=true;a.innerHTML=""};if(!openAdmin.keep)a.scrollTop=0;clearInterval(deskTimer)}
 (()=>{let n=0,tm;document.addEventListener("click",e=>{if(!e.target.closest("#logo"))return;n++;clearTimeout(tm);tm=setTimeout(()=>n=0,700);if(n>=3){n=0;openAdmin()}})})();
 
 function setHome(n){HOME=n;buildStores();U.store=0;PEAK=STORES[0].peak;U.slot=null;
