@@ -259,7 +259,7 @@ function draw(scroll){
   const c=$("#chat");
   c.innerHTML=`<div class="day">今天</div>`+state.msgs.map(m=>m.w==="me"
     ?`<div class="m me"><div class="col"><div class="b">${m.h}</div></div><span class="tm">已讀<br>${m.t}</span></div>`
-    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">${OA}</span>${/^<div class="(card|hub)/.test(m.h)?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
+    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">${OA}</span>${/^<div class="hub"/.test(m.h)?hubCard():/^<div class="card/.test(m.h)?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
   liveButtons();
   if(scroll)c.scrollTop=c.scrollHeight;
   setQuick(quick);
