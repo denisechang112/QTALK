@@ -209,6 +209,7 @@ const IC={
   store:'<path d="M20 34s-10-9.5-10-17a10 10 0 0 1 20 0c0 7.5-10 17-10 17z"/><circle cx="20" cy="17" r="3.6"/>',
   now:'<circle cx="20" cy="20" r="13"/><path d="M20 12v8l6 4"/>',
   rate:'<circle cx="20" cy="20" r="13"/><path d="M14.5 23.5c1.4 2 3.3 3 5.5 3s4.1-1 5.5-3"/><path d="M15 16.5h.01M25 16.5h.01" stroke-width="3.4"/>',
+  ai:'<path d="M7 11a5 5 0 0 1 5-5h16a5 5 0 0 1 5 5v11a5 5 0 0 1-5 5H17l-6 6v-6h0a4 4 0 0 1-4-4z"/><path d="M15 16.5h.01M20 16.5h.01M25 16.5h.01" stroke-width="3.4"/>',
   more:'<circle cx="20" cy="20" r="13"/><path d="M20 13v14M13 20h14"/>',
   gift:'<rect x="7" y="16" width="26" height="17" rx="2"/><path d="M5 12h30v5H5zM20 12v21M20 12c-2-5-8-6-8-2s8 2 8 2zm0 0c2-5 8-6 8-2s-8 2-8 2z"/>',
   phone:'<rect x="12" y="5" width="16" height="30" rx="3"/><path d="M18 30h4"/>',
@@ -219,7 +220,7 @@ const IC={
 };
 const svg=k=>`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const MENU={
-  svc:[["take","門市取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["more","更多服務"]],   // 「門市取號」回覆卡片裡的 6 個功能（仿銀行行動取號）
+  svc:[["take","門市取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["ai:智能小麥","問智能小麥"]],   // 「門市取號」回覆卡片裡的 6 個功能（仿銀行行動取號）
   tabs:{
     svc:[["hub","門市取號","🎫",1],["ai:智能小麥","智能小麥","💁‍♀️"],["promo:網路門市","網路門市","🛍️"],["promo:數位娛樂","數位娛樂","🍿"],["promo:綁定好友","綁定好友","🤝"],["promo:出國漫遊","出國漫遊","🧳"]],
     promo:"banners"
@@ -254,7 +255,7 @@ function draw(scroll){
   const c=$("#chat");
   c.innerHTML=`<div class="day">今天</div>`+state.msgs.map(m=>m.w==="me"
     ?`<div class="m me"><div class="col"><div class="b">${m.h}</div></div><span class="tm">已讀<br>${m.t}</span></div>`
-    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">${OA}</span>${m.h.startsWith("<div class=\"card")?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
+    :`<div class="m"><div class="av" aria-hidden="true"></div><div class="col"><span class="who">${OA}</span>${/^<div class="(card|hub)/.test(m.h)?m.h:`<div class="b">${m.h}</div>`}</div><span class="tm">${m.t}</span></div>`).join("");
   liveButtons();
   if(scroll)c.scrollTop=c.scrollHeight;
   setQuick(quick);
@@ -269,7 +270,7 @@ const RM={W:1179,H:760,
   svc:{img:"line-assets/menu-service.jpg",bg:"#ececec",hot:[
     ["promo:網路門市","網路門市",28,130,576,320],["hub","門市取號（新功能）",612,130,1160,320],
     ["promo:數位娛樂","數位娛樂",28,338,576,525],["promo:綁定好友","綁定好友",612,338,1160,525],
-    ["ai:智能小麥","智能小麥",28,546,576,735],["promo:出國漫遊","出國漫遊",612,546,1160,735]]},
+    ["promo:OP響樂生活","OP響樂生活",28,546,576,735],["promo:出國漫遊","出國漫遊",612,546,1160,735]]},
   promo:{img:"line-assets/menu-promo.jpg",bg:"#ffffff",hot:[
     ["promo:全新 iPhone 一應俱全","全新 iPhone",37,118,1148,532],["promo:全能超 5G","全能超 5G",37,550,584,747],["promo:高效解鎖 享樂由我","在外 5G・在家 Wi-Fi 7",605,550,1153,747]]}};
 const pct=(x0,y0,x1,y1)=>`left:${x0/RM.W*100}%;top:${y0/RM.H*100}%;width:${(x1-x0)/RM.W*100}%;height:${(y1-y0)/RM.H*100}%`;
@@ -280,7 +281,7 @@ function drawMenu(){const m=RM[tab];
     RM.tabs.map(([k,...b])=>`<button class="hs" data-tab="${k}" role="tab" aria-selected="${tab===k}" aria-label="${k==="svc"?"用戶服務":"本月主打"}" style="${pct(...b)}"></button>`).join("")+
     m.hot.map(([k,l,...b])=>`<button class="hs" data-menu="${esc(k)}" aria-label="${esc(l)}" style="${pct(...b)}"></button>`).join("");
 }
-function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${svg(k)}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
+function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${svg(k.split(":")[0])}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
 $("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};
 $("#kbBtn").onclick=()=>{const t=$("#typing");const on=t.hidden;t.hidden=!on;$("#menuTog").hidden=on;showMenu(!on);if(on)$("#msg").focus()};
