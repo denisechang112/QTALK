@@ -92,12 +92,16 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .rmimg .hs:active{background:rgba(0,0,0,.08)}
 .rmimg .hs:focus-visible{outline:3px solid var(--sky);outline-offset:-3px}
 /* 仿銀行「個人化服務」的回覆卡片 */
-.hub{background:#fff;border-radius:16px;width:min(285px,76vw);padding:16px 12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.hub{background:#fff;border-radius:16px;width:min(292px,78vw);padding:16px 12px 16px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .hub h3{margin:0 0 4px;text-align:center;font-size:22px;font-weight:900}
 .hub p{margin:0 0 12px;text-align:center;font-size:12px;color:var(--muted)}
-.hub .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.hub .g button{border:0;border-radius:12px;background:#f1f2f3;padding:12px 2px 9px;display:grid;justify-items:center;gap:6px;font-size:13px;font-weight:700;color:#3d4150}
-.hub .g button svg{width:34px;height:34px;color:#f15a00}
+/* 叫號說 App 的風格：粗黑框、純色塊、硬陰影 */
+.hub .g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 9px}
+.hub .g button{border:2.5px solid var(--ink);border-radius:14px;background:#fff;box-shadow:3px 3px 0 var(--ink);padding:10px 2px 8px;display:grid;justify-items:center;gap:6px;font-size:13px;font-weight:900;color:var(--ink);transition:transform .08s,box-shadow .08s}
+.hub .g button:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.hub .chip{width:48px;height:48px;border:2.5px solid var(--ink);border-radius:13px;display:grid;place-items:center;overflow:hidden}
+.hub .chip svg{width:38px;height:38px}
+.hub .chip.mai{background:#fdf0d2 url(line-assets/mai.png) 72% 4%/170% auto no-repeat}
 .bar{background:#e4ddd2;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));flex:none}
 .bar .kb{border:0;background:none;padding:0;width:32px;height:32px;color:var(--ink);flex:none}
 .bar .kb svg{width:30px;height:30px}
@@ -281,7 +285,17 @@ function drawMenu(){const m=RM[tab];
     RM.tabs.map(([k,...b])=>`<button class="hs" data-tab="${k}" role="tab" aria-selected="${tab===k}" aria-label="${k==="svc"?"用戶服務":"本月主打"}" style="${pct(...b)}"></button>`).join("")+
     m.hot.map(([k,l,...b])=>`<button class="hs" data-menu="${esc(k)}" aria-label="${esc(l)}" style="${pct(...b)}"></button>`).join("");
 }
-function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${svg(k.split(":")[0])}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
+/* 門市取號功能卡的圖示：跟叫號說 App 同一套（黑框＋亮色塊） */
+const APPIC={
+  take:["#ffcf2e",'<path d="M6 13a3 3 0 0 1 3-3h22a3 3 0 0 1 3 3v3.5a3.5 3.5 0 0 0 0 7V27a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-3.5a3.5 3.5 0 0 0 0-7z" fill="#fff"/><path d="M24 11v18" stroke-dasharray="2.4 2.4"/><path d="M11 17h8M11 23h6"/><circle cx="29" cy="20" r="2.2" fill="#f2711c" stroke="none"/>'],
+  mine:["#3a4fd6",'<rect x="11" y="5" width="18" height="30" rx="4" fill="#fff"/><path d="M17 9h6"/><rect x="14" y="14" width="12" height="11" rx="2.5" fill="#ffcf2e"/><text x="20" y="22.6" font-size="7.5" font-weight="900" text-anchor="middle" fill="#15142a" stroke="none" font-family="Arial Black,sans-serif">A1</text><path d="M17 30h6"/>'],
+  store:["#3ec46d",'<path d="M20 35s-10-9-10-17a10 10 0 0 1 20 0c0 8-10 17-10 17z" fill="#f2711c"/><circle cx="20" cy="17.5" r="4" fill="#fff"/>'],
+  now:["#b9bff2",'<circle cx="20" cy="20" r="13" fill="#fff"/><path d="M20 12v8l5.5 3.5" stroke="#f2711c" stroke-width="3"/><circle cx="20" cy="20" r="1.8" fill="#15142a" stroke="none"/>'],
+  rate:["#f2711c",'<circle cx="20" cy="20" r="13" fill="#ffcf2e"/><path d="M14 22.5c1.5 2.8 3.6 4 6 4s4.5-1.2 6-4"/><path d="M15.5 16.5h.01M24.5 16.5h.01" stroke-width="4"/>']
+};
+function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;const [bg,body]=APPIC[k]||APPIC.take;
+  return `<span class="chip" style="background:${bg}"><svg viewBox="0 0 40 40" fill="none" stroke="#15142a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`}
+function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${appIcon(k.split(":")[0])}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
 $("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};
 $("#kbBtn").onclick=()=>{const t=$("#typing");const on=t.hidden;t.hidden=!on;$("#menuTog").hidden=on;showMenu(!on);if(on)$("#msg").focus()};
