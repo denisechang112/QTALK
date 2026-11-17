@@ -20,6 +20,7 @@ button:focus-visible,textarea:focus-visible{outline:3px solid var(--yellow);outl
 @media (min-width:600px){.phone{border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.45);height:min(calc(100% - 32px),880px)}}
 html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;border-radius:0}
 .top{background:var(--hdr);color:var(--ink);display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;flex:none}
+.top .back small{font-size:20px;font-weight:700;margin-left:4px;vertical-align:4px}
 .top .back{border:0;background:none;color:var(--ink);font-size:30px;line-height:1;padding:0 6px 2px 2px}
 .top .nm{flex:1;min-width:0}
 .top .nm b{display:flex;align-items:center;gap:5px;font-size:17px;white-space:nowrap;overflow:hidden}
@@ -36,6 +37,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .m .av{width:32px;height:32px;border-radius:50%;background:#fff url(icon-192.png) center/cover;box-shadow:0 0 0 1px #e2d6c4;flex:none;align-self:flex-start}
 .m .col{display:grid;gap:3px;min-width:0;max-width:78%}
 .m .who{font-size:11px;color:#5a5446}
+.m:not(.me) .b{background:#ead9cb;border:1.5px solid #c9b29e}
 .b{background:#fff;border-radius:18px;padding:9px 12px;font-size:15px;line-height:1.5;overflow-wrap:anywhere;white-space:pre-line}
 .m.me{flex-direction:row-reverse}
 .m.me .b{background:var(--me)}
@@ -59,13 +61,38 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .qr:empty{display:none}
 .menu{background:#eceef1;flex:none;border-top:1px solid #ddd2c2}
 .menu[hidden]{display:none}
-.rmtabs{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:6px 6px 0}
-.rmtabs button{border:0;font-weight:900;font-size:15px;letter-spacing:.06em;padding:9px 4px;color:#fff;background:#b9bcc4;border-radius:14px 14px 0 0}
-.rmtabs button[aria-selected="true"]{background:var(--teal)}
-.rmgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 10px 12px;border-top:3px solid var(--teal)}
-.rmgrid button{border:0;background:#fff;border-radius:14px;padding:12px 4px 10px;display:grid;justify-items:center;gap:6px;font-weight:700;font-size:14.5px;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.05)}
-.rmgrid button svg{width:38px;height:38px;color:var(--teal)}
-.rmgrid button:active{background:#fff3e9}
+.rmtabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 10px 4px}
+.rmtabs button{position:relative;border:0;border-radius:999px;font-weight:900;font-size:17px;letter-spacing:.04em;padding:9px 8px 9px 46px;color:var(--ink);background:linear-gradient(#fbfbfc,#d9dadf);box-shadow:0 2px 3px rgba(0,0,0,.18),inset 0 1px 0 #fff}
+.rmtabs button i{position:absolute;left:5px;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:17px;background:linear-gradient(#ff9a3d,#f05a00);color:#fff;box-shadow:0 0 0 2px #fff}
+.rmtabs button[aria-selected="true"]{background:linear-gradient(#ff8a1e,#f15a00);color:#fff;box-shadow:0 2px 4px rgba(200,70,0,.35),inset 0 1px 0 rgba(255,255,255,.4)}
+.rmtabs button[aria-selected="true"] i{background:#fff;color:#f15a00}
+.rmgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;padding:10px 10px 14px}
+.rmgrid button{position:relative;border:0;border-radius:12px;background:linear-gradient(#f4f4f6,#e7e7ea);min-height:74px;padding:0 10px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:4px;text-align:left;font-weight:900;font-size:19px;color:var(--ink);box-shadow:2px 3px 4px rgba(0,0,0,.16);overflow:hidden}
+.rmgrid button span{border-left:4px solid #f15a00;padding-left:7px;line-height:1.15;white-space:nowrap}
+.rmgrid button em{font-style:normal;font-size:40px;line-height:1;flex:none;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.15))}
+.rmgrid button b.new{position:absolute;top:0;left:0;background:#e8402f;color:#fff;font-size:10.5px;font-weight:900;padding:1px 7px;border-radius:12px 0 10px 0;letter-spacing:.05em}
+.rmgrid button.hot{background:linear-gradient(#fff6ec,#ffe2c6);box-shadow:2px 3px 4px rgba(0,0,0,.16),0 0 0 2px #f15a00 inset}
+.rmgrid button:active{filter:brightness(.95)}
+.rmgrid.ban{grid-template-columns:1fr 1fr;gap:8px}
+.rmgrid.ban .bn{display:grid;justify-content:stretch;align-items:center;color:#fff;font-size:inherit;padding:10px 12px;min-height:0}
+.rmgrid.ban .bn.big{min-height:118px;padding-left:42%}.rmgrid.ban .bn.g5,.rmgrid.ban .bn.qt{min-height:68px}
+.bn{position:relative;border:0;border-radius:6px;color:#fff;text-align:left;overflow:hidden;padding:10px 12px;display:grid;align-content:center;gap:2px;box-shadow:1px 2px 4px rgba(0,0,0,.25)}
+.bn strong{font-size:18px;font-weight:900;font-style:italic;line-height:1.15;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+.bn small{font-size:11.5px;font-weight:700;opacity:.92}
+.bn.big{grid-column:1/-1;min-height:118px;padding-left:44%;background:radial-gradient(circle at 92% 30%,#9fc3ff 0,#3a63c9 18%,transparent 42%),linear-gradient(120deg,#05070f 0,#0d1838 55%,#1c2f6b)}
+.bn.big strong{font-size:25px}
+.bn.big small{justify-self:start;background:#f15a00;border-radius:4px;padding:1px 6px}
+.bn.big em{position:absolute;left:8%;top:50%;transform:translateY(-50%) rotate(-8deg);font-style:normal;font-size:70px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+.bn.g5{min-height:66px;background:radial-gradient(ellipse at 50% 120%,#ffd66b 0,#3e7bff 30%,transparent 60%),linear-gradient(#0a2a7a,#123a9e)}
+.bn.qt{min-height:66px;background:linear-gradient(135deg,#ff9a3d,#f15a00 60%,#d84800)}
+.bn.qt b.new{position:absolute;top:0;right:0;left:auto;background:#e8402f;color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:0 6px 0 8px}
+/* 仿銀行「個人化服務」的回覆卡片 */
+.hub{background:#fff;border-radius:16px;width:min(285px,76vw);padding:16px 12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.hub h3{margin:0 0 4px;text-align:center;font-size:22px;font-weight:900}
+.hub p{margin:0 0 12px;text-align:center;font-size:12px;color:var(--muted)}
+.hub .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hub .g button{border:0;border-radius:12px;background:#f1f2f3;padding:12px 2px 9px;display:grid;justify-items:center;gap:6px;font-size:13px;font-weight:700;color:#3d4150}
+.hub .g button svg{width:34px;height:34px;color:#f15a00}
 .bar{background:#e4ddd2;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));flex:none}
 .bar .kb{border:0;background:none;padding:0;width:32px;height:32px;color:var(--ink);flex:none}
 .bar .kb svg{width:30px;height:30px}
@@ -143,16 +170,16 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 </head>
 <body>
 <div class="wrap"><div class="phone" id="phone">
-  <div class="top"><button class="back" aria-label="返回" id="backBtn">‹</button>
-    <div class="nm"><b><svg viewBox="0 0 20 20" aria-label="認證官方帳號"><path d="M10 1.5l7 2.6v5.2c0 4.3-3 7.6-7 9.2-4-1.6-7-4.9-7-9.2V4.1z" fill="#06b04f"/><path d="M6.4 10.2l2.5 2.4 4.8-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="title">台灣大哥大・叫號說</span></b><small id="st"><i></i><span>此官方帳號正在自動回覆訊息</span></small></div>
+  <div class="top"><button class="back" aria-label="返回" id="backBtn">‹<small>3</small></button>
+    <div class="nm"><b><svg viewBox="0 0 20 20" aria-label="認證官方帳號"><path d="M10 1.5l7 2.6v5.2c0 4.3-3 7.6-7 9.2-4-1.6-7-4.9-7-9.2V4.1z" fill="#06b04f"/><path d="M6.4 10.2l2.5 2.4 4.8-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="title">台灣大哥大 Open Possible</span></b><small id="st"><i></i><span>此官方帳號正在自動回覆訊息</span></small></div>
     <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21M11 7.5V11l2.4 1.6"/></svg>
     <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-  <div class="mock" id="mock">概念示意：在 LINE 官方帳號裡選門市、取號、收叫號通知、填滿意度</div>
+  <div class="mock" id="mock">概念示意：台灣大哥大官方帳號＋門市線上取號（選門市、取號、叫號通知、滿意度）</div>
   <div class="chat" id="chat" aria-live="polite"></div>
   <div class="qr" id="qr"></div>
   <div class="menu" id="menu"><div class="rmtabs" id="rmTabs" role="tablist"></div><div class="rmgrid" id="rmGrid"></div></div>
   <div class="bar"><button class="kb" id="kbBtn" aria-label="切換鍵盤輸入"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="7" width="26" height="19" rx="4"/><path d="M8 12h.01M12.5 12h.01M17 12h.01M21.5 12h.01M8 16.5h.01M12.5 16.5h.01M17 16.5h.01M21.5 16.5h.01M11 21h10" stroke-width="2.4"/></svg></button>
-    <button class="tog" id="menuTog" aria-expanded="true">服務專區 <span aria-hidden="true">▾</span></button>
+    <button class="tog" id="menuTog" aria-expanded="true">用戶服務 <span aria-hidden="true">▾</span></button>
     <div class="typing" id="typing" hidden><input id="msg" placeholder="輸入訊息（例如：取號）" enterkeyhint="send"><button id="sendBtn">傳送</button></div></div>
   <div id="liff" hidden></div>
 </div></div>
@@ -168,7 +195,7 @@ const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k
 const CATS={"繳費/儲值":{t:4,docs:["門號或帳單"]},"續約/換約/新申辦":{t:18,docs:["身分證","第二證件（健保卡或駕照）"]},"異動/諮詢/維修":{t:10,docs:["身分證","要維修的手機（維修時）"]},"網路取貨/預約取件":{t:5,docs:["身分證","取貨簡訊或訂單編號"]}};
 const STARTERS=["合約快到期了","想問家庭方案","手機摔壞了","來取網路訂的手機","想把 SIM 卡轉 eSIM"];
 const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
-const OA="台灣大哥大・叫號說";
+const OA="台灣大哥大 Open Possible";
 
 /* ---------- 線條圖示（仿官方帳號圖文選單） ---------- */
 const IC={
@@ -187,8 +214,11 @@ const IC={
 };
 const svg=k=>`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const MENU={
-  svc:[["take","線上取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["more","更多服務"]],
-  promo:[["phone","新機預購"],["family","家庭方案"],["five","5G 吃到飽"],["point","會員點數"],["gift","續約好禮"],["cal","門市活動"]]
+  svc:[["take","門市取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["more","更多服務"]],   // 「門市取號」回覆卡片裡的 6 個功能（仿銀行行動取號）
+  tabs:{
+    svc:[["hub","門市取號","🎫",1],["ai:智能小麥","智能小麥","💁‍♀️"],["promo:網路門市","網路門市","🛍️"],["promo:數位娛樂","數位娛樂","🍿"],["promo:綁定好友","綁定好友","🤝"],["promo:出國漫遊","出國漫遊","🧳"]],
+    promo:"banners"
+  }
 };
 
 /* ---------- 門市清單（直接用叫號說 App 的門市資料） ---------- */
@@ -201,7 +231,7 @@ const mapUrl=n=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComp
 const sess=Q.parseLink();
 const DEMO=!sess;
 const ROOM=sess?sess.room:"demo";
-const KEY="qt-line-"+ROOM;
+const KEY="qt-line2-"+ROOM;
 let state={msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null};
 try{const o=JSON.parse(ls.get(KEY)||"null");if(o&&Array.isArray(o.msgs))state=Object.assign(state,o)}catch(e){}
 const save=()=>ls.set(KEY,JSON.stringify({msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone}));
@@ -229,17 +259,22 @@ function setQuick(list){quick=list||[];$("#qr").innerHTML=quick.map((q,i)=>`<but
 /* ---------- 圖文選單 ---------- */
 let tab="svc";
 function drawMenu(){
-  $("#rmTabs").innerHTML=[["promo","精 選 活 動"],["svc","服 務 專 區"]].map(([k,l])=>`<button data-tab="${k}" aria-selected="${tab===k}" role="tab">${l}</button>`).join("");
-  $("#rmGrid").innerHTML=MENU[tab].map(([k,l])=>`<button data-menu="${tab==="svc"?k:"promo:"+l}">${svg(k)}<span>${l}</span></button>`).join("");
-  $("#menuTog").innerHTML=(tab==="svc"?"服務專區":"精選活動")+" <span aria-hidden=\"true\">▾</span>";
+  $("#rmTabs").innerHTML=[["promo","本月主打","★"],["svc","用戶服務","🎫"]].map(([k,l,ic])=>`<button data-tab="${k}" aria-selected="${tab===k}" role="tab"><i aria-hidden="true">${tab===k?ic:"«"}</i>${l}</button>`).join("");
+  $("#rmGrid").className=tab==="promo"?"rmgrid ban":"rmgrid";
+  if(tab==="promo"){$("#rmGrid").innerHTML=`
+    <button class="bn big" data-menu="promo:iPhone Duo 正式開賣"><small>全新 iPhone</small><strong>iPhone Duo<br>正式開賣</strong><em aria-hidden="true">📱</em></button>
+    <button class="bn g5" data-menu="promo:全能超 5G"><strong>全能超 5G</strong><small>網速・覆蓋・穩定度</small></button>
+    <button class="bn qt" data-menu="hub"><b class="new">NEW</b><strong>LINE 線上取號</strong><small>門市不用抽號碼牌</small></button>`;return}
+  $("#rmGrid").innerHTML=MENU.tabs[tab].map(([k,l,e,hot])=>`<button data-menu="${esc(k)}"${hot?' class="hot"':""}>${hot?'<b class="new">NEW</b>':""}<span>${l}</span><em aria-hidden="true">${e}</em></button>`).join("");
 }
+function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${svg(k)}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
 $("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};
 $("#kbBtn").onclick=()=>{const t=$("#typing");const on=t.hidden;t.hidden=!on;$("#menuTog").hidden=on;showMenu(!on);if(on)$("#msg").focus()};
 $("#sendBtn").onclick=sendTyped;
 $("#msg").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendTyped()}});
 function sendTyped(){const v=$("#msg").value.trim();if(!v)return;$("#msg").value="";
-  const k=/取號|抽號|排隊/.test(v)?"take":/號碼|進度|輪到/.test(v)?"mine":/門市|分店|地址|哪裡/.test(v)?"store":/滿意|評分|問卷/.test(v)?"rate":null;
+  const k=/^門市取號$|選單/.test(v)?"hub":/取號|抽號|排隊/.test(v)?"take":/號碼|進度|輪到/.test(v)?"mine":/門市|分店|地址|哪裡/.test(v)?"store":/滿意|評分|問卷/.test(v)?"rate":null;
   if(k){menu(k,v);return}
   me(v);bot("我是自動回覆小幫手 🤖\n可以打「取號」、「我的號碼」、「選門市」或「滿意度」，或直接點下方的選單。");}
 
@@ -276,12 +311,14 @@ function storeCard(n,title){const live=isLive(n),v=live?VL:null;
     ${demoTag(n)}</div>
     <div class="ft"><button data-card="take">在這間線上取號</button><a href="${mapUrl(n)}" target="_blank" rel="noopener">Google 地圖導航</a><button data-card="stores">換一間門市</button></div></div>`}
 function menu(k,said){
-  if(k.startsWith("promo:")){me(k.slice(6));bot(`📣 ${esc(k.slice(6))}\n（概念示意：這裡會放官方帳號的行銷活動連結）\n\n要到門市辦理的話，點「服務專區 › 線上取號」先排隊，不用在現場抽號碼牌。`);return}
+  if(k==="hub"){me("【/門市取號/】");bot(hubCard());return}
+  if(k.startsWith("ai:")){me(k.slice(3));bot(`您好，我是智能小麥 🙋‍♀️（概念示意）\n帳單、方案、漫遊的問題可以直接問我。\n需要到門市辦理的話，我可以幫你先線上取號，不用到現場抽號碼牌！`);setQuick([["幫我線上取號",()=>{state.msgs.pop();menu("take","幫我線上取號")}],["門市取號選單",()=>bot(hubCard())]]);return}
+  if(k.startsWith("promo:")){me(k.slice(6));bot(`📣 ${esc(k.slice(6))}\n（概念示意：這裡是官方帳號原本的活動／服務連結）\n\n要到門市辦理的話，點「用戶服務 › 門市取號」先線上排隊，不用在現場抽號碼牌。`);return}
   if(k==="take"){me(said||"線上取號");const t=mine();if(active(t)){bot(`你已經有號碼 ${t.no}（${esc(state.tkStore)}）囉！辦完這次才能再取號。`);return}
     if(!state.store&&!liveStore){bot(`請先選一間要去的門市 👇`);openStores();return}
     openLiff();return}
   if(k==="mine"){me(said||"我的號碼");const t=mine();
-    if(!active(t)){bot("你目前沒有號碼。點下方「線上取號」，先說說你要辦什麼，櫃台會先幫你準備。");return}
+    if(!active(t)){bot("你目前沒有號碼。點下方「用戶服務 › 門市取號」，先說說你要辦什麼，櫃台會先幫你準備。");return}
     if(t.st==="c"){bot(calledCard(t,"輪到你了"));return}
     bot(ticketCard(t,"目前進度"));return}
   if(k==="store"){me(said||"選擇門市");if(active(mine())){bot(`你正在 ${esc(state.tkStore)} 排隊（${mine().no}）。\n辦完或過號之後才能換門市喔。`);return}openStores();return}
@@ -452,7 +489,7 @@ function demoRun(){clearInterval(demo.timer);demo.timer=setInterval(()=>{   // �
 /* ---------- 啟動 ---------- */
 function setStatus(s){const el=$("#st");el.className=s==="live"?"ok":s==="connecting"||s==="reconnecting"?"":"bad";el.lastElementChild.textContent=s==="live"?`已連上 ${liveStore}・自動回覆訊息中`:(Q.STATUS_ZH[s]||s)}
 drawMenu();
-if(!state.msgs.length){bot(`歡迎加入台灣大哥大官方帳號 👋\n現在可以直接在這裡線上取號：\n① 點下方「選擇門市」挑一間門市\n② 點「線上取號」，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
+if(!state.msgs.length){bot(`歡迎加入台灣大哥大 Open Possible 👋\n🆕 現在可以直接在官方帳號線上取號：\n① 點下方「用戶服務 › 門市取號」\n② 選門市，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
 if(DEMO){$("#mock").textContent="概念示意・示範模式（沒有連線，櫃台每 6 秒自動叫下一位）"}
 else{conn=Q.connect(sess.host,sess.room,room=>{VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
 draw(true);
