@@ -34,7 +34,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:12px 10px 16px;display:flex;flex-direction:column;gap:10px}
 .day{align-self:center;background:rgba(0,0,0,.12);color:#fff;font-size:11px;border-radius:999px;padding:2px 10px}
 .m{display:flex;gap:6px;align-items:flex-end;max-width:100%}
-.m .av{width:32px;height:32px;border-radius:50%;background:#fff url(icon-192.png) center/cover;box-shadow:0 0 0 1px #e2d6c4;flex:none;align-self:flex-start}
+.m .av{width:34px;height:34px;border-radius:50%;background:#fff url(line-assets/oa-avatar.png) center/cover;box-shadow:0 0 0 1px #e2d6c4;flex:none;align-self:flex-start}
 .m .col{display:grid;gap:3px;min-width:0;max-width:78%}
 .m .who{font-size:11px;color:#5a5446}
 .m:not(.me) .b{background:#ead9cb;border:1.5px solid #c9b29e}
@@ -86,6 +86,11 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .bn.g5{min-height:66px;background:radial-gradient(ellipse at 50% 120%,#ffd66b 0,#3e7bff 30%,transparent 60%),linear-gradient(#0a2a7a,#123a9e)}
 .bn.qt{min-height:66px;background:linear-gradient(135deg,#ff9a3d,#f15a00 60%,#d84800)}
 .bn.qt b.new{position:absolute;top:0;right:0;left:auto;background:#e8402f;color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:0 6px 0 8px}
+.rmimg{position:relative;display:block;padding:0;line-height:0}
+.rmimg img{width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.rmimg .hs{position:absolute;border:0;background:transparent;padding:0;border-radius:14px;cursor:pointer}
+.rmimg .hs:active{background:rgba(0,0,0,.08)}
+.rmimg .hs:focus-visible{outline:3px solid var(--sky);outline-offset:-3px}
 /* 仿銀行「個人化服務」的回覆卡片 */
 .hub{background:#fff;border-radius:16px;width:min(285px,76vw);padding:16px 12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
 .hub h3{margin:0 0 4px;text-align:center;font-size:22px;font-weight:900}
@@ -96,7 +101,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .bar{background:#e4ddd2;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));flex:none}
 .bar .kb{border:0;background:none;padding:0;width:32px;height:32px;color:var(--ink);flex:none}
 .bar .kb svg{width:30px;height:30px}
-.bar .tog{flex:1;border:0;background:none;font-weight:900;font-size:16px;color:var(--ink);white-space:nowrap}
+.bar .tog{flex:1;border:0;background:none;font-weight:500;font-size:16px;color:var(--ink);white-space:nowrap}
 .bar .tog span{display:inline-block;font-size:11px;transition:transform .2s}
 .bar .tog.closed span{transform:rotate(180deg)}
 .typing{flex:1;display:flex;gap:6px}.typing[hidden]{display:none}
@@ -179,7 +184,7 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
   <div class="qr" id="qr"></div>
   <div class="menu" id="menu"><div class="rmtabs" id="rmTabs" role="tablist"></div><div class="rmgrid" id="rmGrid"></div></div>
   <div class="bar"><button class="kb" id="kbBtn" aria-label="切換鍵盤輸入"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="7" width="26" height="19" rx="4"/><path d="M8 12h.01M12.5 12h.01M17 12h.01M21.5 12h.01M8 16.5h.01M12.5 16.5h.01M17 16.5h.01M21.5 16.5h.01M11 21h10" stroke-width="2.4"/></svg></button>
-    <button class="tog" id="menuTog" aria-expanded="true">用戶服務 <span aria-hidden="true">▾</span></button>
+    <button class="tog" id="menuTog" aria-expanded="true">iPhone Duo正式開賣 <span aria-hidden="true">▾</span></button>
     <div class="typing" id="typing" hidden><input id="msg" placeholder="輸入訊息（例如：取號）" enterkeyhint="send"><button id="sendBtn">傳送</button></div></div>
   <div id="liff" hidden></div>
 </div></div>
@@ -258,14 +263,22 @@ function setQuick(list){quick=list||[];$("#qr").innerHTML=quick.map((q,i)=>`<but
 
 /* ---------- 圖文選單 ---------- */
 let tab="svc";
-function drawMenu(){
-  $("#rmTabs").innerHTML=[["promo","本月主打","★"],["svc","用戶服務","🎫"]].map(([k,l,ic])=>`<button data-tab="${k}" aria-selected="${tab===k}" role="tab"><i aria-hidden="true">${tab===k?ic:"«"}</i>${l}</button>`).join("");
-  $("#rmGrid").className=tab==="promo"?"rmgrid ban":"rmgrid";
-  if(tab==="promo"){$("#rmGrid").innerHTML=`
-    <button class="bn big" data-menu="promo:iPhone Duo 正式開賣"><small>全新 iPhone</small><strong>iPhone Duo<br>正式開賣</strong><em aria-hidden="true">📱</em></button>
-    <button class="bn g5" data-menu="promo:全能超 5G"><strong>全能超 5G</strong><small>網速・覆蓋・穩定度</small></button>
-    <button class="bn qt" data-menu="hub"><b class="new">NEW</b><strong>LINE 線上取號</strong><small>門市不用抽號碼牌</small></button>`;return}
-  $("#rmGrid").innerHTML=MENU.tabs[tab].map(([k,l,e,hot])=>`<button data-menu="${esc(k)}"${hot?' class="hot"':""}>${hot?'<b class="new">NEW</b>':""}<span>${l}</span><em aria-hidden="true">${e}</em></button>`).join("");
+/* 圖文選單：直接用官方帳號的選單截圖，上面疊透明的熱區按鈕（座標以 1179×760 的圖為準） */
+const RM={W:1179,H:760,
+  tabs:[["promo",28,10,580,97],["svc",607,10,1160,97]],
+  svc:{img:"line-assets/menu-service.jpg",bg:"#ececec",hot:[
+    ["promo:網路門市","網路門市",28,130,576,320],["ai:智能小麥","智能小麥",612,130,1160,320],
+    ["promo:數位娛樂","數位娛樂",28,338,576,525],["hub","門市取號（新功能）",612,338,1160,525],
+    ["promo:OP響樂生活","OP響樂生活",28,546,576,735],["promo:出國漫遊","出國漫遊",612,546,1160,735]]},
+  promo:{img:"line-assets/menu-promo.jpg",bg:"#ffffff",hot:[
+    ["promo:全新 iPhone 一應俱全","全新 iPhone",37,118,1148,532],["promo:全能超 5G","全能超 5G",37,550,584,747],["promo:高效解鎖 享樂由我","在外 5G・在家 Wi-Fi 7",605,550,1153,747]]}};
+const pct=(x0,y0,x1,y1)=>`left:${x0/RM.W*100}%;top:${y0/RM.H*100}%;width:${(x1-x0)/RM.W*100}%;height:${(y1-y0)/RM.H*100}%`;
+function drawMenu(){const m=RM[tab];
+  $("#rmTabs").hidden=true;$("#menu").style.background=m.bg;
+  $("#rmGrid").className="rmimg";
+  $("#rmGrid").innerHTML=`<img src="${m.img}" alt="" draggable="false">`+
+    RM.tabs.map(([k,...b])=>`<button class="hs" data-tab="${k}" role="tab" aria-selected="${tab===k}" aria-label="${k==="svc"?"用戶服務":"本月主打"}" style="${pct(...b)}"></button>`).join("")+
+    m.hot.map(([k,l,...b])=>`<button class="hs" data-menu="${esc(k)}" aria-label="${esc(l)}" style="${pct(...b)}"></button>`).join("");
 }
 function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${svg(k)}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
