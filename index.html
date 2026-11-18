@@ -545,7 +545,7 @@ html.fold-single .appBody{padding-inline:max(14px,calc((100% - 560px)/2))}
 </style>
 
 <div class="outer">
-  <div class="foldTog" id="foldTog" role="group" aria-label="預覽手機尺寸"><button type="button" data-fold="0" aria-pressed="true">📱 一般手機</button><button type="button" data-fold="1" aria-pressed="false">📖 折疊機展開（雙欄）</button><button type="button" data-fold="2" aria-pressed="false">📖 折疊機展開（原本單欄）</button></div>
+  <div class="foldTog" id="foldTog" role="group" aria-label="預覽手機尺寸"><button type="button" data-fold="0" aria-pressed="true">📱 一般手機</button><button type="button" data-fold="1" aria-pressed="false">📖 折疊機展開</button></div>
   <div class="phone" id="phone">
     <div class="urlbar" aria-hidden="true"><span>🔒</span><span class="u" id="url">qtalk.demo/<b>台北文創門市</b></span></div>
     <div id="toast"></div>
@@ -832,7 +832,7 @@ function renderFoldChip(){let c=$("#foldChip");const show=bigScreen()&&FOLD_SING
   if(!c){c=document.createElement("button");c.type="button";c.id="foldChip";c.className="foldChip";c.onclick=()=>setFoldSingle(false);$("#phone").appendChild(c)}
   c.textContent="📖 改成雙欄"}
 function applyWide(){const r=document.documentElement,on=isWide(),was=r.classList.contains("is-wide");setTimeout(renderFoldChip,0);r.classList.toggle("is-wide",on);
-  const cur=!FOLD_FORCE?"0":FOLD_SINGLE?"2":"1";document.querySelectorAll("#foldTog [data-fold]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.fold===cur)));
+  const cur=FOLD_FORCE?"1":"0";document.querySelectorAll("#foldTog [data-fold]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.fold===cur)));
   r.classList.toggle("fold-single",bigScreen()&&FOLD_SINGLE);
   if(on!==was&&typeof U!=="undefined"){if(on&&U.tab==="mine")U.tab="queue";renderApp()}}
 addEventListener("resize",()=>applyWide());
