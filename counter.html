@@ -207,12 +207,15 @@ function aiHTML(t,big){
     <div class="row">${tagOf(a.cat)}${diff?`<span class="diff">顧客選的是「${esc(t.cat)}」</span>`:`<span class="diff ok">和顧客選的一致</span>`}${a.by==="ai"?`<span class="diff">約 ${a.mins} 分</span>`:""}</div>
     ${a.sum?`<b>${esc(a.sum)}</b>`:""}${a.prep&&a.prep.length?`<span>先準備：${a.prep.map(esc).join("、")}</span>`:""}</div>`;
 }
+const plainR=new Map();
 async function decryptNew(){
   let changed=false;
   for(const t of V.all){if(!t.say||plain.has(t.id))continue;
     plain.set(t.id,null);   // 佔位，避免重複解
     const txt=sess.d?await Q.crypto.open(sess.pub||(V.meta&&V.meta.pub),sess.d,t.say):null;
     plain.set(t.id,txt===null?false:txt);changed=true}
+  for(const t of V.all){const m=t.rate&&t.rate.m;if(!m||plainR.has(t.id))continue;   // 滿意度意見
+    plainR.set(t.id,null);const txt=sess.d?await Q.crypto.open(sess.pub||(V.meta&&V.meta.pub),sess.d,m):null;plainR.set(t.id,txt===null?false:txt);changed=true}
   for(const t of V.all)if(t.st==="w"||t.st==="c")classify(t);
   if(changed)render();
 }
@@ -260,6 +263,9 @@ function accHTML(){const done=V.all.filter(t=>t.st==="d"&&t.act);
     <div class="stats"><div><b>${pc(aiOk,ai.length)}</b><span>${AI.key?"AI":"規則"}判斷正確</span></div><div><b>${pc(selfOk,done.length)}</b><span>顧客自選正確</span></div><div><b>${done.filter(t=>t.ai&&t.ai===t.act&&t.cat!==t.act).length}</b><span>AI 幫忙改對</span></div></div>
     <p class="muted">AI 先判斷、人確認，系統越用越準。留言在辦完時已從資料庫刪除。</p></div>`}
 /* 服務滿意度：顧客在 App 或 LINE 辦完後填的評分，即時彙整 */
+function notesHTML(rs){const ns=rs.filter(t=>t.rate.m).slice(-6).reverse();if(!ns.length)return "";const face={good:"😀",mid:"😐",bad:"😞"};
+  return `<div class="say" style="background:#eef3ff"><small>顧客意見（${rs.filter(t=>t.rate.m).length} 則，選填）</small>${ns.map(t=>{const p=plainR.get(t.id);
+    return `<div style="margin-top:4px"><b>${t.no}</b>${face[t.rate.f]||""}${t.rate.src==="line"?"・LINE":"・App"}：${p?esc(p):p===false||!sess.d?"🔒 有意見，但這台裝置沒有櫃台金鑰":"解密中…"}</div>`}).join("")}</div>`}
 function satHTML(){const rs=V.all.filter(t=>t.rate&&t.rate.s);
   if(!rs.length)return `<div class="box acc"><h2>服務滿意度</h2><p class="muted">顧客辦完後在手機或 LINE 填的評分，會即時出現在這裡。</p></div>`;
   const avg=k=>(rs.reduce((a,t)=>a+(+t.rate[k]||0),0)/rs.length).toFixed(1),low=rs.filter(t=>t.rate.c||["s","w","r"].some(k=>t.rate[k]&&t.rate[k]<=2));
@@ -267,6 +273,7 @@ function satHTML(){const rs=V.all.filter(t=>t.rate&&t.rate.s);
   return `<div class="box acc"><h2>服務滿意度<span class="tag white">${rs.length} 份</span></h2>
     <div class="stats"><div><b>${avg("s")}</b><span>櫃台服務</span></div><div><b>${avg("w")}</b><span>等候時間</span></div><div><b>${avg("r")}</b><span>問題解決</span></div></div>
     ${low.length?`<div class="say" style="background:#ffe9e5"><small>需要主管關心（${low.length} 位）</small>${low.map(t=>`${t.no}${t.rate.f?face[t.rate.f]||"":""}・服務 ${t.rate.s}／等候 ${t.rate.w}／解決 ${t.rate.r}${t.rate.c?"・<b>希望主管聯絡</b>":""}${t.rate.src==="line"?"・LINE":""}`).join("<br>")}</div>`:""}
+    ${notesHTML(rs)}
     <p class="muted">滿分 5 分。來源：${rs.filter(t=>t.rate.src==="line").length} 份 LINE、${rs.filter(t=>t.rate.src!=="line").length} 份 App。</p></div>`}
 async function act(fn){if(busy)return;busy=true;render();try{await fn()}catch(e){flash(e&&(e.status===401||e.status===403)?"資料庫拒絕寫入，請檢查安全規則":"沒有送出，請檢查網路後再按一次",4200)}busy=false;render()}
 /* 辦完或過號時，把顧客留言從資料庫刪掉（只留類別與統計） */

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#f1e4d2">
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
 <title>叫號說・LINE 官方帳號（概念示意）</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
@@ -119,6 +121,8 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .card .grid3 span{display:grid;justify-items:center;gap:4px;background:#f3f4f6;border-radius:10px;padding:8px 2px}
 .card .grid3 svg{width:28px;height:28px;color:var(--teal)}
 .slist .w em{font-style:normal;font-size:15px;font-weight:900;color:var(--ink)}
+.rq em.opt{font-style:normal;font-size:12px;font-weight:700;color:var(--muted);margin-left:4px}
+#liff .rq textarea{min-height:76px}
 .yn.f3 button{font-size:13px;padding:7px 2px}
 .muted{color:var(--muted);font-size:12px}
 #liff .sh small a{color:#2a6fd6;font-weight:700}
@@ -176,6 +180,51 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 .yn{display:flex;gap:8px}.yn button{flex:1;border:2px solid #d5d9e6;border-radius:10px;background:#fff;font-weight:700;padding:7px}
 .yn button[aria-pressed="true"]{border-color:var(--orange);background:#fff1e6}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* ===== 叫號說 App 的設計語言：取號／選門市／滿意度畫面、官方帳號傳來的號碼卡片，跟 App 同一套 ===== */
+:root{--paper:#fffaf0;--cream:#fdf0d2;--lilac:#b9bff2;--qg:#3ec46d;--line:2.5px solid var(--ink);--shadow:3px 3px 0 var(--ink);--f-num:"Archivo Black","Noto Sans TC",Impact,sans-serif}
+#liff .sheet{background:var(--paper);border:var(--line);border-bottom:0;border-radius:20px 20px 0 0}
+#liff .sh{background:var(--sky);color:#fff;border-bottom:var(--line)}
+#liff .sh small{color:#dfe2ff}#liff .sh small a{color:var(--yellow)}
+#liff .sh button{background:var(--yellow);color:var(--ink);border:var(--line);font-weight:900;box-shadow:2px 2px 0 var(--ink)}
+.lbl i{background:var(--yellow);color:var(--ink);border:2px solid var(--ink)}
+.cats button,.slist button,.yn button,.scale button,.cities button,.chips button{border:var(--line);background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.cats button[aria-pressed="true"],.slist button[aria-pressed="true"]{background:var(--sky);color:#fff;border-color:var(--ink)}
+.cats button[aria-pressed="true"] small,.slist button[aria-pressed="true"] small,.slist button[aria-pressed="true"] .w,.slist button[aria-pressed="true"] .w em{color:#dfe2ff}
+.cats button:active,.slist button:active,.yn button:active,.scale button:active,.chips button:active,.go:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.chips button{border-style:dashed;border-width:2px;box-shadow:none;font-weight:700}
+.cities button{box-shadow:2px 2px 0 var(--ink);border-width:2px}
+.cities button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);border-color:var(--ink)}
+.slist .w em{font-family:var(--f-num);font-weight:400}
+.slist .live{background:var(--qg);color:var(--ink);border:1.5px solid var(--ink)}
+.scale button{font-family:var(--f-num);font-weight:400;font-size:20px;padding:4px 0}
+.scale button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);border-color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
+.yn button[aria-pressed="true"]{background:var(--yellow);border-color:var(--ink)}
+textarea,.search,#liff .rq textarea{border:var(--line);background:#fff}
+textarea:focus,.search:focus{outline:3px solid var(--yellow);outline-offset:1px}
+.chk{background:var(--cream);border:var(--line)}
+.note{background:#e3f7ea;border:2px solid var(--ink);color:var(--ink);font-weight:700}
+.note.demo,.card p.demo{background:var(--cream);border:1.5px dashed var(--ink);color:var(--ink)}
+.go{background:var(--yellow);color:var(--ink);border:var(--line);box-shadow:4px 4px 0 var(--ink);font-size:20px;letter-spacing:.04em}
+.go:disabled{opacity:.5;box-shadow:2px 2px 0 var(--ink)}
+/* 號碼卡片 */
+.card{border:var(--line);box-shadow:var(--shadow);border-radius:18px;background:var(--paper)}
+.card .hd{background:var(--sky);border-bottom:var(--line)}
+.card.or .hd{background:var(--orange)}.card.gr .hd{background:var(--qg);color:var(--ink)}
+.card .no{font-family:var(--f-num);font-weight:400;font-size:52px}
+.card .no.sm{font-size:32px}
+.card .bd{background:linear-gradient(135deg,#d8dcf7,#b9bff2 40%,#e9ebfb 60%,#a9afe8)}
+.card.or .bd,.card.gr .bd{background:var(--paper)}
+.card .row2 div{background:#fff;border:2px solid var(--ink);color:var(--ink)}
+.card .row2 b{font-family:var(--f-num);font-weight:400}
+.card p{color:var(--ink)}
+.card .ft{border-top:var(--line);gap:8px;padding:10px;background:var(--paper)}
+.card .ft button,.card .ft a{border:var(--line)!important;border-radius:11px;background:#fff;color:var(--ink);font-weight:900;box-shadow:var(--shadow);padding:8px}
+.card .ft button:first-child{background:var(--yellow)}
+.card .ft button:disabled{background:#eee;color:#888;box-shadow:none}
+.faces{border-top:var(--line);gap:8px;padding:10px 10px 0;background:var(--paper)}
+.faces button{border:var(--line)!important;border-radius:12px;background:#fff;box-shadow:var(--shadow);color:var(--ink)}
+.card .grid3 span{background:#fff;border:2px solid var(--ink)}
 </style>
 </head>
 <body>
@@ -434,7 +483,7 @@ const FACE={good:"😀 解決了",mid:"😐 普通",bad:"😞 沒解決"};
 let R={};
 function openSurvey(face,tid){
   tid=tid||state.lastDone;if(!tid||state.rated[tid])return;
-  R={f:face||null,s:0,w:0,r:0,c:null,tid};
+  R={f:face||null,s:0,w:0,r:0,c:null,m:"",tid};
   const L=$("#liff");L.hidden=false;
   let first=true;
   const draw2=()=>{const sc=L.querySelector(".sb"),top=sc?sc.scrollTop:0,low=QS.some(([k])=>R[k]&&R[k]<=2),ok=R.f&&QS.every(([k])=>R[k])&&(!low||R.c!==null);
@@ -443,6 +492,9 @@ function openSurvey(face,tid){
         <div class="rq"><b>今天的問題解決了嗎？</b><div class="yn f3">${Object.entries(FACE).map(([k,l])=>`<button data-rf="${k}" aria-pressed="${R.f===k}">${l}</button>`).join("")}</div></div>
         ${QS.map(([k,l])=>`<div class="rq"><b>${l}</b><div class="scale">${[1,2,3,4,5].map(n=>`<button data-rk="${k}" data-rv="${n}" aria-pressed="${R[k]===n}" aria-label="${l} ${n} 分">${n}</button>`).join("")}</div><div class="scale-l"><span>很不滿意</span><span>非常滿意</span></div></div>`).join("")}
         ${low?`<div class="rq"><b>需要門市主管聯絡你嗎？</b><div class="yn"><button data-rc="1" aria-pressed="${R.c===true}">好，請聯絡我</button><button data-rc="0" aria-pressed="${R.c===false}">不用了</button></div><small class="muted">會透過這個官方帳號傳訊息給你，不需要留電話。</small></div>`:""}
+        <div class="rq"><b>其他想說的 <em class="opt">選填，可以不寫</em></b>
+          <textarea id="rm" maxlength="200" placeholder="例如：櫃台人員很親切、希望假日多開一個櫃台……">${esc(R.m)}</textarea>
+          <div class="cnt"><span id="rmc">${R.m.length}</span> / 200</div></div>
         <div class="note">📊 你的評分會直接送到門市櫃台的後台，跟叫號說 App 的評分放在一起看。不會記錄你的姓名或電話。</div>
         <div class="err" id="err"></div>
         <button class="go" id="rgo" ${ok?"":"disabled"}>送出評分</button>
@@ -451,14 +503,16 @@ function openSurvey(face,tid){
     L.querySelectorAll("[data-rf]").forEach(b=>b.onclick=()=>{R.f=b.dataset.rf;draw2()});
     L.querySelectorAll("[data-rk]").forEach(b=>b.onclick=()=>{R[b.dataset.rk]=+b.dataset.rv;if(!QS.some(([k])=>R[k]&&R[k]<=2))R.c=null;draw2()});
     L.querySelectorAll("[data-rc]").forEach(b=>b.onclick=()=>{R.c=b.dataset.rc==="1";draw2()});
+    $("#rm").oninput=e=>{R.m=e.target.value;$("#rmc").textContent=R.m.length};
     $("#rgo").onclick=sendSurvey;first=false;L.querySelector(".sb").scrollTop=top};
   draw2();
 }
 async function sendSurvey(){const g=$("#rgo");g.disabled=true;g.textContent="送出中…";
-  const rate={f:R.f,s:R.s,w:R.w,r:R.r,c:R.c===true,src:"line",t:DEMO||!state.tkLive?Date.now():Q.TS};
+  const rate={f:R.f,s:R.s,w:R.w,r:R.r,c:R.c===true,src:"line",t:DEMO||!state.tkLive?Date.now():Q.TS},note=R.m.trim().slice(0,200);
+  if(note){if(state.tkLive){let sealed=null;try{sealed=await Q.crypto.seal(VL.meta&&VL.meta.pub,note)}catch(e){}if(sealed)rate.m=sealed}else rate.m=note}   // 意見先加密，只有門市櫃台看得到
   try{if(state.tkLive&&conn)await conn.patch("/tickets/"+R.tid,{rate});else if(VD.all.some(t=>t.id===R.tid)&&demo.tickets[R.tid])demo.tickets[R.tid].rate=rate;
     state.rated[R.tid]=1;save();closeLiff();
-    me(`${FACE[R.f]}｜服務 ${R.s}・等候 ${R.w}・處理結果 ${R.r}`);
+    me(`${FACE[R.f]}｜服務 ${R.s}・等候 ${R.w}・處理結果 ${R.r}${note?`\n「${note}」`:""}`);
     bot(rate.c?"謝謝你的回饋 🙇\n很抱歉這次沒讓你滿意，門市主管會在 3 天內透過這個官方帳號跟你聯絡。":R.f==="good"?"謝謝你的評分 🙏\n很高興幫上忙，下次需要也可以直接在這裡線上取號！":"謝謝你的評分 🙏\n我們會把你的意見交給門市，持續改進。")}
   catch(e){$("#err").textContent="網路不太穩，評分沒有送出，請再按一次。";g.disabled=false;g.textContent="送出評分"}}
 function doneCard(t){return `<div class="card gr"><div class="hd">✅ 已辦理完成・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no sm">${t.no}</div><p>謝謝光臨！今天的問題解決了嗎？點表情告訴我們，接著 3 題快速評分。</p></div>
