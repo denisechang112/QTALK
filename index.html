@@ -848,8 +848,7 @@ function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.c
   el.innerHTML=`<div class="sd-now"><div><small>現在叫號</small><b>${now?now.no:"—"}</b></div><div style="text-align:right"><small>請到</small><b>${now?now.desk+1:"—"}</b><small>號櫃台</small></div></div>
     ${tk}
     ${nx?`<h5>接下來</h5><div class="sd-next">${nx}</div>`:""}
-    <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>
-    <button class="btn sm" type="button" data-side="single">↩ 改回原本的單欄畫面</button>`;
+    <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>`;
   el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="single"){setFoldSingle(true);return}if(k==="take"){go("queue");setTimeout(()=>{const f=$("#take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"start"})},60)}else{U.mineOK=true;go("mine")}})}
 document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;const v=b.dataset.fold;FOLD_FORCE=v!=="0";if(v!=="0")FOLD_SINGLE=v==="2";applyWide()});
 
