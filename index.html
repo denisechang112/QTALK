@@ -1162,9 +1162,11 @@ function setLang(){document.documentElement.lang={zh:"zh-Hant",en:"en",ja:"ja",k
 trObs.observe(document.getElementById("phone"),{subtree:true,childList:true,characterData:true});
 let VP={land:true,src:null};
 function vpLayout(){const box=$("#vplayer"),st=box&&box.querySelector(".stage");if(!st)return;const W=box.clientWidth,H=box.clientHeight;
-  if(VP.land){st.style.width=H+"px";st.style.height=W+"px";st.style.transform="translate(-50%,-50%) rotate(90deg)"}
+  const wideBox=W>=H;   // 折疊機展開／橫向螢幕：畫面本來就是寬的，橫式影片直接放大，不用轉向
+  const rot=VP.land&&!wideBox;
+  if(rot){st.style.width=H+"px";st.style.height=W+"px";st.style.transform="translate(-50%,-50%) rotate(90deg)"}
   else{st.style.width=W+"px";st.style.height=H+"px";st.style.transform="translate(-50%,-50%)"}
-  const r=box.querySelector("[data-rot]");if(r)r.textContent=VP.land?"轉直式":"轉橫式";phoneTurn(VP.land&&!box.hidden)}
+  const r=box.querySelector("[data-rot]");if(r){r.hidden=wideBox;r.textContent=VP.land?"轉直式":"轉橫式"}phoneTurn(rot&&!box.hidden&&!document.documentElement.classList.contains("is-wide"))}
 function phoneTurn(on){const ph=$("#phone");if(!ph)return;
   if(!on||innerWidth<=480){ph.style.transform="";return}
   const W=ph.offsetWidth,H=ph.offsetHeight,k=Math.min(1,(innerWidth-40)/H,(innerHeight-40)/W);
