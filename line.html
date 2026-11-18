@@ -29,6 +29,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .top .nm small{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#5a5446}
 .top .nm small i{width:7px;height:7px;border-radius:50%;background:#aaa;display:inline-block}
 .top .nm small.ok i{background:#06b04f}.top .nm small.bad i{background:var(--red)}
+.top .icb{border:0;background:none;padding:0;color:var(--ink);display:grid}
 .top .ic{width:24px;height:24px;flex:none;color:var(--ink)}
 .mock{background:#fff7d6;color:#6b5300;font-size:11.5px;font-weight:700;text-align:center;padding:4px 8px;flex:none}
 .chat{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:12px 10px 16px;display:flex;flex-direction:column;gap:10px}
@@ -182,7 +183,7 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
   <div class="top"><button class="back" aria-label="返回" id="backBtn">‹<small>3</small></button>
     <div class="nm"><b><svg viewBox="0 0 20 20" aria-label="認證官方帳號"><path d="M10 1.5l7 2.6v5.2c0 4.3-3 7.6-7 9.2-4-1.6-7-4.9-7-9.2V4.1z" fill="#06b04f"/><path d="M6.4 10.2l2.5 2.4 4.8-5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="title">台灣大哥大 Open Possible</span></b><small id="st"><i></i><span>此官方帳號正在自動回覆訊息</span></small></div>
     <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21M11 7.5V11l2.4 1.6"/></svg>
-    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <button class="icb" id="moreBtn" aria-label="選單：重新開始"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>
   <div class="mock" id="mock">概念示意：台灣大哥大官方帳號＋門市線上取號（選門市、取號、叫號通知、滿意度）</div>
   <div class="chat" id="chat" aria-live="polite"></div>
   <div class="qr" id="qr"></div>
@@ -200,7 +201,8 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 (function(){try{const u=navigator.userAgent;if(/iPhone|iPod|iPad|Android|Mobile/i.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1))document.documentElement.classList.add("is-phone")}catch(e){}})();
 const $=s=>document.querySelector(s),Q=window.QTLive,ST=window.QTStores||null;
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}},
+  wipe(){try{Object.keys(localStorage).filter(k=>/^qt-line/.test(k)).forEach(k=>localStorage.removeItem(k))}catch(e){}}};
 const CATS={"繳費/儲值":{t:4,docs:["門號或帳單"]},"續約/換約/新申辦":{t:18,docs:["身分證","第二證件（健保卡或駕照）"]},"異動/諮詢/維修":{t:10,docs:["身分證","要維修的手機（維修時）"]},"網路取貨/預約取件":{t:5,docs:["身分證","取貨簡訊或訂單編號"]}};
 const STARTERS=["合約快到期了","想問家庭方案","手機摔壞了","來取網路訂的手機","想把 SIM 卡轉 eSIM"];
 const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")};
@@ -242,10 +244,19 @@ const sess=Q.parseLink();
 const DEMO=!sess;
 const ROOM=sess?sess.room:"demo";
 const KEY="qt-line2-"+ROOM;
-let state={msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null};
-try{const o=JSON.parse(ls.get(KEY)||"null");if(o&&Array.isArray(o.msgs))state=Object.assign(state,o)}catch(e){}
-const save=()=>ls.set(KEY,JSON.stringify({msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone}));
-if(state.myId&&!state.tkLive){state.myId=null;save()}          // 示範號碼不跨重新整理
+/* 每次打開都像第一次加入官方帳號；只有「現場連線、號碼還在排隊／剛辦完還沒評分」時才接回之前的對話 */
+const FRESH=()=>({msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null});
+if(/[?&#]fresh\b/.test(location.search+location.hash)){ls.wipe();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/#&?fresh(=1)?$/,""))}catch(e){}}
+let state=FRESH(),saved=null,decided=true;
+try{const o=JSON.parse(ls.get(KEY)||"null");if(!DEMO&&o&&Array.isArray(o.msgs)&&o.myId&&o.tkLive&&Date.now()-(o.at||0)<6*3600e3){saved=o;decided=false}}catch(e){}
+if(!saved)ls.del(KEY);
+const save=()=>{if(DEMO||!decided)return;ls.set(KEY,JSON.stringify({at:Date.now(),msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone}))};
+function decide(room){if(decided)return;decided=true;
+  const t=room&&saved?Q.view(room).all.find(x=>x.id===saved.myId):null;
+  const keep=t&&(t.st==="w"||t.st==="c"||(t.st==="d"&&!(saved.rated||{})[t.id]));
+  if(keep)state=Object.assign(FRESH(),saved);else{state=FRESH();ls.del(KEY)}
+  if(!state.msgs.length)welcome();save();draw(true)}
+function resetChat(){ls.wipe();closeLiff();clearInterval(demo.timer);demo.tickets={};VD=Q.view(null);state=FRESH();decided=true;tab="svc";drawMenu();showMenu(true);welcome();draw(true)}
 let VL=Q.view(null),VD=Q.view(null),conn=null,liveStore=DEMO?null:"台北文創門市",quick=[];
 const isLive=n=>!DEMO&&!!n&&n===liveStore;
 const myStore=()=>state.store||liveStore||"台北文創門市";
@@ -316,6 +327,11 @@ document.addEventListener("click",e=>{
     if(a==="survey")openSurvey(null,b.dataset.tid);
     if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}return}
 });
+$("#moreBtn").onclick=()=>{const L=$("#liff");L.hidden=false;
+  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="重新開始"><div class="sh"><div style="flex:1"><b>Demo 小工具</b><small>只在這支手機上清除，不會動到櫃台和其他人</small></div><button id="lx" aria-label="關閉">✕</button></div>
+    <div class="sb"><p>清除這個聊天室的對話和號碼，回到「第一次加入官方帳號」的畫面。</p>
+    <button class="go" id="rst">清除紀錄，重新開始</button></div></div>`;
+  $("#lx").onclick=closeLiff;$("#rst").onclick=resetChat};
 $("#backBtn").onclick=()=>{if(!$("#liff").hidden)closeLiff()};
 
 /* ---------- 我的號碼狀態 ---------- */
@@ -517,9 +533,10 @@ function demoRun(){clearInterval(demo.timer);demo.timer=setInterval(()=>{   // �
 /* ---------- 啟動 ---------- */
 function setStatus(s){const el=$("#st");el.className=s==="live"?"ok":s==="connecting"||s==="reconnecting"?"":"bad";el.lastElementChild.textContent=s==="live"?`已連上 ${liveStore}・自動回覆訊息中`:(Q.STATUS_ZH[s]||s)}
 drawMenu();
-if(!state.msgs.length){bot(`歡迎加入台灣大哥大 Open Possible 👋\n🆕 現在可以直接在官方帳號線上取號：\n① 點下方「用戶服務 › 門市取號」\n② 選門市，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
+function welcome(){bot(`歡迎加入台灣大哥大 Open Possible 👋\n🆕 現在可以直接在官方帳號線上取號：\n① 點下方「用戶服務 › 門市取號」\n② 選門市，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
+if(decided)welcome();else setTimeout(()=>decide(null),3000);
 if(DEMO){$("#mock").textContent="概念示意・示範模式（沒有連線，櫃台每 6 秒自動叫下一位）"}
-else{conn=Q.connect(sess.host,sess.room,room=>{VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
+else{conn=Q.connect(sess.host,sess.room,room=>{decide(room);VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
 draw(true);
 </script>
 <script id="qt-lock">

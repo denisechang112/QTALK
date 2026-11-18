@@ -599,6 +599,10 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const tag=c=>`<span class="tagc ${CATS[c].c}">${c}</span>`;
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+/* Demo 用：清掉這支手機上的紀錄，回到「第一次打開」的樣子（網址加 ?fresh，或設定裡的按鈕） */
+const APP_KEYS=["qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
+function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
+if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/&fresh(=1)?\b/,"").replace(/#fresh(=1)?$/,""))}catch(e){}}
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 const maskPhone=p=>p.replace(/\D/g,"").replace(/^(\d{4})\d{3}(\d{3})$/,"$1-***-$2");
 
@@ -1037,7 +1041,10 @@ function openSettings(){
     <button type="button" class="btn sm" id="stTry" style="justify-self:start">🔊 試聽叫號</button>
     <div class="setrow" style="grid-template-columns:1fr"><span><b>語言 Language</b><small>介面與語音叫號的語言</small></span>
       <div class="langs">${L.map(([k,n])=>`<button type="button" data-lang="${k}" aria-pressed="${PREF.lang===k}">${n}</button>`).join("")}</div></div>
+    <div class="setrow" style="grid-template-columns:1fr"><span><b>重新開始</b><small>清除這支手機上的號碼、設定和提示，回到第一次打開的樣子（Demo 前用）</small></span>
+      <button type="button" class="btn sm" id="stReset" style="justify-self:start">🔄 清除紀錄，重新開始</button></div>
     <div class="acts"><button class="btn dark wide" type="button" id="stDone">完成</button></div></div>`,m=>{
+    $("#stReset").onclick=()=>{wipeLocal();location.reload()};
     $("#stBig").onchange=e=>{PREF.big=e.target.checked;store.set("qt-big",PREF.big?"1":"0");applyBig()};
     $("#stVoice").onchange=e=>{PREF.voice=e.target.checked;store.set("qt-voice",PREF.voice?"1":"0")};
     $("#stTry").onclick=()=>say(callLine("A123",2),true);
@@ -1711,9 +1718,9 @@ function restartTick2(){clearInterval(tickTimer);tickTimer=setInterval(()=>tick(
 restartTick=restartTick2;
 
 /* ================= 現場同步模式（掃門市大螢幕的 QR Code 進來時啟用；沒有 #l= 就是原本的模擬版） ================= */
-const LIVE={on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
+const LIVE={first:true,on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
 (function(){const Q=window.QTLive,ss=Q&&Q.parseLink();if(!ss)return;LIVE.on=true;LIVE.sess=ss;
-  try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id){LIVE.myId=m.id;LIVE.myText=m.text||""}}catch(e){}})();
+  try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id&&Date.now()-(m.at||0)<6*3600e3){LIVE.myId=m.id;LIVE.myText=m.text||""}else store.set("qt-live-me","null")}catch(e){}})();
 const simRestartTick=restartTick;
 restartTick=function(){if(LIVE.on){clearInterval(tickTimer);return}simRestartTick()};
 function liveBadge(){const b=$("#liveBadge");if(!b)return;b.hidden=!LIVE.on;const st=LIVE.status,ok=st==="live",wait=st==="connecting"||st==="reconnecting";
@@ -1749,6 +1756,8 @@ function liveSync(room){
   if(V.last){S.lastDesk=Math.min(2,Math.max(0,(V.last.desk||1)-1));S.lastCalled={no:V.last.no,desk:S.lastDesk}}else{S.lastCalled=null;S.lastDesk=0}
   S.total=V.all.length;
   let called=false,nearNow=false;
+  if(LIVE.first){LIVE.first=false;   // 剛打開頁面：舊號碼已辦完、過號或被清空 → 直接當成第一次來，不跳通知
+    if(LIVE.myId){const m0=V.all.find(t=>t.id===LIVE.myId);if(!m0||m0.st==="d"||m0.st==="s"||m0.st==="x")liveForget()}}
   if(LIVE.myId){const mine=V.all.find(t=>t.id===LIVE.myId);
     if(!mine){if(Date.now()-LIVE.tookAt>8000){liveForget();S.me=null;if(prevMe)toast("info","場次已重新開始","之前的號碼已失效，請重新取號。",5200)}}
     else if(mine.st==="s"||mine.st==="x"){liveForget();S.me=null;closeModal();toast("info",`${mine.no} 已過號`,"櫃台叫號時沒有等到你。請重新取號，或直接洽櫃台人員。",7000);buzz([120,60,120])}
@@ -1780,7 +1789,7 @@ async function liveTake(){
     if(txt){let sealed=null;try{sealed=await window.QTLive.crypto.seal(LIVE.pub,txt)}catch(e){}if(sealed)t.say=sealed;else sent=""}   // 沒辦法加密就不送出留言
     LIVE.tookAt=Date.now();
     const id=await LIVE.conn.post("/tickets",t);
-    LIVE.myId=id;LIVE.myText=sent;LIVE.calledSig=null;store.set("qt-live-me",JSON.stringify({room:LIVE.sess.room,id:id,text:sent}));
+    LIVE.myId=id;LIVE.myText=sent;LIVE.calledSig=null;store.set("qt-live-me",JSON.stringify({room:LIVE.sess.room,id:id,text:sent,at:Date.now()}));
     liveSync(LIVE.conn.data);
     if(!S.me)throw new Error("no ticket");
     S.me.log=[];
