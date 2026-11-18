@@ -509,6 +509,8 @@ html.is-wide:not(.is-phone) .phone{width:min(100%,880px);height:min(720px,calc(1
 html.is-wide .appTop{grid-column:1/-1;grid-row:1}
 html.is-wide .appSide>*{flex:none}
 html.is-wide .urlbar{display:none}
+/* 展開時玩遊戲只佔右邊，左邊號碼照樣看得到 */
+html.is-wide #gameview{left:max(260px,40%);border-left:var(--line)}
 html.is-wide .appBody{grid-column:2;grid-row:2;min-height:0}
 html.is-wide .tabbar{grid-column:2;grid-row:3}
 html.is-wide .appSide{display:flex;flex-direction:column;gap:12px;grid-column:1;grid-row:2/4;min-height:0;overflow-y:auto;padding:14px 12px 18px;background:var(--paper);border-right:var(--line);color:var(--ink)}
