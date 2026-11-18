@@ -498,9 +498,48 @@ html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.tap
 #liveBadge::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--yellow)}
 #liveBadge.ok::before{background:var(--green)}#liveBadge.bad::before{background:var(--red)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== 折疊機（展開）／平板：左邊常駐「我的號碼」，右邊照常使用 App ===== */
+.appSide,.foldTog{display:none}
+html:not(.is-phone) .foldTog{display:flex;gap:6px;margin-bottom:10px}
+.foldTog button{border:var(--line);border-radius:999px;background:var(--paper);color:var(--ink);font-weight:900;font-size:13px;padding:5px 12px;box-shadow:2px 2px 0 var(--ink);cursor:pointer}
+.foldTog button[aria-pressed="true"]{background:var(--yellow)}
+html.is-wide .phone{display:grid;grid-template-columns:minmax(260px,40%) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
+html.is-wide:not(.is-phone) .phone{width:min(100%,880px);height:min(720px,calc(100dvh - 76px));min-height:560px;border-radius:26px}
+html.is-wide .appTop{grid-column:1/-1;grid-row:1}
+html.is-wide .appSide>*{flex:none}
+html.is-wide .urlbar{display:none}
+html.is-wide .appBody{grid-column:2;grid-row:2;min-height:0}
+html.is-wide .tabbar{grid-column:2;grid-row:3}
+html.is-wide .appSide{display:flex;flex-direction:column;gap:12px;grid-column:1;grid-row:2/4;min-height:0;overflow-y:auto;padding:14px 12px 18px;background:var(--paper);border-right:var(--line);color:var(--ink)}
+html.is-wide.is-phone .appSide{zoom:1.12}
+html.is-wide .tabbar button[data-t="mine"]{display:none}
+html.is-wide .tabbar{grid-template-columns:repeat(2,1fr)}
+.appSide h5{margin:0;font-size:13px;font-weight:900;letter-spacing:.06em;color:#5b5f7a}
+.sd-now{background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow)}
+.sd-now small{display:block;font-size:11px;opacity:.75}
+.sd-now b{font-family:var(--f-num);font-weight:400;font-size:30px;line-height:1.1;color:var(--yellow)}
+.sd-tk{background:#fff;border:var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.sd-tk .hd{background:var(--sky);color:#fff;font-weight:900;font-size:13px;padding:6px 12px;border-bottom:var(--line)}
+.sd-tk.call .hd{background:var(--orange)}.sd-tk.done .hd{background:#3ec46d;color:var(--ink)}
+.sd-tk .bd{padding:12px;display:grid;gap:8px;text-align:center}
+.sd-tk .no{font-family:var(--f-num);font-size:54px;line-height:1}
+.sd-tk .cat{font-weight:900;font-size:13px}
+.sd-tk .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sd-tk .two div{border:2px solid var(--ink);border-radius:12px;padding:5px;font-size:11px;font-weight:700;color:#5b5f7a}
+.sd-tk .two b{display:block;font-family:var(--f-num);font-weight:400;font-size:22px;color:var(--ink)}
+.sd-tk .desk{font-size:20px;font-weight:900}
+.sd-tk .why{font-size:11.5px;color:#5b5f7a}
+.sd-tk .empty{font-size:14px;font-weight:700;color:#5b5f7a}
+.appSide .btn{width:100%}
+.sd-next{display:flex;flex-wrap:wrap;gap:6px}
+.sd-next span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:2px 8px;font-family:var(--f-num);font-size:14px}
+.sd-next span.me{background:var(--yellow)}
+.sd-tip{font-size:11.5px;color:#5b5f7a;line-height:1.5;margin-top:auto}
 </style>
 
 <div class="outer">
+  <div class="foldTog" id="foldTog" role="group" aria-label="預覽手機尺寸"><button type="button" data-fold="0" aria-pressed="true">📱 一般手機</button><button type="button" data-fold="1" aria-pressed="false">📖 折疊機展開</button></div>
   <div class="phone" id="phone">
     <div class="urlbar" aria-hidden="true"><span>🔒</span><span class="u" id="url">qtalk.demo/<b>台北文創門市</b></span></div>
     <div id="toast"></div>
@@ -513,6 +552,7 @@ html.is-phone #say:not(:placeholder-shown)+.taph,html.is-phone #say[hidden]+.tap
       <div class="title"><span class="lg"><span id="logo">叫號說</span><button type="button" id="liveBadge" hidden></button></span><span class="store"><button type="button" class="storebtn" id="storeBtn" aria-label="切換門市，目前：台北文創門市"><span id="storeName">台北文創門市</span> ▾</button><button type="button" class="aa" id="aaBtn" aria-label="大字、語音叫號、語言設定">Aa</button><button class="help" id="help" aria-label="這頁怎麼用">?</button></span></div>
       <div class="mq"><div class="pin" id="pin" aria-live="polite"></div><div class="run"><div class="track" id="mqText"><span class="seg"></span><span class="seg" aria-hidden="true"></span></div></div></div>
     </div>
+    <aside class="appSide" id="appSide" aria-label="我的號碼（折疊機展開時常駐）"></aside>
     <div class="appBody" id="appBody"></div>
     <nav class="tabbar" id="tabbar" aria-label="頁面"></nav>
   </div>
@@ -614,7 +654,7 @@ function reset(){
      docs:new Set(),out:false,done:null,rating:{},contact:null,tipsSeen:new Set(JSON.parse(store.get("qt-tips")||"[]")),guide:null,playing:{}};
   SEED.forEach(([c,t])=>enqueue(c,t,{}));
   for(let i=0;i<ONDUTY;i++)S.serving[i]=S.queue.shift();
-  applyBig();renderApp();restartTick();if(PREF.lang!=="zh")setLang();
+  applyBig();try{applyWide()}catch(e){}renderApp();restartTick();if(PREF.lang!=="zh")setLang();
   setTimeout(()=>tip("first"),700);
 }
 function enqueue(cat,text,o){
@@ -775,6 +815,29 @@ function mqStep(ts){
   requestAnimationFrame(mqStep);
 }
 
+/* ================= 折疊機展開：左邊常駐「我的號碼」 ================= */
+let FOLD_FORCE=/[?&#]fold\b/.test(location.search+location.hash);
+function isWide(){const r=document.documentElement;if(!r.classList.contains("is-phone"))return FOLD_FORCE;const w=innerWidth,h=innerHeight;return w>=600&&w/h>=0.72}
+function applyWide(){const r=document.documentElement,on=isWide(),was=r.classList.contains("is-wide");r.classList.toggle("is-wide",on);
+  document.querySelectorAll("#foldTog [data-fold]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.fold==="1")===FOLD_FORCE)));
+  if(on!==was&&typeof U!=="undefined"){if(on&&U.tab==="mine")U.tab="queue";renderApp()}}
+addEventListener("resize",()=>applyWide());
+function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.classList.contains("is-wide"))return;
+  const st=meState(),t=S.me,now=nowCalled();
+  let tk;
+  if(st==="none")tk=`<div class="sd-tk"><div class="hd">我的號碼</div><div class="bd"><div class="empty">還沒有號碼</div><button class="btn blue" type="button" data-side="take">去取號</button></div></div>`;
+  else if(st==="called"){const d=S.serving.indexOf(t)+1;tk=`<div class="sd-tk call"><div class="hd">🔔 輪到你了！</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${d} 號櫃台</div><div class="cat">${esc(t.cat)}</div></div></div>`}
+  else if(st==="waiting"){const w=waitFor(t);tk=`<div class="sd-tk"><div class="hd">我的號碼・排隊中</div><div class="bd"><div class="no">${t.no}</div><div class="cat">${esc(t.cat)}</div>
+    <div class="two"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div><div class="why">${esc(waitWhy(t))}</div><button class="btn" type="button" data-side="mine">看完整號碼牌</button></div></div>`}
+  else tk=`<div class="sd-tk done"><div class="hd">✅ 已辦理完成</div><div class="bd"><div class="no" style="font-size:36px">${t.no}</div><button class="btn" type="button" data-side="mine">幫櫃台評分</button></div></div>`;
+  const nx=S.queue.slice(0,6).map(x=>`<span class="${x===t?"me":""}">${x.no}</span>`).join("");
+  el.innerHTML=`<div class="sd-now"><div><small>現在叫號</small><b>${now?now.no:"—"}</b></div><div style="text-align:right"><small>請到</small><b>${now?now.desk+1:"—"}</b><small>號櫃台</small></div></div>
+    ${tk}
+    ${nx?`<h5>接下來</h5><div class="sd-next">${nx}</div>`:""}
+    <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>`;
+  el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="take"){go("queue");setTimeout(()=>{const f=$("#say")||$("#appBody .take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"center"})},60)}else{U.mineOK=true;go("mine")}})}
+document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;FOLD_FORCE=b.dataset.fold==="1";applyWide()});
+
 /* ================= tabs ================= */
 const ICONS={queue:'<path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/>',mine:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 6v12" stroke-dasharray="2 2"/>',learn:'<path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v5c3 2 7 2 10 0v-5"/>'};
 function renderTabs(){
@@ -783,10 +846,10 @@ function renderTabs(){
   $("#tabbar").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.t));
   $("#url").innerHTML=S.me&&st!=="done"?`qtalk.demo/<b>${S.me.no}</b>`:`qtalk.demo/<b>${HOME}</b>`;
 }
-function go(t){U.tab=t;U.bubble=null;U.carReset=true;renderApp();$("#appBody").scrollTop=0;if(t==="learn")setTimeout(()=>tip("learn"),400)}
+function go(t){U.mineOK=t==="mine"&&!!U.mineOK;U.tab=t;U.bubble=null;U.carReset=true;renderApp();$("#appBody").scrollTop=0;if(t==="learn")setTimeout(()=>tip("learn"),400)}
 let lastNow=null;
 function renderApp(fromTick){gameStatus();
-  renderTabs();renderMarquee();
+  renderTabs();renderMarquee();renderSide();
   const b=$("#appBody");
   if(fromTick){ // light updates only, so typing and playing videos are never interrupted
     const live=b.querySelector("[data-live]");
@@ -799,6 +862,7 @@ function renderApp(fromTick){gameStatus();
   fullRender();
 }
 function fullRender(){
+  if(document.documentElement.classList.contains("is-wide")&&U.tab==="mine"&&!U.mineOK&&meState()!=="done")U.tab="queue";   // 展開時號碼已經在左邊，右邊不用再放一次
   const b=$("#appBody"),y=b.scrollTop;
   const pv=[...b.querySelectorAll("video")].find(v=>!v.paused),keep=pv?{src:pv.getAttribute("src"),t:pv.currentTime}:null;
   const vx=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
@@ -1137,7 +1201,7 @@ function liveHTML(){
     return `<div class="box" data-live style="background:var(--yellow)"><div class="row" style="justify-content:space-between"><div><small style="font-weight:900">你的號碼</small><div style="font-family:var(--f-num);font-size:34px;line-height:1">${t.no}</div></div><div style="text-align:right;font-weight:900">${st==="called"?`請到 <span style="font-family:var(--f-num);font-size:30px">${S.serving.indexOf(t)+1}</span> 號櫃台`:`前面 ${w.ahead} 組<br>約 ${w.mins} 分`}</div></div><button class="btn dark wide" id="toMine">看我的號碼</button></div>`}
   return `<div data-live hidden></div>`;
 }
-function bindLive(){const m=$("#toMine");if(m)m.onclick=()=>go("mine")}
+function bindLive(){const m=$("#toMine");if(m)m.onclick=()=>{U.mineOK=true;go("mine")}}
 function queueHTML(){
   const st=meState(),has=st==="waiting"||st==="called";
   const now=nowCalled();lastNow=now?now.no:null;
