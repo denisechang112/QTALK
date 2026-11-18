@@ -725,7 +725,7 @@ function nearAlert(){
 }
 function calledAlert(){closePlayer();closeGame();
   const t=S.me,d=S.serving.indexOf(t);
-  buzz([250,100,250,100,250]);if(LIVE.on){liveChime();setTimeout(()=>say(callLine(t.no,d+1)),700)}else say(callLine(t.no,d+1));
+  buzz([250,100,250,100,250]);liveChime();setTimeout(()=>say(callLine(t.no,d+1)),700);   // 跟 LINE 一樣：先「叮咚叮」再唸號碼
   if(t.family)toast("sms",`輪到 ${t.no} 了，請到 ${d+1} 號櫃台`,`也已通知${t.family.name}。`);
   modal(`<div class="sheet called" role="alertdialog" aria-labelledby="mh"><p>輪到你了！${t.no}</p><div class="desk">${d+1}</div><h3 id="mh">請到 ${d+1} 號櫃台</h3>
     <p>${U.out?"你還沒回到門市，可以保留一次。":"櫃台已經看過你寫的需求，正在等你。"}</p>
@@ -979,7 +979,13 @@ const TTS_LANG={zh:"zh-TW",en:"en-US",ja:"ja-JP",ko:"ko-KR",vi:"vi-VN",id:"id-ID
 /* 挑語音：Mac / iPhone 的語音清單裡有一堆搞笑音效聲（Albert、Eddy、Grandpa、Bubbles⋯），排在前面會被選到，聽起來很怪。排除它們，優先用系統預設與高品質語音 */
 const ODD_VOICE=/\b(Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Kathy|Ralph|Eddy|Flo|Grandma|Grandpa|Reed|Rocko|Sandy|Shelley|Deranged|Hysterical|Pipe Organ)\b/i;
 const GOOD_VOICE=/Premium|Enhanced|Natural|Neural|Online|Google|Samantha|Kyoko|Otoya|Yuna|Mei-?Jia|Meijia|Linh|Damayanti|HoaiMy|NamMinh|Gadis|Ardi|Nanami|Keita|SunHi|InJoon|HsiaoChen|HsiaoYu|YunJhe/i;
-function pickVoice(lang){try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_VOICE.test(v.name)),l=lang.toLowerCase(),norm=v=>v.lang.toLowerCase().replace("_","-");
+/* 中文叫號跟 LINE 官方帳號同一個聲音：優先挑系統的台灣國語女聲（Hanhan、Yating、美佳 Meijia、Google 國語…），避開男聲 */
+const ZH_FEMALE=/Hanhan|Yating|HsiaoChen|HsiaoYu|Mei-?Jia|Meijia|美佳|Tingting|Ting-Ting|Sinji|Google\s*國語|Google\s*普通|Xiaoxiao|Xiaoyi|Huihui|Female|女/i,ZH_MALE=/Zhiwei|YunJhe|Yunxi|Yunyang|Kangkang|Li-?mu|Liang|Male|男/i;
+function pickZhFemale(){try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_VOICE.test(v.name)),n=v=>v.lang.toLowerCase().replace("_","-");
+  const tw=vs.filter(v=>n(v)==="zh-tw"),zh=vs.filter(v=>n(v).startsWith("zh")&&!/hk|yue/.test(n(v)));
+  for(const L of [tw,zh]){const f=L.filter(v=>ZH_FEMALE.test(v.name));const pick=f.find(v=>v.localService!==false)||f[0]||L.find(v=>!ZH_MALE.test(v.name));if(pick)return pick}
+  return null}catch(e){return null}}
+function pickVoice(lang){if(/^zh/i.test(lang)){const z=pickZhFemale();if(z)return z}try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_VOICE.test(v.name)),l=lang.toLowerCase(),norm=v=>v.lang.toLowerCase().replace("_","-");
   const exact=vs.filter(v=>norm(v)===l),near=vs.filter(v=>norm(v).startsWith(l.slice(0,2)));
   for(const L of [exact,near]){if(!L.length)continue;const loc=L.filter(v=>v.localService!==false);return loc.find(v=>v.default)||loc.find(v=>GOOD_VOICE.test(v.name))||loc[0]||L.find(v=>GOOD_VOICE.test(v.name))||L[0]}
   return null}catch(e){return null}}
@@ -988,7 +994,8 @@ function pickVoice(lang){try{const vs=speechSynthesis.getVoices().filter(v=>!ODD
 const CLIP_LANGS=["zh","en","ja","ko","vi","id"];
 const IS_MOBILE=/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
 function hasVoice(lang){const v=pickVoice(lang);return !!(v&&v.localService!==false&&v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))}
-function wantClips(l){if(!CLIP_LANGS.includes(l))return false;return (IS_MOBILE||l==="ko")?!hasVoice(TTS_LANG[l]):true}
+function wantClips(l){if(!CLIP_LANGS.includes(l))return false;if(l==="zh")return !pickZhFemale();   // 中文：跟 LINE 一樣先用系統女聲，沒有才播預錄
+  return (IS_MOBILE||l==="ko")?!hasVoice(TTS_LANG[l]):true}
 const CLIP_RX={zh:[/^([A-Z]) (\d+) 號，請到 (\d+) 號櫃台/,/^前面剩 (\d+) 組/],en:[/^Number ([A-Z]\d+), please go to counter (\d+)\./,/^(\d+) groups ahead/],
   ja:[/^([A-Z]\d+) 番の方、(\d+) 番窓口/,/^あと (\d+) 組/],ko:[/^([A-Z]\d+)번 고객님, (\d+)번 창구/,/^앞에 (\d+)팀/],
   vi:[/^Mời khách hàng số ([A-Z]\d+), đến quầy số (\d+)\./,/^Còn (\d+) nhóm/],id:[/^Nomor antrean ([A-Z]\d+), silakan ke loket (\d+)\./,/^Tinggal (\d+) grup/]};
@@ -1000,15 +1007,15 @@ async function clipIndex(l){if(clipIdx[l])return clipIdx[l];const r=await fetch(
 function clipChunk(l,ch){const key=l+"/"+ch;if(!clipBuf[key])clipBuf[key]=(async()=>{const r=await fetch("audio/"+key+".mp3");if(!r.ok)throw new Error("chunk");const ab=await r.arrayBuffer();
     return await new Promise((res,rej)=>{const p=getCtx().decodeAudioData(ab,res,rej);if(p&&p.catch)p.catch(rej)})})().catch(e=>{delete clipBuf[key];throw e});return clipBuf[key]}
 function clipPrefetch(l){clipIndex(l).then(()=>clipChunk(l,"x")).catch(()=>{})}
-document.addEventListener("pointerdown",()=>{const live=typeof LIVE!=="undefined"&&LIVE.on;if(!live&&!wantClips(PREF.lang))return;const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{});clipPrefetch(PREF.lang)},true);
+document.addEventListener("pointerdown",()=>{const c=getCtx();if(c&&c.state!=="running")c.resume().catch(()=>{});clipPrefetch(PREF.lang)},true);
 /* 現場模式：叫號是從網路來的，不是手指點出來的。手機（尤其 iPhone）要先在「點按」時把聲音打開，之後才准自動出聲 */
 let audioPrimed=false;
 function primeAudio(){
   try{const c=getCtx();if(c){if(c.state!=="running")c.resume().catch(()=>{});const b=c.createBuffer(1,1,22050),s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0)}}catch(e){}
   try{if(!audioPrimed&&"speechSynthesis" in window){const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang=TTS_LANG[PREF.lang]||"zh-TW";speechSynthesis.speak(u);audioPrimed=true}}catch(e){}
   clipPrefetch(PREF.lang)}
-function liveChime(){try{const c=getCtx();if(!c||c.state!=="running")return;const t0=c.currentTime+.02;
-  [[659.25,0],[523.25,.3]].forEach(([f,dt])=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t0+dt);g.gain.linearRampToValueAtTime(.5,t0+dt+.02);g.gain.exponentialRampToValueAtTime(.001,t0+dt+.8);o.connect(g);g.connect(c.destination);o.start(t0+dt);o.stop(t0+dt+.9)})}catch(e){}}
+function liveChime(){try{const c=getCtx();if(!c)return;if(c.state!=="running")c.resume().catch(()=>{});if(c.state!=="running")return;const t0=c.currentTime+.02;   // 跟 LINE 官方帳號同一段提示音（Do-Mi-Sol）
+  [[1046.5,0],[1318.5,.16],[1568,.32]].forEach(([f,dt])=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t0+dt);g.gain.linearRampToValueAtTime(.4,t0+dt+.015);g.gain.exponentialRampToValueAtTime(.001,t0+dt+.5);o.connect(g);g.connect(c.destination);o.start(t0+dt);o.stop(t0+dt+.6)})}catch(e){}}
 function clipStop(){clipSrcs.forEach(s=>{try{s.stop()}catch(e){}});clipSrcs=[]}
 async function playClips(l,keys,force,text){const my=++clipSeq;clipStop();
   try{const c=getCtx();if(!c)throw new Error("no audio");if(c.state!=="running")await c.resume();
@@ -1021,12 +1028,12 @@ function say(text,force,noClip){if(!PREF.voice&&!force)return;
   if(!noClip&&wantClips(PREF.lang)){const k=clipKeys(PREF.lang,text);if(k){try{speechSynthesis.cancel()}catch(e){}playClips(PREF.lang,k,force,text);return}}
   if(!("speechSynthesis" in window)||typeof SpeechSynthesisUtterance==="undefined"){if(force)toast("info","這個瀏覽器不支援語音","請改用手機的 Safari 或 Chrome 直接開啟這個網頁。",4200);return}
   try{const ss=window.speechSynthesis;if(ss.speaking||ss.pending)ss.cancel();if(ss.paused)ss.resume();
-    const u=new SpeechSynthesisUtterance(text);u.lang=TTS_LANG[PREF.lang]||"zh-TW";const v=pickVoice(u.lang);if(v)u.voice=v;u.rate=PREF.lang==="en"?.95:.92;u.volume=1;
+    const u=new SpeechSynthesisUtterance(text);u.lang=TTS_LANG[PREF.lang]||"zh-TW";const v=pickVoice(u.lang);if(v)u.voice=v;u.rate=PREF.lang==="en"||PREF.lang==="zh"?.95:.92;u.volume=1;
     let started=false;u.onstart=()=>{started=true};
     u.onerror=e=>{if(force&&e.error!=="interrupted"&&e.error!=="canceled")toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)};
     ss.speak(u);
     /* 現場模式：內建語音 1.5 秒內沒有開始唸（被瀏覽器擋住），就改播預錄語音 */
-    if(typeof LIVE!=="undefined"&&LIVE.on&&!noClip)setTimeout(()=>{if(started)return;const k=clipKeys(PREF.lang,text);if(k){try{ss.cancel()}catch(e){}playClips(PREF.lang,k,force,text)}},1500);
+    if(!noClip&&CLIP_LANGS.includes(PREF.lang))setTimeout(()=>{if(started)return;const k=clipKeys(PREF.lang,text);if(k){try{ss.cancel()}catch(e){}playClips(PREF.lang,k,force,text)}},1500);
     if(force)setTimeout(()=>{if(!started&&!ss.speaking)toast("info","沒聽到聲音嗎？","請確認手機沒有開靜音（iPhone 側邊靜音鍵）、音量已調高；在 App 內建瀏覽器可能被擋，請用 Safari 或 Chrome 開啟。",6500)},1600)
   }catch(e){if(force)toast("info","語音播放失敗","請改用 Safari 或 Chrome 直接開啟網頁再試一次。",4200)}}
 function callLine(no,desk){const L={zh:`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`,en:`Number ${no}, please go to counter ${desk}.`,ja:`${no} 番の方、${desk} 番窓口へお越しください。`,ko:`${no}번 고객님, ${desk}번 창구로 오세요.`,vi:`Mời khách hàng số ${no}, đến quầy số ${desk}.`,id:`Nomor antrean ${no}, silakan ke loket ${desk}.`}[PREF.lang];return L+" "+L}

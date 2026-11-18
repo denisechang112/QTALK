@@ -196,6 +196,7 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 .cities button{box-shadow:2px 2px 0 var(--ink);border-width:2px}
 .cities button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);border-color:var(--ink)}
 .slist .w em{font-family:var(--f-num);font-weight:400}
+.slist .live.cur{background:var(--yellow)}
 .slist .live{background:var(--qg);color:var(--ink);border:1.5px solid var(--ink)}
 .scale button{font-family:var(--f-num);font-weight:400;font-size:20px;padding:4px 0}
 .scale button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);border-color:var(--ink);box-shadow:2px 2px 0 var(--ink)}
@@ -438,8 +439,8 @@ function openStores(){
   $("#lx").onclick=closeLiff;
   const list=()=>{const q=$("#sq").value.trim();
     let a=q?STORE_LIST.filter(s=>(s.n+s.addr+s.c).includes(q)):STORE_LIST.filter(s=>s.c===city);
-    a=a.slice().sort((x,y)=>(isLive(y.n)-isLive(x.n))||(storeMins(x.n)-storeMins(y.n))).slice(0,40);
-    $("#slist").innerHTML=a.length?a.map(s=>`<button data-store="${esc(s.n)}" aria-pressed="${s.n===cur}"><b>${esc(s.n)}${isLive(s.n)?'<span class="live">現場連線</span>':""}</b><small>${esc(s.addr||s.c)}</small><span class="w">現在約<br><em>${storeMins(s.n)} 分</em></span></button>`).join(""):`<p class="muted">找不到符合的門市</p>`;
+    a=a.slice().sort((x,y)=>((y.n===cur)-(x.n===cur))||(isLive(y.n)-isLive(x.n))||(storeMins(x.n)-storeMins(y.n))).slice(0,40);   // 目前的門市永遠排第一
+    $("#slist").innerHTML=a.length?a.map(s=>`<button data-store="${esc(s.n)}" aria-pressed="${s.n===cur}"><b>${esc(s.n)}${s.n===cur?'<span class="live cur">目前門市</span>':""}${isLive(s.n)?'<span class="live">現場連線</span>':""}</b><small>${esc(s.addr||s.c)}</small><span class="w">現在約<br><em>${storeMins(s.n)} 分</em></span></button>`).join(""):`<p class="muted">找不到符合的門市</p>`;
     L.querySelectorAll("[data-store]").forEach(b=>b.onclick=()=>pickStore(b.dataset.store))};
   $("#sq").oninput=list;
   L.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;$("#sq").value="";L.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",x===b));list()});
@@ -532,8 +533,11 @@ async function clipIndex(l){if(!clipIdx[l]){const r=await fetch("audio/"+l+"/ind
 function clipChunk(l,ch){const k=l+"/"+ch;if(!clipBuf[k])clipBuf[k]=(async()=>{const r=await fetch("audio/"+k+".mp3");if(!r.ok)throw 0;const ab=await r.arrayBuffer();return await new Promise((res,rej)=>{const p=ctx().decodeAudioData(ab,res,rej);if(p&&p.catch)p.catch(rej)})})().catch(e=>{delete clipBuf[k];throw e});return clipBuf[k]}
 async function playClips(keys){const c=ctx(),idx=await clipIndex("zh");if(!keys.every(k=>idx[k]))return;const bufs=await Promise.all(keys.map(k=>clipChunk("zh",idx[k][0])));let t=c.currentTime+.05;
   keys.forEach((k,i)=>{const s=c.createBufferSource();s.buffer=bufs[i];s.connect(c.destination);s.start(t,Math.max(0,idx[k][1]-.04),idx[k][2]+.12);t+=idx[k][2]+.17})}
+const ZH_FEMALE=/Hanhan|Yating|HsiaoChen|HsiaoYu|Mei-?Jia|Meijia|美佳|Tingting|Ting-Ting|Sinji|Google\s*國語|Google\s*普通|Xiaoxiao|Xiaoyi|Huihui|Female|女/i,ZH_MALE=/Zhiwei|YunJhe|Yunxi|Yunyang|Kangkang|Li-?mu|Liang|Male|男/i;
+function zhFemale(){try{const vs=speechSynthesis.getVoices(),n=v=>v.lang.toLowerCase().replace("_","-");const tw=vs.filter(v=>n(v)==="zh-tw"),zh=vs.filter(v=>n(v).startsWith("zh")&&!/hk|yue/.test(n(v)));
+  for(const L of [tw,zh]){const f=L.filter(v=>ZH_FEMALE.test(v.name));const p=f.find(v=>v.localService!==false)||f[0]||L.find(v=>!ZH_MALE.test(v.name));if(p)return p}}catch(e){}return null}
 function announce(no,desk){chime();try{navigator.vibrate&&navigator.vibrate([250,100,250,100,250])}catch(e){}
-  setTimeout(()=>{let started=false;try{const line=`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`;const u=new SpeechSynthesisUtterance(line+" "+line);u.lang="zh-TW";u.rate=.95;u.onstart=()=>started=true;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
+  setTimeout(()=>{let started=false;try{const line=`${no.replace(/^([A-Z])/,"$1 ")} 號，請到 ${desk} 號櫃台。`;const u=new SpeechSynthesisUtterance(line+" "+line);u.lang="zh-TW";const fv=zhFemale();if(fv)u.voice=fv;u.rate=.95;u.onstart=()=>started=true;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}
     setTimeout(()=>{if(!started){try{speechSynthesis.cancel()}catch(e){}playClips([no,"q"+desk,no,"q"+desk]).catch(()=>{})}},1500)},600)}
 
 /* ---------- 取號、延後 ---------- */
