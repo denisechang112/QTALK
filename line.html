@@ -381,7 +381,7 @@ function sendTyped(){const v=$("#msg").value.trim();if(!v)return;$("#msg").value
 document.addEventListener("click",e=>{
   const q=e.target.closest("[data-q]");if(q){const it=quick[+q.dataset.q];setQuick([]);if(it){me(it[0]);it[1]()}return}
   const tb=e.target.closest("[data-tab]");if(tb){tab=tb.dataset.tab;drawMenu();return}
-  const m=e.target.closest("[data-menu]");if(m){menu(m.dataset.menu);return}
+  const m=e.target.closest("[data-menu]");if(m){if(m.closest("#rmGrid"))showMenu(false);menu(m.dataset.menu);const c=$("#chat");requestAnimationFrame(()=>c.scrollTop=c.scrollHeight);return}   // 點了圖文選單就自動收起來，讓聊天畫面變大（點下方「▴」可再打開）
   const f=e.target.closest("[data-face]");if(f&&!f.disabled){openSurvey(f.dataset.face,f.dataset.tid);return}
   const b=e.target.closest("[data-card]");if(b&&!b.disabled){const a=b.dataset.card;
     if(a==="hold")doHold();if(a==="mine")menu("mine");if(a==="take")menu("take");if(a==="stores")menu("store");
