@@ -196,6 +196,14 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 .cities button{box-shadow:2px 2px 0 var(--ink);border-width:2px}
 .cities button[aria-pressed="true"]{background:var(--yellow);color:var(--ink);border-color:var(--ink)}
 .slist .w em{font-family:var(--f-num);font-weight:400}
+.mapsb{gap:12px}
+.mapbox{border:var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);height:min(46vh,340px);background:#e8eef5}
+.mapbox iframe{width:100%;height:100%;border:0;display:block}
+.row2m{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2m div{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--muted)}
+.row2m b{display:block;font-family:var(--f-num);font-weight:400;font-size:20px;color:var(--ink)}
+a.go{display:block;text-align:center;text-decoration:none}
+.go.alt{background:#fff}
 .slist .live.cur{background:var(--yellow)}
 .slist .live{background:var(--qg);color:var(--ink);border:1.5px solid var(--ink)}
 .scale button{font-family:var(--f-num);font-weight:400;font-size:20px;padding:4px 0}
@@ -287,6 +295,9 @@ const MENU={
 const STORE_LIST=ST?Object.entries(ST.ALL_STORES).flatMap(([c,a])=>a.map(n=>({n,c,addr:ST.STORE_ADDR[n]||""}))):[{n:"台北文創門市",c:"台北市",addr:""}];
 const CITIES=ST?Object.keys(ST.ALL_STORES):["台北市"];
 const addrOf=n=>(ST&&ST.STORE_ADDR[n])||"";
+const mapQ=n=>addrOf(n)||("台灣大哥大 "+n);
+const mapEmbed=n=>"https://maps.google.com/maps?hl=zh-TW&z=16&output=embed&q="+encodeURIComponent(mapQ(n));   // 地圖直接嵌在 LINE 裡，不用跳出去
+const navUrl=n=>"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(mapQ(n));
 const mapUrl=n=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("台灣大哥大 "+n+" "+addrOf(n));
 
 /* ---------- 場次：有 QR Code 連結就是現場連線，沒有就是示範模式 ---------- */
@@ -375,7 +386,8 @@ document.addEventListener("click",e=>{
   const b=e.target.closest("[data-card]");if(b&&!b.disabled){const a=b.dataset.card;
     if(a==="hold")doHold();if(a==="mine")menu("mine");if(a==="take")menu("take");if(a==="stores")menu("store");
     if(a==="survey")openSurvey(null,b.dataset.tid);
-    if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}return}
+    if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}
+    if(a==="map")openMap(b.dataset.store);return}
 });
 $("#moreBtn").onclick=()=>{const L=$("#liff");L.hidden=false;
   L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="重新開始"><div class="sh"><div style="flex:1"><b>Demo 小工具</b><small>只在這支手機上清除，不會動到櫃台和其他人</small></div><button id="lx" aria-label="關閉">✕</button></div>
@@ -403,7 +415,7 @@ function storeCard(n,title){const live=isLive(n),v=live?VL:null;
     <p>📍 ${esc(addrOf(n)||"（地址請洽門市）")}</p>
     <div class="row2"><div>現在等候<b>${live?v.waiting.length+" 組":"約 "+Math.max(1,Math.round(storeMins(n)/4))+" 組"}</b></div><div>預估等候<b>${storeMins(n)} 分</b></div></div>
     ${demoTag(n)}</div>
-    <div class="ft"><button data-card="take">在這間線上取號</button><a href="${mapUrl(n)}" target="_blank" rel="noopener">Google 地圖導航</a><button data-card="stores">換一間門市</button></div></div>`}
+    <div class="ft"><button data-card="take">在這間線上取號</button><button data-card="map" data-store="${esc(n)}">📍 查看地圖・導航</button><button data-card="stores">換一間門市</button></div></div>`}
 function menu(k,said){
   if(k==="hub"){me("【/門市取號/】");bot(hubCard());return}
   if(k.startsWith("ai:")){me(k.slice(3));bot(`您好，我是智能小麥 🙋‍♀️（概念示意）\n帳單、方案、漫遊的問題可以直接問我。\n需要到門市辦理的話，我可以幫你先線上取號，不用到現場抽號碼牌！`);setQuick([["幫我線上取號",()=>{state.msgs.pop();menu("take","幫我線上取號")}],["門市取號選單",()=>bot(hubCard())]]);return}
@@ -475,6 +487,15 @@ function openLiff(){
   $("#prio").onchange=e=>F.p=e.target.checked;
   $("#go").onclick=take;
 }
+/* 門市地圖：在 LINE 裡直接看（像 LINE 的位置訊息），要導航時才交給 Google 地圖 App */
+function openMap(n){const L=$("#liff");L.hidden=false;
+  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="門市位置"><div class="sh"><div style="flex:1"><b>${esc(n)}</b><small>📍 ${esc(addrOf(n)||"")}</small></div><button id="lx" aria-label="關閉">✕</button></div>
+    <div class="sb mapsb"><div class="mapbox"><iframe title="${esc(n)} 地圖" src="${mapEmbed(n)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+      <div class="row2m"><div>預估等候<b>${storeMins(n)} 分</b></div><div>現在等候<b>${isLive(n)?VL.waiting.length+" 組":"約 "+Math.max(1,Math.round(storeMins(n)/4))+" 組"}</b></div></div>
+      <a class="go" id="nav" href="${navUrl(n)}" target="_blank" rel="noopener">開始導航（開啟 Google 地圖）</a>
+      <button class="go alt" id="mtake">在這間線上取號</button>
+      <p class="muted">地圖在 LINE 裡直接顯示；按「開始導航」才會打開 Google 地圖 App（手機有裝的話）。</p></div></div>`;
+  $("#lx").onclick=closeLiff;$("#mtake").onclick=()=>{closeLiff();if(state.store!==n&&!active(mine())){state.store=n;save()}menu("take")}}
 function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
 function catWait(c,n,v){return isLive(n)?qMins(v):storeMins(n)}
 
