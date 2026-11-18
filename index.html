@@ -536,10 +536,16 @@ html.is-wide .tabbar{grid-template-columns:repeat(2,1fr)}
 .sd-next span{border:2px solid var(--ink);border-radius:10px;background:#fff;padding:2px 8px;font-family:var(--f-num);font-size:14px}
 .sd-next span.me{background:var(--yellow)}
 .sd-tip{font-size:11.5px;color:#5b5f7a;line-height:1.5;margin-top:auto}
+
+/* 折疊機展開但選了「原本單欄」：維持手機排版，置中；右下角可切回雙欄 */
+html.fold-single:not(.is-phone) .phone{width:min(100%,880px);height:min(720px,calc(100dvh - 76px));min-height:560px;border-radius:26px}
+html.fold-single .appBody{padding-inline:max(14px,calc((100% - 560px)/2))}
+.foldChip{position:absolute;right:12px;bottom:68px;z-index:30;border:var(--line);border-radius:999px;background:var(--yellow);color:var(--ink);font-weight:900;font-size:13px;padding:6px 12px;box-shadow:var(--shadow)}
+[data-foldpref][aria-pressed="true"]{background:var(--yellow)}
 </style>
 
 <div class="outer">
-  <div class="foldTog" id="foldTog" role="group" aria-label="預覽手機尺寸"><button type="button" data-fold="0" aria-pressed="true">📱 一般手機</button><button type="button" data-fold="1" aria-pressed="false">📖 折疊機展開</button></div>
+  <div class="foldTog" id="foldTog" role="group" aria-label="預覽手機尺寸"><button type="button" data-fold="0" aria-pressed="true">📱 一般手機</button><button type="button" data-fold="1" aria-pressed="false">📖 折疊機展開（雙欄）</button><button type="button" data-fold="2" aria-pressed="false">📖 折疊機展開（原本單欄）</button></div>
   <div class="phone" id="phone">
     <div class="urlbar" aria-hidden="true"><span>🔒</span><span class="u" id="url">qtalk.demo/<b>台北文創門市</b></span></div>
     <div id="toast"></div>
@@ -640,7 +646,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const tag=c=>`<span class="tagc ${CATS[c].c}">${c}</span>`;
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 /* Demo 用：清掉這支手機上的紀錄，回到「第一次打開」的樣子（網址加 ?fresh，或設定裡的按鈕） */
-const APP_KEYS=["qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
+const APP_KEYS=["qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
 function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
 if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/&fresh(=1)?\b/,"").replace(/#fresh(=1)?$/,""))}catch(e){}}
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
@@ -817,9 +823,17 @@ function mqStep(ts){
 
 /* ================= 折疊機展開：左邊常駐「我的號碼」 ================= */
 let FOLD_FORCE=/[?&#]fold\b/.test(location.search+location.hash);
-function isWide(){const r=document.documentElement;if(!r.classList.contains("is-phone"))return FOLD_FORCE;const w=innerWidth,h=innerHeight;return w>=600&&w/h>=0.72}
-function applyWide(){const r=document.documentElement,on=isWide(),was=r.classList.contains("is-wide");r.classList.toggle("is-wide",on);
-  document.querySelectorAll("#foldTog [data-fold]").forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.fold==="1")===FOLD_FORCE)));
+function bigScreen(){const r=document.documentElement;if(!r.classList.contains("is-phone"))return FOLD_FORCE;const w=innerWidth,h=innerHeight;return w>=600&&w/h>=0.72}
+let FOLD_SINGLE=store.get("qt-fold")==="single";   // 使用者選「保留原本的單欄」
+function isWide(){return bigScreen()&&!FOLD_SINGLE}
+function setFoldSingle(v){FOLD_SINGLE=v;store.set("qt-fold",v?"single":"dual");applyWide();renderFoldChip()}
+function renderFoldChip(){let c=$("#foldChip");const show=bigScreen()&&FOLD_SINGLE;
+  if(!show){if(c)c.remove();return}
+  if(!c){c=document.createElement("button");c.type="button";c.id="foldChip";c.className="foldChip";c.onclick=()=>setFoldSingle(false);$("#phone").appendChild(c)}
+  c.textContent="📖 改成雙欄"}
+function applyWide(){const r=document.documentElement,on=isWide(),was=r.classList.contains("is-wide");setTimeout(renderFoldChip,0);r.classList.toggle("is-wide",on);
+  const cur=!FOLD_FORCE?"0":FOLD_SINGLE?"2":"1";document.querySelectorAll("#foldTog [data-fold]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.fold===cur)));
+  r.classList.toggle("fold-single",bigScreen()&&FOLD_SINGLE);
   if(on!==was&&typeof U!=="undefined"){if(on&&U.tab==="mine")U.tab="queue";renderApp()}}
 addEventListener("resize",()=>applyWide());
 function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.classList.contains("is-wide"))return;
@@ -834,9 +848,10 @@ function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.c
   el.innerHTML=`<div class="sd-now"><div><small>現在叫號</small><b>${now?now.no:"—"}</b></div><div style="text-align:right"><small>請到</small><b>${now?now.desk+1:"—"}</b><small>號櫃台</small></div></div>
     ${tk}
     ${nx?`<h5>接下來</h5><div class="sd-next">${nx}</div>`:""}
-    <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>`;
-  el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="take"){go("queue");setTimeout(()=>{const f=$("#say")||$("#appBody .take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"center"})},60)}else{U.mineOK=true;go("mine")}})}
-document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;FOLD_FORCE=b.dataset.fold==="1";applyWide()});
+    <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>
+    <button class="btn sm" type="button" data-side="single">↩ 改回原本的單欄畫面</button>`;
+  el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="single"){setFoldSingle(true);return}if(k==="take"){go("queue");setTimeout(()=>{const f=$("#say")||$("#appBody .take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"center"})},60)}else{U.mineOK=true;go("mine")}})}
+document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;const v=b.dataset.fold;FOLD_FORCE=v!=="0";if(v!=="0")FOLD_SINGLE=v==="2";applyWide()});
 
 /* ================= tabs ================= */
 const ICONS={queue:'<path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/>',mine:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 6v12" stroke-dasharray="2 2"/>',learn:'<path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v5c3 2 7 2 10 0v-5"/>'};
@@ -1112,10 +1127,13 @@ function openSettings(){
     <button type="button" class="btn sm" id="stTry" style="justify-self:start">🔊 試聽叫號</button>
     <div class="setrow" style="grid-template-columns:1fr"><span><b>語言 Language</b><small>介面與語音叫號的語言</small></span>
       <div class="langs">${L.map(([k,n])=>`<button type="button" data-lang="${k}" aria-pressed="${PREF.lang===k}">${n}</button>`).join("")}</div></div>
+    <div class="setrow" style="grid-template-columns:1fr"><span><b>折疊機／平板展開時</b><small>雙欄：左邊常駐號碼。單欄：維持原本手機的樣子</small></span>
+      <div style="display:flex;gap:8px"><button type="button" class="btn sm" data-foldpref="dual" aria-pressed="${!FOLD_SINGLE}">📖 雙欄</button><button type="button" class="btn sm" data-foldpref="single" aria-pressed="${FOLD_SINGLE}">📱 原本單欄</button></div></div>
     <div class="setrow" style="grid-template-columns:1fr"><span><b>重新開始</b><small>清除這支手機上的號碼、設定和提示，回到第一次打開的樣子（Demo 前用）</small></span>
       <button type="button" class="btn sm" id="stReset" style="justify-self:start">🔄 清除紀錄，重新開始</button></div>
     <div class="acts"><button class="btn dark wide" type="button" id="stDone">完成</button></div></div>`,m=>{
     $("#stReset").onclick=()=>{wipeLocal();location.reload()};
+    m.querySelectorAll("[data-foldpref]").forEach(b=>b.onclick=()=>{setFoldSingle(b.dataset.foldpref==="single");m.querySelectorAll("[data-foldpref]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
     $("#stBig").onchange=e=>{PREF.big=e.target.checked;store.set("qt-big",PREF.big?"1":"0");applyBig()};
     $("#stVoice").onchange=e=>{PREF.voice=e.target.checked;store.set("qt-voice",PREF.voice?"1":"0")};
     $("#stTry").onclick=()=>say(callLine("A123",2),true);
