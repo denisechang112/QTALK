@@ -640,6 +640,10 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 .linebind .lb-ic{flex:none;width:40px;height:40px;border-radius:12px;background:#06C755;color:#fff;font-weight:900;font-size:11px;display:grid;place-items:center;letter-spacing:.02em}
 .linebind h4{margin:0 0 2px}
 .linebind .lb-go{display:block;text-align:center;text-decoration:none;background:#06C755!important;color:#fff!important;border:2px solid #2D2E67;box-shadow:2px 2px 0 #2D2E67}
+
+.viabox{display:flex!important;gap:10px;align-items:center;border:1.5px solid #06C755!important;background:#F2FBF5!important;padding:10px 12px!important}
+.viabox p{margin:0;font-size:13px;line-height:1.5}
+.viabox .lb-ic{flex:none;width:38px;height:38px;border-radius:11px;background:#06C755;color:#fff;font-weight:900;font-size:10.5px;display:grid;place-items:center}
 </style>
 
 <div class="outer">
@@ -744,6 +748,9 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const tag=c=>`<span class="tagc ${CATS[c].c}">${c}</span>`;
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 /* Demo 用：清掉這支手機上的紀錄，回到「第一次打開」的樣子（網址加 ?fresh，或設定裡的按鈕） */
+/* 從 LINE 官方帳號打開（等候時看看）：帶著同一張號碼進來，通知仍由 LINE 傳送 */
+const VIA=(()=>{try{const q=new URLSearchParams(location.search),h=location.hash,g=k=>q.get(k)||((h.match(new RegExp("[&#]"+k+"=([^&]+)"))||[])[1]?decodeURIComponent(h.match(new RegExp("[&#]"+k+"=([^&]+)"))[1]):null);
+  if(g("via")!=="line")return null;return {me:g("me"),bind:g("bind"),ahead:Math.max(0,+g("ahead")||0),cat:g("cat"),open:g("open")}}catch(e){return null}})();
 const APP_KEYS=["qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
 function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
 if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/&fresh(=1)?\b/,"").replace(/#fresh(=1)?$/,""))}catch(e){}}
@@ -755,7 +762,7 @@ function reset(){
   S={pauseDesk:-1,pauseLeft:0,next:101+Math.floor(Math.random()*20),rnext:1,pnext:1,queue:[],serving:[null,null,null],me:null,lastDesk:0,total:186,courses:COURSES.map(c=>({...c})),enrolled:new Set()};
   U={tab:"queue",bubble:null,picked:null,draft:"",phone:"0912345678",consent:false,family:null,familyOn:false,more:false,
      resvOpen:false,peakSel:NOW_IDX,slot:null,resv:null,quizIdx:0,quizAns:null,stamps:new Set(),streak:0,round:0,roundEnd:false,
-     docs:new Set(),out:false,done:null,rating:{},contact:null,tipsSeen:new Set(JSON.parse(store.get("qt-tips")||"[]")),guide:null,playing:{}};
+     docs:new Set(),out:false,done:null,rating:{},contact:null,viaLine:!!VIA,tipsSeen:new Set(JSON.parse(store.get("qt-tips")||"[]")),guide:null,playing:{}};
   SEED.forEach(([c,t])=>enqueue(c,t,{}));
   for(let i=0;i<ONDUTY;i++)S.serving[i]=S.queue.shift();
   applyBig();try{applyWide()}catch(e){}renderApp();restartTick();if(PREF.lang!=="zh")setLang();
@@ -978,7 +985,7 @@ function fullRender(){
   const b=$("#appBody"),y=b.scrollTop;
   const pv=[...b.querySelectorAll("video")].find(v=>!v.paused),keep=pv?{src:pv.getAttribute("src"),t:pv.currentTime}:null;
   const vx=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
-  b.innerHTML=({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();
+  b.innerHTML=(U.viaLine&&meState()!=="none"&&meState()!=="done"?`<div class="box viabox"><span class="lb-ic" aria-hidden="true">LINE</span><p><b>通知會從 LINE 傳給你</b><br>可以放心關掉這頁；或留下來看影片、玩遊戲、上小教室。</p></div>`:"")+({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();   // 從 LINE 打開：每一頁最上面都提醒通知走 LINE
   ({queue:bindQueue,mine:bindMine,learn:bindLearn})[U.tab]();
   const reset=U.carReset;U.carReset=false;b.scrollTop=y;if(!reset)document.querySelectorAll(".vids").forEach((v,k)=>{if(vx[k])v.scrollLeft=vx[k]});else document.querySelectorAll(".vids").forEach(v=>{v.scrollLeft=0;v.dispatchEvent(new Event("scroll"))});
   if(keep){const v=b.querySelector(`video[src="${keep.src}"]`);if(v){v.preload="auto";v.currentTime=keep.t;v.play().catch(()=>{})}}
@@ -1429,7 +1436,7 @@ function doTake(){
 function afterTake(){
   U.draft="";U.chips=[];U.writeOpen=false;U.prio=false;U.bubble=S.me.no;U.docs=new Set();U.out=false;U.done=null;U.rating={};U.contact=null;U.note="";U.fresh=true;
   Q3.sync();go("mine");buzz(60);
-  toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
+  if(U.viaLine)toast("info",`已帶入號碼 ${S.me.no}`,"這張號碼是在 LINE 取的，叫號會從 LINE 通知你。",4200);else toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
   setTimeout(()=>tip("took"),1200);
   if(U.consent)setTimeout(()=>{if(S.me&&meState()==="waiting")toast("promo",CATS[S.me.cat].promo,"跟你這次要辦的事有關，到櫃台出示號碼即可使用。")},7000);
 }
@@ -1496,7 +1503,7 @@ function mineHTML(){
   ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，先把下面的證件準備好。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
   ${st==="waiting"&&!near?`<button class="btn wide away ${U.out?"on":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>
   <p class="note" style="margin-top:-8px">${U.out?"放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。":"不想乾等可以先去附近逛，快到了會叫你。"}</p>`:""}
-  ${st==="waiting"&&!U.lineBound?lineBindHTML(t):""}
+  ${st==="waiting"&&!U.lineBound&&!U.viaLine?lineBindHTML(t):""}
   <div class="box ${near?"docsnear":""}"><h4>${near?"現在就把這些拿出來":"排到之前，先準備好"}</h4><div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
     <p class="muted">${U.docs.size===docs.length?"全部準備好了，櫃台會更快幫你辦完。":"點一下勾選你帶了的東西。"}</p></div>
   ${st==="waiting"&&U.consent?`<div class="box" style="background:var(--cream)"><span class="tagc lilac" style="justify-self:start">跟你有關的優惠</span><h4>${CATS[t.cat].promo}</h4><p class="muted">到櫃台出示號碼即可使用。</p></div>`:""}
@@ -1919,7 +1926,8 @@ restartTick=restartTick2;
 /* ================= 現場同步模式（掃門市大螢幕的 QR Code 進來時啟用；沒有 #l= 就是原本的模擬版） ================= */
 const LIVE={first:true,on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
 (function(){const Q=window.QTLive,ss=Q&&Q.parseLink();if(!ss)return;LIVE.on=true;LIVE.sess=ss;
-  try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id&&Date.now()-(m.at||0)<6*3600e3){LIVE.myId=m.id;LIVE.myText=m.text||""}else store.set("qt-live-me","null")}catch(e){}})();
+  try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id&&Date.now()-(m.at||0)<6*3600e3){LIVE.myId=m.id;LIVE.myText=m.text||""}else store.set("qt-live-me","null")}catch(e){}
+  if(VIA&&VIA.me){LIVE.myId=VIA.me;LIVE.myText="";store.set("qt-live-me",JSON.stringify({room:ss.room,id:VIA.me,text:"",at:Date.now()}))}})();
 const simRestartTick=restartTick;
 restartTick=function(){if(LIVE.on){clearInterval(tickTimer);return}simRestartTick()};
 function liveBadge(){const b=$("#liveBadge");if(!b)return;b.hidden=!LIVE.on;const st=LIVE.status,ok=st==="live",wait=st==="connecting"||st==="reconnecting";
@@ -2005,6 +2013,17 @@ async function liveTake(){
 }
 
 reset();
+function adoptViaSim(){if(!VIA||!VIA.bind||(typeof LIVE!=="undefined"&&LIVE.on))return;
+  const cat=CATS[VIA.cat]?VIA.cat:"繳費/儲值",cs=Object.keys(CATS);
+  while(S.queue.length>VIA.ahead)S.queue.pop();while(S.queue.length<VIA.ahead)enqueue(cs[S.queue.length%cs.length],"",{});
+  S.me=enqueue(cat,"",{me:true});S.me.no=VIA.bind;S.me.sc={};S.me.log=[];S.me.start=VIA.ahead;afterTake()}
+function openVia(o){if(!o)return;
+  if(o==="learn"){go("learn");return}
+  if(o.startsWith("game:")){openGame(o.slice(5));return}
+  if(o.startsWith("v:")){const lbl=o.slice(2);for(const tab of ["mine","queue","learn"]){if(U.tab!==tab){if(tab==="mine")U.mineOK=true;go(tab)}
+    const v=[...document.querySelectorAll("video")].find(x=>(x.getAttribute("aria-label")||"").includes(lbl));
+    if(v){v.scrollIntoView({block:"center"});openPlayer(v);const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});return}}}}
+if(VIA){try{adoptViaSim()}catch(e){}setTimeout(()=>{try{openVia(VIA.open)}catch(e){}},VIA.me?1600:500);try{history.replaceState(null,"",location.href.replace(/[?&](via|bind|ahead|cat|open|me)=[^&#]*/g,"").replace(/&(via|me|open)=[^&]*/g,"").replace(/\?(?=#|$)/,""))}catch(e){}}
 if(LIVE.on)liveStart();
 ;/* qt-lock */if(document.documentElement.classList.contains("is-phone"))/* 手機上鎖住畫面：手指拖曳時，只讓真的能捲的區塊捲動，其他一律不讓整頁（或 App 內瀏覽器的視窗）跟著移動 */
 (function(){var sx=0,sy=0;

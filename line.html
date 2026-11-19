@@ -307,6 +307,20 @@ textarea,.search,#liff .rq textarea{border:1.5px solid #DEDEEA!important;border-
 .flist b{flex:1}.flist i{font-style:normal;font-weight:900;color:#06C755;width:18px}
 #sgo:disabled{opacity:.45}
 .card .hd .li,#liff .sh .li{color:#fff}.card .hd .li .ac,#liff .sh .li .ac{stroke:#F5C543}
+
+/* 等候推薦輪播 */
+.card.reco{width:min(320px,84vw)}
+.card.reco .hd{background:#5B5BA5!important}
+.rcs{display:flex;gap:10px;overflow-x:auto;padding:12px;scroll-snap-type:x mandatory;scrollbar-width:none;background:#F6F6F9}
+.rc{flex:none;width:170px;scroll-snap-align:start;background:#fff;border:1.5px solid #DEDEEA;border-radius:14px;overflow:hidden;display:grid;gap:4px;padding-bottom:8px}
+.rc-img{position:relative;height:96px;background:#5B5BA5 center/cover no-repeat;display:grid;place-items:center}
+.rc-img i{font-style:normal;font-size:40px}
+.rc-img.game{background:linear-gradient(135deg,#F5C543,#E8893A)}.rc-img.learn{background:linear-gradient(135deg,#4BA882,#5B5BA5)}
+.rc-img span{position:absolute;right:6px;bottom:6px;background:rgba(45,46,103,.85);color:#fff;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px}
+.rc b{font-size:13px;line-height:1.35;padding:0 10px;color:#2D2E67}
+.rc small{font-size:11.5px;color:#6b6b90;padding:0 10px}
+.rc button{margin:4px 10px 0;border:0;border-radius:10px;background:#E8893A;color:#fff;font-weight:900;font-size:13px;padding:7px}
+.card .ft button.watch{background:#F2FBF5!important;color:#06A045!important;border:1.5px solid #06C755!important;box-shadow:none!important}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -325,6 +339,7 @@ const P={
  wrench:'<path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5 7.5 20l6.2-6.2a4.5 4.5 0 0 0 5.8-4.3l-2.6 2.6-3-.6-.6-3z"/>',
  box:'<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/><path d="M7.8 5.3l8.5 4.5" class="ac"/>',
  lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><path d="M12 14.5v2.5" class="ac"/>',
+ school:'<path d="M3 9l9-4.5L21 9l-9 4.5z"/><path d="M7 11v4.5c3 2 7 2 10 0V11" class="ac"/><path d="M21 9v5"/>',
  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5" class="ac"/><path d="M12 7.8h.01" stroke-width="2.8"/>'
 };
 const sv=(k,cls)=>`<svg class="li ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
@@ -390,7 +405,7 @@ const IC={
 };
 const svg=k=>`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
 const MENU={
-  svc:[["take","門市取號"],["mine","我的號碼"],["store","選擇門市"],["now","門市現況"],["rate","滿意度調查"],["ai:智能小麥","問智能小麥"]],   // 「門市取號」回覆卡片裡的 6 個功能（仿銀行行動取號）
+  svc:[["take","門市取號"],["mine","我的號碼"],["store","選擇門市"],["learn","等候小教室"],["rate","滿意度調查"],["ai:智能小麥","問智能小麥"]],   // 「門市取號」回覆卡片裡的 6 個功能（仿銀行行動取號）
   tabs:{
     svc:[["hub","門市取號","🎫",1],["ai:智能小麥","智能小麥","💁‍♀️"],["promo:網路門市","網路門市","🛍️"],["promo:數位娛樂","數位娛樂","🍿"],["promo:綁定好友","綁定好友","🤝"],["promo:出國漫遊","出國漫遊","🧳"]],
     promo:"banners"
@@ -473,7 +488,7 @@ const APPIC={
 };
 function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;const [bg,body]=APPIC[k]||APPIC.take;
   return `<span class="chip" style="background:${bg}"><svg viewBox="0 0 40 40" fill="none" stroke="#2D2E67" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`}
-function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;return `<span class="chip">${window.__LI({take:"ticket",mine:"phone",store:"pin",now:"clock",rate:"smile"}[k]||"ticket")}</span>`}   // SVG 線稿版
+function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;return `<span class="chip">${window.__LI({take:"ticket",mine:"phone",store:"pin",now:"clock",learn:"school",rate:"smile"}[k]||"ticket")}</span>`}   // SVG 線稿版
 function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${appIcon(k.split(":")[0])}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
 $("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};
@@ -495,7 +510,8 @@ document.addEventListener("click",e=>{
     if(a==="survey")openSurvey(null,b.dataset.tid);
     if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}
     if(a==="map")openMap(b.dataset.store);
-    if(a==="share"){e.preventDefault();openShare()}return}
+    if(a==="share"){e.preventDefault();openShare()}
+    if(a==="watch")openWait(b.dataset.open||"",b.dataset.lbl);return}
 });
 $("#moreBtn").onclick=()=>{const L=$("#liff");L.hidden=false;
   L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="重新開始"><div class="sh"><div style="flex:1"><b>Demo 小工具</b><small>只在這支手機上清除，不會動到櫃台和其他人</small></div><button id="lx" aria-label="關閉">✕</button></div>
@@ -515,7 +531,7 @@ function ticketCard(t,title){const w=waitOf(t),docs=(CATS[t.cat]||CATS["異動/�
   return `<div class="card"><div class="hd">${title||"取號成功"}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><p>${esc(t.cat)}</p>
     <div class="row2"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div>
     <p>📋 請先準備：${docs.map(esc).join("、")}</p><p style="font-size:12px;color:#6b7086">輪到你時，會在這裡傳訊息通知你。不用一直盯著。</p>${state.tkLive||DEMO?"":demoTag(state.tkStore)}</div>
-    <div class="ft"><button data-card="mine">查看最新進度</button><button data-card="hold" data-hold="${t.id}">我需要晚一點（往後延 2 組）</button><a class="share" href="#" data-card="share" data-tid="${t.id}">↗ 分享號碼給家人</a></div></div>`}
+    <div class="ft"><button data-card="mine">查看最新進度</button><button class="watch" data-card="watch" data-open="" data-lbl="等候時看看">▶ 等候時看看（影片・小遊戲）</button><button data-card="hold" data-hold="${t.id}">我需要晚一點（往後延 2 組）</button><a class="share" href="#" data-card="share" data-tid="${t.id}">↗ 分享號碼給家人</a></div></div>`}
 function liveButtons(){const t=mine();document.querySelectorAll("[data-hold]").forEach(b=>{b.disabled=!t||t.held||!active(t)||b.dataset.hold!==state.myId;if(t&&t.held&&b.dataset.hold===state.myId)b.textContent="已延後過（只能用一次）"});
   document.querySelectorAll("[data-face],[data-card=survey]").forEach(b=>{if(state.rated[b.dataset.tid])b.disabled=true})}
 function storeCard(n,title){const live=isLive(n),v=live?VL:null;
@@ -536,6 +552,7 @@ function menu(k,said){
     if(t.st==="c"){bot(calledCard(t,"輪到你了"));return}
     bot(ticketCard(t,"目前進度"));return}
   if(k==="store"){me(said||"選擇門市");if(active(mine())){bot(`你正在 ${esc(state.tkStore)} 排隊（${mine().no}）。\n辦完或過號之後才能換門市喔。`);return}openStores();return}
+  if(k==="learn"){me("等候小教室");openWait("learn","等候小教室");return}
   if(k==="now"){me("門市現況");const n=myStore();
     if(isLive(n)){const d=[1,2,3].map(i=>VL.desks[i]?`${i} 號櫃台：${VL.desks[i].no}`:`${i} 號櫃台：—`).join("\n");bot(`🏪 ${esc(n)}（現場連線）\n現在等候：${VL.waiting.length} 組，約 ${qMins(VL)} 分\n${d}`)}
     else bot(storeCard(n,"🏪 門市現況"));return}
@@ -627,6 +644,29 @@ function openShare(){const t=mine();if(!t||!active(t)){bot("目前沒有排隊�
         ${w?`<div class="row2"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div>`:`<p><b>已經叫號了</b>，請到櫃台</p>`}<p style="font-size:12px;color:#6b7086">輪到他時，你也會收到通知。</p></div>
         <div class="ft"><button data-card="mine">查看最新進度</button></div></div>`)}};
   draw()}
+/* 等候體驗：在 LINE 裡打開叫號說 App（正式版是 LIFF），號碼一起帶過去 */
+const VIDS=[
+ {l:"60 秒看懂：我適合哪種 5G 方案？",p:"c2387925c7de4ac7abcc9d096054b33e",c:"續約/換約/新申辦",d:"1:00"},
+ {l:"1 分鐘認識：好速成双",p:"c45243a4a4eae360422f57b38851a288",c:"續約/換約/新申辦",d:"0:55"},
+ {l:"1 分鐘認識：OP響樂生活",p:"91f6d7c0d953afc64696499e7ae551d6",c:"續約/換約/新申辦",d:"0:55"},
+ {l:"SIM卡轉eSIM教學",p:"88dca3430512f90b093500358e988cb1",c:"網路取貨/預約取件",d:"1:00"},
+ {l:"30 秒看懂：出國上網怎麼選？",p:"23082a8a0f505eef488d67804e893ad6",c:"異動/諮詢/維修",d:"0:34"},
+ {l:"1 分鐘認識：智慧移動網",p:"388e2594cac5a7f5777b5a100c143035",c:"異動/諮詢/維修",d:"0:55"},
+ {l:"1 分鐘看懂：12 種常見詐騙",p:"0c0821381fc2809b217432c912aa1058",c:"*",d:"1:19"}];
+const GAMEC=[{k:"lm",l:"小小店長",e:"🏪",d:"打倒詐騙怪，帶顧客到櫃台"},{k:"fd",l:"防詐偵探",e:"🕵️",d:"12 位嫌疑人，抓出騙子"}];
+function waitUrl(open){const base=new URL("./",location.href).href.replace(/[#?].*$/,""),o=open?"&open="+encodeURIComponent(open):"",t=mine();
+  if(!DEMO&&state.tkLive&&t&&active(t))return base+"#l="+sess.host+"~"+sess.room+"&me="+encodeURIComponent(t.id)+"&via=line"+o;
+  if(t&&active(t)){const w=t.st==="w"?waitOf(t).ahead:0;return base+"?via=line&bind="+encodeURIComponent(t.no)+"&ahead="+w+"&cat="+encodeURIComponent(t.cat)+o}
+  return base+(DEMO?"?via=line"+o:"#l="+sess.host+"~"+sess.room+"&via=line"+o)}
+function openWait(open,label){const u=waitUrl(open);const a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+  if(label)bot(`已在 LINE 裡打開「${esc(label)}」📺\n看完關掉就好，輪到你時我會在這裡叫你。`)}
+function recoCard(t){const w=t.st==="w"?waitOf(t).mins:3;
+  let v=VIDS.filter(x=>x.c===t.cat);if(!v.length||t.cat==="繳費/儲值")v=VIDS.filter(x=>x.c==="*");
+  v=v.slice(0,w<6?1:2);
+  const items=v.map(x=>`<div class="rc"><div class="rc-img" style="background-image:url(media/${x.p}.jpg)"><span>${x.d}</span></div><b>${esc(x.l)}</b><button data-card="watch" data-open="v:${esc(x.l)}" data-lbl="${esc(x.l)}">▶ 看影片</button></div>`);
+  if(w>=6)GAMEC.forEach(g=>items.push(`<div class="rc"><div class="rc-img game"><i>${g.e}</i><span>約 3 分</span></div><b>玩一局：${g.l}</b><small>${g.d}</small><button data-card="watch" data-open="game:${g.k}" data-lbl="${g.l}">▶ 開始玩</button></div>`));
+  items.push(`<div class="rc"><div class="rc-img learn"><i>📚</i></div><b>等候小教室</b><small>防詐小測驗、短課程</small><button data-card="watch" data-open="learn" data-lbl="等候小教室">▶ 進教室</button></div>`);
+  return `<div class="card reco"><div class="hd">等候時看看・約 ${w} 分</div><div class="rcs">${items.join("")}</div></div>`}
 function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
 function catWait(c,n,v){return isLive(n)?qMins(v):storeMins(n)}
 
@@ -706,7 +746,7 @@ async function take(){
       VL=Q.view(conn.data);
     }
     closeLiff();if(text)me(`我要辦：${F.cat}\n「${text}」`);else me(`我要辦：${F.cat}`);
-    const t=mine();if(t){bot(pick(["收到！幫你排好了 👍 不用在門市乾等，先去附近逛逛也沒關係。","好的，號碼幫你拿好了！輪到你之前我會先提醒你 🙂"]));bot(ticketCard(t))}
+    const t=mine();if(t){bot(pick(["收到！幫你排好了 👍 不用在門市乾等，先去附近逛逛也沒關係。","好的，號碼幫你拿好了！輪到你之前我會先提醒你 🙂"]));bot(ticketCard(t));setTimeout(()=>{const m=mine();if(m&&active(m)){bot(`排隊時間不浪費 👇 幫你挑了${m.cat==="繳費/儲值"?"幾個":"跟「"+esc(m.cat.split("/")[0])+"」有關的"}內容，點了就在 LINE 裡打開，叫號照樣會通知你。`);bot(recoCard(m))}},700)}
   }catch(e){$("#err").textContent=e&&(e.status===401||e.status===403)?"門市的叫號系統拒絕了這次取號，請洽現場人員。":"網路不太穩，請再按一次「取號」。";go.disabled=false;go.textContent="取號"}
 }
 async function doHold(){const t=mine();if(!t||t.held)return;me("我需要晚一點");
