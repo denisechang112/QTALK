@@ -3,9 +3,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--sky:#3a4fd6;--night:#1b2470;--ink:#15142a;--paper:#fffaf0;--cream:#fdf0d2;--orange:#f2711c;--yellow:#ffcf2e;--green:#3ec46d;--red:#e8402f;--lilac:#b9bff2;--muted:#5a5c78;--card:#fffaf0;--text:#15142a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky:#26338f;--night:#10153f;--card:#24244a;--text:#fffaf0;--muted:#c4c6e0;--cream:#33325c}}
-:root[data-theme="dark"]{--sky:#26338f;--night:#10153f;--card:#24244a;--text:#fffaf0;--muted:#c4c6e0;--cream:#33325c}
+:root{--sky:#5B5BA5;--night:#2D2E67;--ink:#2D2E67;--paper:#FFFFFF;--cream:#F6F6F9;--orange:#E8893A;--yellow:#F5C543;--green:#4BA882;--red:#DD4F3C;--lilac:#D9D9EE;--muted:#5a5c78;--card:#FFFFFF;--text:#2D2E67}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky:#26338f;--night:#10153f;--card:#24244a;--text:#FFFFFF;--muted:#c4c6e0;--cream:#33325c}}
+:root[data-theme="dark"]{--sky:#26338f;--night:#10153f;--card:#24244a;--text:#FFFFFF;--muted:#c4c6e0;--cream:#33325c}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{background:var(--sky);color:var(--text);font-family:"Noto Sans TC",system-ui,sans-serif;font-size:17px;line-height:1.5;
@@ -57,12 +57,12 @@ h2.head{color:#fff;font:900 28px "Noto Sans TC";margin:4px 0 12px;-webkit-text-s
 .who .halo{position:absolute;left:50%;top:-10px;transform:translateX(-50%);font-size:28px;display:none}
 .who.good .halo{display:block;animation:bob 1.6s infinite}
 .msg{flex:1;min-width:0;margin-bottom:24px}
-.dev{border:3px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;color:#15142a;position:relative}
+.dev{border:3px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;color:#2D2E67;position:relative}
 .dev:before{content:"";position:absolute;left:-14px;bottom:18px;border:8px solid transparent;border-right:8px solid var(--ink)}
 .dev .bar{display:flex;align-items:center;gap:6px;padding:6px 10px;font-weight:900;font-size:14px;color:#fff;background:#5a5c78}
 .dev .bar .from{margin-left:auto;font-weight:700;opacity:.9;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dev .body{padding:10px 12px;font-weight:700;font-size:18px;line-height:1.55}
-.dev.sms .bar{background:#5a5c78}.dev.call .bar{background:#1b2470}.dev.line .bar{background:#06c755}.dev.shop .bar{background:#f2711c}.dev.job .bar{background:#9b6bd6}.dev.date .bar{background:#e85d8f}.dev.push .bar{background:#2fb3a6}
+.dev.sms .bar{background:#5a5c78}.dev.call .bar{background:#2D2E67}.dev.line .bar{background:#06c755}.dev.shop .bar{background:#E8893A}.dev.job .bar{background:#9b6bd6}.dev.date .bar{background:#e85d8f}.dev.push .bar{background:#2fb3a6}
 .dev.call .body{background:#eef0ff}
 .dev .body .note{display:block;font-size:14px;color:#5a5c78;margin-top:4px;font-weight:700}
 mark{background:var(--yellow);color:inherit;padding:0 2px;border-radius:3px;box-shadow:0 0 0 2px var(--ink);animation:pulse 1s 2}
@@ -181,8 +181,8 @@ mark{background:var(--yellow);color:inherit;padding:0 2px;border-radius:3px;box-
 
 <script>
 function char(o={}){
-  const ink="#15142a",sw=6;
-  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#ffcf2e",shirtS=o.shirtS||"#d9a91c";
+  const ink="#2D2E67",sw=6;
+  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#F5C543",shirtS=o.shirtS||"#d9a91c";
   const wave=o.wave||0,bob=o.bob||0,blink=o.blink;
   const S=`stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"`;
   const eye=blink?`<rect x="62" y="124" width="16" height="5" fill="${ink}"/><rect x="104" y="124" width="16" height="5" fill="${ink}"/>`:`<rect x="64" y="114" width="12" height="20" rx="2" fill="${ink}"/><rect x="106" y="114" width="12" height="20" rx="2" fill="${ink}"/>`;
@@ -193,14 +193,14 @@ function char(o={}){
   if(st==="short"||st==="bob"||st==="long"){hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="28" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 ${st==="short"?92:150} L142 ${st==="short"?98:176} Z" fill="${hair}" ${S}/>`;
     if(st!=="short")hairSvg+=`<rect x="22" y="70" width="18" height="${st==="bob"?90:120}" fill="${hair}" ${S}/>`;}
   if(st==="bun")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="22" fill="${hair}" ${S}/><rect x="84" y="14" width="44" height="34" fill="${hair}" ${S}/>`;
-  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#e8402f" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#e8402f" ${S}/>`;
+  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#DD4F3C" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#DD4F3C" ${S}/>`;
   const TOP=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/>`;
   if(st==="spiky")hairSvg=`<path d="M46 52 L60 18 L78 46 L94 14 L110 44 L128 16 L140 44 L162 24 L164 50 Z" fill="${hair}" ${S}/>`+TOP+`<path d="M30 96 L30 70 L142 70 L142 96 L128 84 L114 96 L100 84 L86 96 L72 84 L58 96 L44 84 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 88 L142 96 Z" fill="${hair}" ${S}/>`;
   if(st==="ponytail")hairSvg=`<path d="M170 58 q34 24 14 84 q-14-34-14-48 z" fill="${hair}" ${S}/>`+TOP+`<rect x="30" y="70" width="112" height="24" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 100 L142 110 Z" fill="${hair}" ${S}/>`;
-  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#3a4fd6"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#ffcf2e" ${S}/>`;
+  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#46468A"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#46468A"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#5B5BA5"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#F5C543" ${S}/>`;
   if(st==="bald")hairSvg=`<rect x="30" y="96" width="10" height="34" fill="${hair}"/><path d="M142 96 L150 90 L150 124 L142 130 Z" fill="${hair}"/>`;
   if(st==="side")hairSvg=TOP+`<path d="M30 70 L142 70 L142 88 Q90 80 60 110 L30 110 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 92 L142 98 Z" fill="${hair}" ${S}/>`;
-  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#ffcf2e" ${S}/>`:"");
+  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#F5C543" ${S}/>`:"");
   const dots=`<pattern id="dt${o.id||0}" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1.8" fill="rgba(0,0,0,.18)"/></pattern>`;
   const armR=`<g transform="rotate(${-wave} 140 200)"><rect x="140" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>${o.phone?`<rect x="146" y="246" width="22" height="34" rx="4" fill="${ink}"/><rect x="150" y="250" width="14" height="22" fill="#6dc7e6"/>`:""}</g>`;
   return `<svg viewBox="0 0 200 310" width="${o.w||200}" height="${(o.w||200)*1.55}" style="overflow:visible"><defs>${dots}</defs><g transform="translate(0 ${bob})">
@@ -209,7 +209,7 @@ function char(o={}){
    <rect x="32" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>
    <path d="M118 194 L138 178 L138 248 L118 266 Z" fill="${shirtS}" ${S}/>
    <rect x="52" y="194" width="66" height="72" fill="${shirt}" ${S}/>
-   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#e8402f" stroke="${ink}" stroke-width="3"/>`:""}
+   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#DD4F3C" stroke="${ink}" stroke-width="3"/>`:""}
    ${armR}
    <path d="M142 70 L172 44 L172 152 L142 178 Z" fill="${skinS}" ${S}/><path d="M142 70 L172 44 L172 152 L142 178 Z" fill="url(#dt${o.id||0})"/>
    <path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${skin}" ${S}/>
@@ -223,16 +223,16 @@ function char(o={}){
 const CASES=[
  {src:"簡訊",dev:"sms",from:"+886 9xx-xxx-321",q:"「您的包裹地址有誤，請點以下連結補填並支付 25 元運費 hxxp://ezpay-tw.co」",clue:"點以下連結補填並支付 25 元運費",scam:true,
   why:"物流不會用簡訊叫你付小額運費，陌生連結會騙走信用卡資料。直接到物流官方網站查詢。",tip:"物流不會叫你點連結付運費",
-  name:"假物流小哥",line:"包裹卡住了喔～點一下就好！",c:{style:"cap",shirt:"#f2711c",shirtS:"#c95a12",skin:"#e8c09a",skinS:"#c99f7c",phone:1,wave:30}},
+  name:"假物流小哥",line:"包裹卡住了喔～點一下就好！",c:{style:"cap",shirt:"#E8893A",shirtS:"#c95a12",skin:"#e8c09a",skinS:"#c99f7c",phone:1,wave:30}},
  {src:"來電",dev:"call",from:"未顯示號碼",q:"「我是購物網站客服，您的訂單被誤設成分期，請到 ATM 解除」",clue:"請到 ATM 解除",scam:true,
   why:"ATM 沒有「解除分期」功能。直接掛斷，打 165 反詐騙專線確認。",tip:"ATM 沒有「解除分期」功能",
-  name:"假客服阿凱",line:"您好～這邊是客服中心喔",c:{style:"short",shirt:"#6dc7e6",shirtS:"#4ea6c4",phones:"#3ec46d",hair:"#5b3a29",hairT:"#7a5440"}},
+  name:"假客服阿凱",line:"您好～這邊是客服中心喔",c:{style:"short",shirt:"#6dc7e6",shirtS:"#4ea6c4",phones:"#4BA882",hair:"#5b3a29",hairT:"#7a5440"}},
  {src:"簡訊",dev:"sms",from:"電信公司",q:"「您本期電信帳單已出帳，請自行到官方網站查看」",note:"（沒有附連結）",clue:"請自行到官方網站查看",scam:false,
   why:"沒有叫你點陌生連結或給資料，比較像正常通知。最保險的做法是自己打開官方網站查。",tip:"沒附連結、不要資料，比較像正常通知",
-  name:"帳單小幫手",line:"帳單出來囉，記得自己去看～",c:{style:"bob",shirt:"#3ec46d",shirtS:"#2b9a52",glasses:1,hair:"#2a2f6b",hairT:"#454b8f"}},
+  name:"帳單小幫手",line:"帳單出來囉，記得自己去看～",c:{style:"bob",shirt:"#4BA882",shirtS:"#2b9a52",glasses:1,hair:"#2a2f6b",hairT:"#454b8f"}},
  {src:"LINE",dev:"line",from:"小明（新號碼）",q:"「我是你兒子，換新號碼了，先幫我轉 3 萬急用」",clue:"換新號碼了，先幫我轉 3 萬",scam:true,
   why:"換號碼又急著要錢是典型手法。先用原本的號碼打給家人確認。",tip:"先用原本的號碼打給家人確認",
-  name:"冒牌兒子",line:"媽～是我啦！",c:{style:"spiky",shirt:"#e8402f",shirtS:"#b8301f",phone:1,open:1}},
+  name:"冒牌兒子",line:"媽～是我啦！",c:{style:"spiky",shirt:"#DD4F3C",shirtS:"#b8301f",phone:1,open:1}},
  {src:"簡訊",dev:"sms",from:"+886 9xx-xxx-007",q:"「您的銀行帳戶有異常登入，請點連結驗證身分，否則 24 小時內停用」",clue:"請點連結驗證身分，否則 24 小時內停用",scam:true,
   why:"銀行不會用簡訊連結要你輸入帳號密碼。自己打開銀行 APP，或打卡片背面的客服電話確認。",tip:"銀行不會傳連結要你登入",
   name:"假銀行專員",line:"為了您的安全，請馬上驗證",c:{style:"side",shirt:"#ffffff",shirtS:"#d8d8e4",tie:1,glasses:1}},
@@ -241,13 +241,13 @@ const CASES=[
   name:"假檢察官",line:"這案子很嚴重，不能跟家人說！",c:{style:"short",shirt:"#2d2f4a",shirtS:"#1d1f36",tie:1,beard:1,hair:"#c9c9d6",hairT:"#e2e2ea",skin:"#f6e2cf",skinS:"#dcc4ae"}},
  {src:"LINE",dev:"line",from:"財富自由群組（500 人）",q:"投資群組：「老師帶你操作，保證獲利、穩賺不賠」",clue:"保證獲利、穩賺不賠",scam:true,
   why:"投資一定有風險，「保證獲利」就是詐騙的訊號。",tip:"「保證獲利」就是詐騙訊號",
-  name:"飆股老師",line:"跟著老師，翻倍不是夢！",c:{style:"side",shirt:"#ffcf2e",shirtS:"#d9a91c",glasses:1,wave:60,open:1,hair:"#8a4b2a",hairT:"#a8653f"}},
+  name:"飆股老師",line:"跟著老師，翻倍不是夢！",c:{style:"side",shirt:"#F5C543",shirtS:"#d9a91c",glasses:1,wave:60,open:1,hair:"#8a4b2a",hairT:"#a8653f"}},
  {src:"簡訊",dev:"sms",from:"電信公司",q:"「您的門號合約將於下月到期，可至門市或官方 APP 辦理續約」",note:"（沒有附連結）",clue:"可至門市或官方 APP 辦理",scam:false,
   why:"沒有連結、也沒要你提供資料，比較像正常通知。要辦理時，自己打開官方 APP 或到門市最安心。",tip:"沒連結、沒要資料，比較像正常通知",
-  name:"續約提醒員",line:"合約快到期，有空再來辦就好",c:{style:"ponytail",shirt:"#b9bff2",shirtS:"#949ad6",hair:"#5b3a29",hairT:"#7a5440",skin:"#e8c09a",skinS:"#c99f7c"}},
+  name:"續約提醒員",line:"合約快到期，有空再來辦就好",c:{style:"ponytail",shirt:"#D9D9EE",shirtS:"#949ad6",hair:"#5b3a29",hairT:"#7a5440",skin:"#e8c09a",skinS:"#c99f7c"}},
  {src:"網購",dev:"shop",from:"賣家 好物小舖",q:"「你的訂單被系統鎖住，要先到超商繳費才能解除」",clue:"要先到超商繳費才能解除",scam:true,
   why:"解除訂單不需要你付錢，「超商代碼繳費」是常見的騙術。",tip:"解除訂單不需要你付錢",
-  name:"假賣家",line:"親～先繳費就幫你解鎖喔",c:{style:"beanie",shirt:"#9b6bd6",shirtS:"#7a50b3",hat:"#e8402f",hatT:"#b8301f",skin:"#c99a6e",skinS:"#a87c54"}},
+  name:"假賣家",line:"親～先繳費就幫你解鎖喔",c:{style:"beanie",shirt:"#9b6bd6",shirtS:"#7a50b3",hat:"#DD4F3C",hatT:"#b8301f",skin:"#c99a6e",skinS:"#a87c54"}},
  {src:"徵才",dev:"job",from:"高薪居家工作",q:"「在家打字月入 5 萬，請先把存摺和提款卡寄給公司」",clue:"把存摺和提款卡寄給公司",scam:true,
   why:"交出存摺、提款卡，帳戶可能變成人頭帳戶，自己也會吃上官司。",tip:"存摺、提款卡絕不交給別人",
   name:"假老闆",line:"輕鬆賺，什麼都不用會！",c:{style:"bald",shirt:"#2fb3a6",shirtS:"#22887e",beard:1,tie:1,hair:"#5b3a29",skin:"#f3d6b8"}},
@@ -256,10 +256,10 @@ const CASES=[
   name:"假網友",line:"Honey～禮物在海關等你喔",c:{style:"long",shirt:"#ff8fb1",shirtS:"#d96f90",earring:1,hair:"#d9a91c",hairT:"#f0c64a"}},
  {src:"推播",dev:"push",from:"信用卡 APP",q:"「刷卡通知：您剛剛消費 1,280 元」",note:"（你確實剛買完東西）",clue:"你確實剛買完東西",scam:false,
   why:"跟你剛做的事對得上，就是正常通知。如果對不上，再打卡片背面的客服電話確認。",tip:"對得上自己剛做的事，就是正常通知",
-  name:"刷卡通知員",line:"叮！剛剛那筆是你喔～",c:{style:"bun",shirt:"#ffcf2e",shirtS:"#d9a91c",hair:"#1d1b2b",hairT:"#3a3850"}}
+  name:"刷卡通知員",line:"叮！剛剛那筆是你喔～",c:{style:"bun",shirt:"#F5C543",shirtS:"#d9a91c",hair:"#1d1b2b",hairT:"#3a3850"}}
 ];
 const DEV_ICON={sms:"💬 簡訊",call:"📞 來電中…",line:"LINE",shop:"🛒 網購聊聊",job:"💼 徵才廣告",date:"💕 交友 APP",push:"🔔 推播通知"};
-const CHAPS=[{t:"第一案　訊息陷阱",d:"包裹、客服、帳單…",ids:[0,1,2,3],col:"#ffcf2e"},{t:"第二案　冒名大隊",d:"銀行、檢察官、投資老師",ids:[4,5,6,7],col:"#3ec46d"},{t:"第三案　網路迷魂陣",d:"網購、打工、網友",ids:[8,9,10,11],col:"#ff8fb1"}];
+const CHAPS=[{t:"第一案　訊息陷阱",d:"包裹、客服、帳單…",ids:[0,1,2,3],col:"#F5C543"},{t:"第二案　冒名大隊",d:"銀行、檢察官、投資老師",ids:[4,5,6,7],col:"#4BA882"},{t:"第三案　網路迷魂陣",d:"網購、打工、網友",ids:[8,9,10,11],col:"#ff8fb1"}];
 const $=s=>document.querySelector(s);
 const drawC=(i,w,ex={})=>char({...CASES[i].c,id:"c"+i+"_"+Math.random().toString(36).slice(2,6),w,...ex});
 
