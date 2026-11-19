@@ -644,6 +644,43 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 .viabox{display:flex!important;gap:10px;align-items:center;border:1.5px solid #06C755!important;background:#F2FBF5!important;padding:10px 12px!important}
 .viabox p{margin:0;font-size:13px;line-height:1.5}
 .viabox .lb-ic{flex:none;width:38px;height:38px;border-radius:11px;background:#06C755;color:#fff;font-weight:900;font-size:10.5px;display:grid;place-items:center}
+
+/* 預約取機 */
+.pkban{background:linear-gradient(135deg,#2D2E67,#5B5BA5)!important;color:#fff;border:0!important;position:relative;min-height:auto}
+.pktk{min-height:auto}
+.pkban h3{margin:0;font-size:18px;line-height:1.35;color:#fff;text-shadow:none}.pkban p{margin:0;font-size:12.5px;color:#D9D9EE}
+.pk-ic{position:absolute;right:12px;top:14px;font-size:42px}
+.pk-tag{justify-self:start;background:#F5C543;color:#2D2E67;font-weight:900;font-size:11.5px;border-radius:999px;padding:1px 10px}
+.btn.pk-go{background:#E8893A!important;color:#fff!important;border:2.5px solid #2D2E67!important;box-shadow:3px 3px 0 #2D2E67!important;width:100%}
+.btn.pk-go:disabled{opacity:.5}
+.pktk{background:#fff;border:2.5px solid #2D2E67;border-top:8px solid #5B5BA5;border-radius:18px;box-shadow:4px 4px 0 #2D2E67;padding:14px;display:grid;gap:8px;color:#2D2E67}
+.pktk .no{font-family:var(--f-num);font-size:50px;line-height:1}
+.pk-pill{justify-self:start;background:#5B5BA5;color:#fff;font-weight:900;font-size:12px;border-radius:8px;padding:2px 9px}
+.pk-hint{background:#FFF3E6;border:1.5px solid #E8893A;border-radius:12px;padding:7px 10px;font-size:13px;font-weight:700}
+.pk-doc{display:block;font-size:14px;padding:4px 0 4px 26px;position:relative}.pk-doc::before{content:"";position:absolute;left:0;top:6px;width:16px;height:16px;border:2px solid #2D2E67;border-radius:5px}
+.pk-vid{display:flex;gap:10px;align-items:center;border:0;background:none;text-align:left;padding:0;color:#2D2E67}
+.pk-vid .th{width:96px;height:56px;border-radius:10px;background:#5B5BA5 center/cover;flex:none;position:relative}
+.pk-vid .th::after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;color:#fff}
+.pk-vid small{display:block;font-size:12px;color:#6b6b90}
+.pksheet{max-height:86vh;overflow-y:auto}
+.pk-ord{display:flex;gap:10px;align-items:center;background:#F6F6FA;border-radius:12px;padding:10px}
+.pk-ord .pic{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#F5C543,#E8893A);display:grid;place-items:center;font-size:24px;flex:none}
+.pk-ord small{display:block;font-size:12px;color:#6b6b90}.pk-ord em{font-style:normal;font-weight:900;font-size:12px;color:#3A8A69}
+.pk-lbl{display:flex;gap:8px;align-items:center;font-weight:900;font-size:15px;flex-wrap:wrap}
+.pk-lbl i{font-style:normal;width:22px;height:22px;border-radius:50%;background:#2D2E67;color:#fff;font-size:12px;display:grid;place-items:center}
+.pk-lbl small{font-weight:500;font-size:11.5px;color:#6b6b90}
+.pk-stores{display:grid;gap:6px}
+.pk-stores button{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1.5px solid #DEDEEA;border-radius:12px;padding:8px 10px;background:#fff;text-align:left;color:#2D2E67}
+.pk-stores button[aria-pressed="true"]{border-color:#E8893A;box-shadow:0 0 0 2px #E8893A inset}
+.pk-stores button:disabled{opacity:.45}
+.pk-stores small{display:block;font-size:11.5px;color:#6b6b90}
+.pk-stores em{font-style:normal;font-size:11.5px;font-weight:900;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.pk-stores em.g{background:#E5F6EE;color:#2f8a62}.pk-stores em.y{background:#FFF4D6;color:#9a6b00}.pk-stores em.x{background:#FBE4E1;color:#B5372A}
+.pk-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pk-slots button{border:1.5px solid #DEDEEA;border-radius:10px;background:#fff;padding:6px 2px;font-weight:900;font-size:14px;color:#2D2E67}
+.pk-slots small{display:block;font-size:11px;color:#3A8A69}
+.pk-slots button[aria-pressed="true"]{background:#E8893A;color:#fff;border-color:#E8893A}.pk-slots button[aria-pressed="true"] small{color:#fff}
+.pk-slots button:disabled{opacity:.45}.pk-slots button:disabled small{color:#B5372A}
 </style>
 
 <div class="outer">
@@ -751,9 +788,10 @@ const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},se
 /* 從 LINE 官方帳號打開（等候時看看）：帶著同一張號碼進來，通知仍由 LINE 傳送 */
 const VIA=(()=>{try{const q=new URLSearchParams(location.search),h=location.hash,g=k=>q.get(k)||((h.match(new RegExp("[&#]"+k+"=([^&]+)"))||[])[1]?decodeURIComponent(h.match(new RegExp("[&#]"+k+"=([^&]+)"))[1]):null);
   if(g("via")!=="line")return null;return {me:g("me"),bind:g("bind"),ahead:Math.max(0,+g("ahead")||0),cat:g("cat"),open:g("open")}}catch(e){return null}})();
-const APP_KEYS=["qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
+const APP_KEYS=["qt-launch","qt-pick","qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
+let LAUNCH=/[?&#]launch\b/.test(location.search+location.hash)||store.get("qt-launch")==="1";   // 新機開賣日模式（預設關閉）
 function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
-if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/&fresh(=1)?\b/,"").replace(/#fresh(=1)?$/,""))}catch(e){}}
+if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/([?&#])fresh(=1)?(&)?/,(m,a,b,c)=>c?a:"").replace(/[?&]$/,"").replace(/[?&](?=#)/,""))}catch(e){}}
 function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 const maskPhone=p=>p.replace(/\D/g,"").replace(/^(\d{4})\d{3}(\d{3})$/,"$1-***-$2");
 
@@ -1233,10 +1271,12 @@ function openSettings(){
       <div class="langs">${L.map(([k,n])=>`<button type="button" data-lang="${k}" aria-pressed="${PREF.lang===k}">${n}</button>`).join("")}</div></div>
     <div class="setrow" style="grid-template-columns:1fr"><span><b>折疊機／平板展開時</b><small>雙欄：左邊常駐號碼。單欄：維持原本手機的樣子</small></span>
       <div style="display:flex;gap:8px"><button type="button" class="btn sm" data-foldpref="dual" aria-pressed="${!FOLD_SINGLE}">📖 雙欄</button><button type="button" class="btn sm" data-foldpref="single" aria-pressed="${FOLD_SINGLE}">📱 原本單欄</button></div></div>
+    <label class="setrow"><span><b>新機開賣日模式（Demo）</b><small>首頁出現「預約取機」入口；關掉就跟平常一樣</small></span><span class="sw"><input type="checkbox" id="stLaunch" ${LAUNCH?"checked":""}><i></i></span></label>
     <div class="setrow" style="grid-template-columns:1fr"><span><b>重新開始</b><small>清除這支手機上的號碼、設定和提示，回到第一次打開的樣子（Demo 前用）</small></span>
       <button type="button" class="btn sm" id="stReset" style="justify-self:start">🔄 清除紀錄，重新開始</button></div>
     <div class="acts"><button class="btn dark wide" type="button" id="stDone">完成</button></div></div>`,m=>{
     $("#stReset").onclick=()=>{wipeLocal();location.reload()};
+    $("#stLaunch").onchange=e=>{LAUNCH=e.target.checked;store.set("qt-launch",LAUNCH?"1":"0");fullRender()};
     m.querySelectorAll("[data-foldpref]").forEach(b=>b.onclick=()=>{setFoldSingle(b.dataset.foldpref==="single");m.querySelectorAll("[data-foldpref]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
     $("#stBig").onchange=e=>{PREF.big=e.target.checked;store.set("qt-big",PREF.big?"1":"0");applyBig()};
     $("#stVoice").onchange=e=>{PREF.voice=e.target.checked;store.set("qt-voice",PREF.voice?"1":"0")};
@@ -1335,12 +1375,13 @@ function queueHTML(){
     <div id="bubbleWrap"></div>
     <span class="hint">◀ 拖曳・點角色看排隊狀態 ▶</span>
   </div>
+  ${pickupTopHTML()}
   ${has?"":takeHTML()}
   ${has||LIVE.on?"":resvHTML()}
   ${videosHTML(KNOW_VIDEOS,"取號前，先看懂")}`;
 }
 function bindQueue(){
-  bindLive();Q3.mount($("#scene"));
+  bindLive();bindPickup();Q3.mount($("#scene"));
   if(!(meState()==="waiting"||meState()==="called")){bindTake();bindResv()}
   bindVideos();
 }
@@ -1483,6 +1524,49 @@ function ticketInner(){
 }
 function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.serving.indexOf(t);
   return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
+/* ================= 新機開賣日：預約取機（開關打開才出現，預設關閉，不影響一般取號） ================= */
+const PK_SLOTS=["10:00","10:30","11:00","11:30","13:00","13:30"],PK_MODEL="iPhone Duo",PK_ORD="●●●●2048";
+const hsh=x=>[...String(x)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+const stockOf=n=>{const h=hsh(n)%10;return h<6?["有貨","g"]:h<9?["剩少量","y"]:["已售完","x"]};
+const slotLeft=(n,sl)=>sl==="10:00"?0:1+hsh(n+sl)%8;
+function launchBannerHTML(){return `<div class="box pkban"><span class="pk-ic" aria-hidden="true">📱</span><span class="pk-tag">新機開賣日</span><h3>已在網路預購 ${PK_MODEL}？<br>先預約取機時段</h3><p>選好時段再來，到店報到後優先叫號，不用跟現場人潮一起排。</p><button class="btn pk-go" id="pkOpen" type="button">預約取機</button></div>`}
+function pickupCardHTML(){const p=U.pickup;return `<div class="pktk"><span class="pk-pill">取機預約・優先叫號</span><div class="no">${p.no||"R…"}</div>
+  <p class="muted" style="margin:0">開賣日 ${p.slot}–${PK_SLOTS[PK_SLOTS.indexOf(p.slot)+1]||"14:00"}・${esc(p.store)}<br>${PK_MODEL} 預購訂單 ${PK_ORD}</p>
+  <div class="pk-hint">⏱ 到店後按「我到門市了」報到，就會優先叫號</div>
+  <button class="btn pk-go" id="pkIn" type="button">我到門市了（報到）</button>
+  <div class="row" style="gap:8px"><button class="btn sm" id="pkChg" type="button">改時段</button><button class="btn sm" id="pkCancel" type="button">取消預約</button></div></div>
+  <div class="box"><h4>取機要帶的東西</h4><div class="docs">${["身分證","付款證明或訂單簡訊","舊手機（要轉資料、轉 eSIM 的話）"].map(d=>`<span class="pk-doc">${d}</span>`).join("")}</div></div>
+  <div class="box"><h4>取機前先看懂</h4><button class="pk-vid" id="pkVid" type="button"><span class="th" style="background-image:url(${KNOW_VIDEOS[0].poster})"></span><span><b>SIM 卡轉 eSIM 教學</b><small>1:00・新機沒有實體卡槽，先看一下</small></span></button></div>`}
+function openPickup(){let st=U.pickup?U.pickup.store:HOME,sl=U.pickup?U.pickup.slot:null;
+  const near=[HOME,...(ALL_STORES[cityOf(HOME)]||[]).filter(n=>n!==HOME)].slice(0,4);
+  const draw=()=>modal(`<div class="sheet pksheet"><h3>預約取機</h3>
+    <div class="pk-ord"><span class="pic">📱</span><span><b>${PK_MODEL} 預購訂單</b><small>訂單編號 TW-${PK_ORD}（已從會員帶入）</small><em>✓ 已付款・已配貨</em></span></div>
+    <div class="pk-lbl"><i>1</i>到哪間門市取機？<small>庫存來自門市庫存地圖</small></div>
+    <div class="pk-stores">${near.map(n=>{const [l,c]=stockOf(n);return `<button type="button" data-pkst="${esc(n)}" aria-pressed="${n===st}" ${c==="x"?"disabled":""}><span><b>${esc(n)}</b><small>${esc((STORE_ADDR&&STORE_ADDR[n])||cityOf(n)||"")}</small></span><em class="${c}">${l}</em></button>`}).join("")}</div>
+    <div class="pk-lbl"><i>2</i>選取機時段（開賣日）</div>
+    <div class="pk-slots">${PK_SLOTS.map(x=>{const n=slotLeft(st,x);return `<button type="button" data-pksl="${x}" aria-pressed="${x===sl}" ${n?"":"disabled"}>${x}<small>${n?`剩 ${n} 位`:"額滿"}</small></button>`}).join("")}</div>
+    <div class="acts"><button class="btn ghost" type="button" id="pkX">取消</button><button class="btn pk-go" type="button" id="pkOk" ${sl?"":"disabled"}>${sl?`確認預約 ${sl}`:"請選時段"}</button></div></div>`,m=>{
+    m.querySelectorAll("[data-pkst]").forEach(b=>b.onclick=()=>{st=b.dataset.pkst;if(sl&&!slotLeft(st,sl))sl=null;draw()});
+    m.querySelectorAll("[data-pksl]").forEach(b=>b.onclick=()=>{sl=b.dataset.pksl;draw()});
+    $("#pkX").onclick=closeModal;$("#pkOk").onclick=()=>bookPickup(st,sl)});
+  draw()}
+async function bookPickup(st,sl){const was=U.pickup;closeModal();
+  if(LIVE.on){try{if(was&&was.id){await LIVE.conn.patch("/tickets/"+was.id,{slot:sl});U.pickup={...was,slot:sl,store:st}}
+      else{const id=await LIVE.conn.post("/tickets",{cat:"網路取貨/預約取件",st:"b",k:"r",slot:sl,ord:PK_ORD,mdl:PK_MODEL,esim:true,t:window.QTLive.TS,src:"app"});
+        LIVE.pickId=id;store.set("qt-pick",JSON.stringify({room:LIVE.sess.room,id,at:Date.now()}));U.pickup={id,no:null,slot:sl,store:HOME};setTimeout(()=>{try{liveSync(LIVE.conn.data)}catch(e){}},300)}}
+    catch(e){toast("info","預約沒有送出","網路不太穩，請再試一次。",4200);return}}
+  else U.pickup={no:was?was.no:"R"+String(S.rnext++).padStart(3,"0"),slot:sl,store:st};
+  toast("info",was?`已改到 ${sl}`:`預約成功 ${U.pickup.no||""}`,"開賣日前一天會再提醒你；到店按「我到門市了」報到。",4800);U.tab="queue";fullRender()}
+async function pickupCheckIn(){const p=U.pickup;if(!p)return;
+  if(LIVE.on){try{await LIVE.conn.patch("/tickets/"+p.id,{st:"w",p:true,ci:window.QTLive.TS});LIVE.myId=p.id;LIVE.myText="";LIVE.tookAt=Date.now();store.set("qt-live-me",JSON.stringify({room:LIVE.sess.room,id:p.id,text:"",at:Date.now()}));LIVE.pickId=null;store.set("qt-pick","null");U.pickup=null}catch(e){toast("info","報到沒有成功","請再按一次。",4200);return}
+    toast("info","報到成功 👍","你是取機預約，會優先叫號。",4200);return}
+  S.me=enqueue("網路取貨/預約取件","",{prefix:"R",prio:true});S.rnext--;S.me.no=p.no;S.me.sc={name:"開賣日預約取機"};S.me.log=[];S.me.start=waitFor(S.me).ahead;S.me.pickup=true;U.pickup=null;afterTake();
+  toast("info","報到成功 👍","你是取機預約，會優先叫號。",4200)}
+function bindPickup(){const o=$("#pkOpen");if(o)o.onclick=openPickup;
+  const i=$("#pkIn");if(i)i.onclick=pickupCheckIn;const c=$("#pkChg");if(c)c.onclick=openPickup;
+  const x=$("#pkCancel");if(x)x.onclick=async()=>{const p=U.pickup;if(LIVE.on&&p&&p.id){try{await LIVE.conn.patch("/tickets/"+p.id,{st:"x"})}catch(e){}LIVE.pickId=null;store.set("qt-pick","null")}U.pickup=null;toast("info","已取消預約","");fullRender()};
+  const v=$("#pkVid");if(v)v.onclick=()=>openVia("v:SIM卡轉eSIM教學")}
+function pickupTopHTML(){if(U.pickup)return pickupCardHTML();if(LAUNCH&&meState()==="none")return launchBannerHTML();return ""}
 /* 免登入取號後，引導加 LINE 好友：號碼直接帶過去，不用重新取號 */
 function lineBindUrl(t){const base=new URL("line.html",location.href.startsWith("http")?location.href:"https://denisechang112.github.io/QTALK/").href.replace(/[#?].*$/,"");
   if(typeof LIVE!=="undefined"&&LIVE.on&&LIVE.sess&&LIVE.myId)return base+"#l="+LIVE.sess.host+"~"+LIVE.sess.room+"&t="+encodeURIComponent(LIVE.myId);
@@ -1491,6 +1575,7 @@ function lineBindHTML(t){return `<div class="box linebind"><div class="lb-top"><
   <a class="btn lb-go" id="lineBind" href="${lineBindUrl(t)}" target="_blank" rel="noopener">用 LINE 接收叫號通知</a></div>`}
 function mineHTML(){
   const st=meState();
+  if(st==="none"&&U.pickup)return pickupCardHTML()+videosHTML();
   if(st==="none")return `<div class="box"><h4>還沒有號碼</h4><p class="muted">取號後，號碼、等候進度和要帶的證件都會在這裡。</p><button class="btn blue" id="goTake">去取號</button></div>${videosHTML()}`;
   if(st==="done")return doneHTML();
   const t=S.me,docs=CATS[t.cat].docs,w=st==="waiting"?waitFor(t):null;
@@ -1527,6 +1612,7 @@ function doneHTML(){
   return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>${videosHTML()}`;
 }
 function bindMine(){
+  bindPickup();
   const g=$("#goTake");if(g)g.onclick=()=>go("queue");
   const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
   const hl=$("#holdLater");if(hl)hl.onclick=()=>{holdMe();fullRender()};
@@ -1924,9 +2010,10 @@ function restartTick2(){clearInterval(tickTimer);tickTimer=setInterval(()=>tick(
 restartTick=restartTick2;
 
 /* ================= 現場同步模式（掃門市大螢幕的 QR Code 進來時啟用；沒有 #l= 就是原本的模擬版） ================= */
-const LIVE={first:true,on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
+const LIVE={pickId:null,first:true,on:false,sess:null,conn:null,view:null,pub:null,myId:null,myText:"",objs:new Map(),status:"connecting",calledSig:null,tookAt:0,taking:false,warned:false};
 (function(){const Q=window.QTLive,ss=Q&&Q.parseLink();if(!ss)return;LIVE.on=true;LIVE.sess=ss;
   try{const m=JSON.parse(store.get("qt-live-me")||"null");if(m&&m.room===ss.room&&m.id&&Date.now()-(m.at||0)<6*3600e3){LIVE.myId=m.id;LIVE.myText=m.text||""}else store.set("qt-live-me","null")}catch(e){}
+  try{const k=JSON.parse(store.get("qt-pick")||"null");if(k&&k.room===ss.room&&k.id&&Date.now()-(k.at||0)<48*3600e3)LIVE.pickId=k.id}catch(e){}
   if(VIA&&VIA.me){LIVE.myId=VIA.me;LIVE.myText="";store.set("qt-live-me",JSON.stringify({room:ss.room,id:VIA.me,text:"",at:Date.now()}))}})();
 const simRestartTick=restartTick;
 restartTick=function(){if(LIVE.on){clearInterval(tickTimer);return}simRestartTick()};
@@ -1963,6 +2050,10 @@ function liveSync(room){
   if(V.last){S.lastDesk=Math.min(2,Math.max(0,(V.last.desk||1)-1));S.lastCalled={no:V.last.no,desk:S.lastDesk}}else{S.lastCalled=null;S.lastDesk=0}
   S.total=V.all.length;
   let called=false,nearNow=false;
+  if(LIVE.pickId){const pk=V.all.find(t=>t.id===LIVE.pickId);   // 預約取機：還沒報到 → 顯示預約卡；報到後 → 變成一般號碼流程
+    if(!pk||pk.st==="x"||pk.st==="d"||pk.st==="s"){LIVE.pickId=null;U.pickup=null;store.set("qt-pick","null")}
+    else if(pk.st==="b")U.pickup={id:pk.id,no:pk.no,slot:pk.slot,store:HOME};
+    else{if(!LIVE.myId){LIVE.myId=pk.id;LIVE.myText="";store.set("qt-live-me",JSON.stringify({room:LIVE.sess.room,id:pk.id,text:"",at:Date.now()}))}LIVE.pickId=null;U.pickup=null;store.set("qt-pick","null")}}
   if(LIVE.first){LIVE.first=false;   // 剛打開頁面：舊號碼已辦完、過號或被清空 → 直接當成第一次來，不跳通知
     if(LIVE.myId){const m0=V.all.find(t=>t.id===LIVE.myId);if(!m0||m0.st==="d"||m0.st==="s"||m0.st==="x")liveForget()}}
   if(LIVE.myId){const mine=V.all.find(t=>t.id===LIVE.myId);
@@ -1974,8 +2065,8 @@ function liveSync(room){
         if(w.ahead<=3&&!o.n3){o.n3=true;nearNow=true}}}
   }else S.me=null;
   const nowState=meState();
-  const qsig=S.queue.map(x=>x.id).join(",")+"|"+(S.me?S.me.held:"");const qChanged=qsig!==LIVE.qsig;LIVE.qsig=qsig;
-  if(nowState!==prevState||S.me!==prevMe||(qChanged&&nowState==="waiting"&&U.tab==="mine"&&!$("#modal").innerHTML)){if(nowState==="done"){closeModal();U.tab="mine"}fullRender();renderTabs();renderMarquee()}else renderApp(true);
+  const qsig=S.queue.map(x=>x.id).join(",")+"|"+(S.me?S.me.held:"")+"|"+(U.pickup?U.pickup.no+U.pickup.slot:"");const qChanged=qsig!==LIVE.qsig;LIVE.qsig=qsig;
+  if(nowState!==prevState||S.me!==prevMe||(qChanged&&U.pickup&&!$("#modal").innerHTML)||(qChanged&&nowState==="waiting"&&U.tab==="mine"&&!$("#modal").innerHTML)){if(nowState==="done"){closeModal();U.tab="mine"}fullRender();renderTabs();renderMarquee()}else renderApp(true);
   Q3.sync();
   if(called)calledAlert();
   else if(nearNow){const w=waitFor(S.me);toast("info",`快輪到你了，前面剩 ${w.ahead} 組`,`約 ${w.mins} 分鐘後叫到 ${S.me.no}，請回到櫃台附近。`,6500);buzz([150,80,150]);if(U.out)nearAlert()}
@@ -2016,7 +2107,7 @@ reset();
 function adoptViaSim(){if(!VIA||!VIA.bind||(typeof LIVE!=="undefined"&&LIVE.on))return;
   const cat=CATS[VIA.cat]?VIA.cat:"繳費/儲值",cs=Object.keys(CATS);
   while(S.queue.length>VIA.ahead)S.queue.pop();while(S.queue.length<VIA.ahead)enqueue(cs[S.queue.length%cs.length],"",{});
-  S.me=enqueue(cat,"",{me:true});S.me.no=VIA.bind;S.me.sc={};S.me.log=[];S.me.start=VIA.ahead;afterTake()}
+  S.me=enqueue(cat,"",{me:true});S.me.no=VIA.bind;S.me.sc={name:"從 LINE 取的號碼"};S.me.log=[];S.me.start=VIA.ahead;afterTake()}
 function openVia(o){if(!o)return;
   if(o==="learn"){go("learn");return}
   if(o.startsWith("game:")){openGame(o.slice(5));return}

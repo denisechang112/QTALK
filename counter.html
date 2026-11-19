@@ -99,6 +99,9 @@ input[type=text],input[type=url],input[type=password]{border:var(--line);border-
 body{background:#F2F2F7!important}
 .top{background:#2D2E67!important;box-shadow:inset 0 -4px 0 0 transparent;border-bottom:4px solid transparent;border-image:linear-gradient(90deg,#F5C543 0 25%,#E8893A 25% 50%,#DD4F3C 50% 62%,#5B5BA5 62% 82%,#4BA882 82% 100%) 1}
 .box{border:1.5px solid #DEDEEA!important;box-shadow:0 6px 20px rgba(45,46,103,.08)!important;border-radius:20px}
+.tag.pk{background:#5B5BA5;color:#fff}
+.pkl{grid-column:1/-1;margin:2px 0 0;font-size:12.5px}
+.pkbox{border:2px solid #5B5BA5!important;background:#F4F4FB!important}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -267,7 +270,11 @@ function sayHTML(t,cls){
   if(p==null)return `<div class="${cls} none">解密中…</div>`;
   return cls==="say"?`<div class="say"><small>顧客寫給櫃台的話</small>${esc(p)}</div>`:`<div class="t">${esc(p)}</div>`;
 }
-const extra=t=>`${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
+/* 開賣日預約取機：已報到的插在前面（優先），還沒報到的另外列出來先備貨 */
+const pkLine=t=>`<p class="pkl">📱 ${esc(t.mdl||"新機")} 預購 ${esc(t.ord||"")}・<b>手機已備好</b>${t.esim?"・需要轉 eSIM":""}</p>`;
+function pkBoxHTML(){const b=V.all.filter(t=>t.st==="b");if(!b.length)return "";
+  return `<div class="box pkbox"><h2>今天預約取機・還沒報到<span class="tag pk">${b.length} 位</span></h2>${b.map(t=>`<div class="q"><div class="n">${t.no}<small>${esc(t.slot||"")} 取機</small></div><div class="row"><span class="tag pk">未報到</span></div>${pkLine(t)}</div>`).join("")}<p class="muted">顧客到店按「我到門市了」報到後，會自動排進等候名單（優先叫號）。</p></div>`}
+const extra=t=>`${t.k==="r"?`<span class="tag pk">取機預約${t.slot?"・"+esc(t.slot):""}</span>`:""}${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
 function render(){
   if(!sess)return;
   $("#storeName").textContent=(sess.store||"")+"・櫃台叫號台";
@@ -290,8 +297,9 @@ function render(){
       <div class="stats"><div><b>${V.waiting.length}</b><span>等候中</span></div><div><b>${V.done}</b><span>已辦完</span></div><div><b>${skipped}</b><span>過號</span></div></div>
       ${accHTML()}${satHTML()}
     </div>
-    <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span></h2>
-      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
+    ${pkBoxHTML()}
+    <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span>${V.waiting.some(t=>t.k==="r")?`<span class="tag pk">預約 ${V.waiting.filter(t=>t.k==="r").length}</span>`:""}</h2>
+      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${t.k==="r"?pkLine(t):""}${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
       :`<p class="muted">還沒有人取號。請顧客掃大螢幕上的 QR Code；排練時可以到「場次・QR Code」加測試顧客。</p>`}
     </div>
   </div>`;

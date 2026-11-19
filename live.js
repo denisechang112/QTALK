@@ -82,9 +82,10 @@
   /* 票的編號由建立順序決定：第 1 張 A101、第 2 張 A102…（Firebase 的自動鍵值本身就照時間排序） */
   function order(tickets) {
     var ids = Object.keys(tickets || {}).filter(function (id) { var t = tickets[id]; return t && typeof t === "object" && typeof t.st === "string"; }).sort();
-    return ids.map(function (id, i) { var t = tickets[id], o = { id: id, no: "A" + (101 + i) }; for (var k in t) o[k] = t[k]; return o; });
+    var a = 0, r = 0;   // 一般號 A101 起；開賣日預約取機 R001 起，兩種各自編號，互不影響
+    return ids.map(function (id) { var t = tickets[id], no = t.k === "r" ? "R" + String(++r).padStart(3, "0") : "A" + (101 + a++), o = { id: id, no: no }; for (var k in t) o[k] = t[k]; return o; });
   }
-  /* st：w 等候、c 已叫號、d 完成、s 過號、x 取消 */
+  /* st：w 等候、c 已叫號、d 完成、s 過號、x 取消、b 已預約取機（還沒到店報到） */
   function view(room) {
     var all = order(room && room.tickets), waiting = all.filter(function (t) { return t.st === "w"; });
     var key = function (t) { return typeof t.sk === "number" ? t.sk : (typeof t.t === "number" ? t.t : 0); };   // sk：顧客按「晚一點」後的新位置
