@@ -660,12 +660,12 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 <script>
 /* videos are stored with the page itself, so they play in every view */
 const KNOW_VIDEOS=[
-  {src:"media/b0f96a4a4ba5ae8acf022f6544938347.mp4",poster:"media/3f6ec18ea20719b7cfbe8dc4d188cf86.jpg",label:"SIM卡轉eSIM教學",ask:"SIM卡轉eSIM",short:"SIM卡轉eSIM",cat:"異動/諮詢/維修",dur:"1:00"},
-  {src:"media/c5cb77234ede413d1f64ef3564f10c3b.mp4",poster:"media/f973b9f9d537cbbf787665dbad7fb243.jpg",label:"60 秒看懂：我適合哪種 5G 方案？",ask:"5G 方案怎麼選",short:"5G 方案怎麼選",cat:"續約/換約/新申辦",dur:"1:00"},
-  {src:"media/e00f9a538a1c1f89efb7cbc98aa1f1cb.mp4",poster:"media/d143247437e298aa7b25a4ef1aeb6af9.jpg",label:"30 秒看懂：出國上網怎麼選？",ask:"出國上網怎麼選",short:"出國上網怎麼選",cat:"異動/諮詢/維修",dur:"0:34"},
-  {src:"media/dd4b6e2c56fd25f93f9dfb295bacd239.mp4",poster:"media/454a617c82102db72fb7bc4c985629b1.jpg",label:"1 分鐘認識：好速成双",ask:"好速成双",short:"好速成双",cat:"續約/換約/新申辦",dur:"0:55"},
-  {src:"media/446892a619d9c43e8ea5ffe8212d4b97.mp4",poster:"media/b629e6a793b5d92ef721206df099a5f3.jpg",label:"1 分鐘認識：OP響樂生活",ask:"OP響樂生活",short:"OP響樂生活",cat:"續約/換約/新申辦",dur:"0:55"},
-  {src:"media/68447baf50b8984d610041c4b191e86a.mp4",poster:"media/331a6ad0f2b88c1cce9e2a17d680ec54.jpg",label:"1 分鐘認識：智慧移動網",ask:"智慧移動網",short:"智慧移動網",cat:"異動/諮詢/維修",dur:"0:55"}
+  {src:"media/ef70576a525c136924a7c9e70e512454.mp4",poster:"media/88dca3430512f90b093500358e988cb1.jpg",label:"SIM卡轉eSIM教學",ask:"SIM卡轉eSIM",short:"SIM卡轉eSIM",cat:"異動/諮詢/維修",dur:"1:00"},
+  {src:"media/7349a25ccb86ee706ac75ffc67c6b617.mp4",poster:"media/c2387925c7de4ac7abcc9d096054b33e.jpg",label:"60 秒看懂：我適合哪種 5G 方案？",ask:"5G 方案怎麼選",short:"5G 方案怎麼選",cat:"續約/換約/新申辦",dur:"1:00"},
+  {src:"media/8b572e71ba0cc15b496af1f555312249.mp4",poster:"media/23082a8a0f505eef488d67804e893ad6.jpg",label:"30 秒看懂：出國上網怎麼選？",ask:"出國上網怎麼選",short:"出國上網怎麼選",cat:"異動/諮詢/維修",dur:"0:34"},
+  {src:"media/2d565ff8c4b1179807566ac8b2c52773.mp4",poster:"media/c45243a4a4eae360422f57b38851a288.jpg",label:"1 分鐘認識：好速成双",ask:"好速成双",short:"好速成双",cat:"續約/換約/新申辦",dur:"0:55"},
+  {src:"media/4fbd041778d61737f0d143dfff7f672c.mp4",poster:"media/91f6d7c0d953afc64696499e7ae551d6.jpg",label:"1 分鐘認識：OP響樂生活",ask:"OP響樂生活",short:"OP響樂生活",cat:"續約/換約/新申辦",dur:"0:55"},
+  {src:"media/0935937e1b43c204cd92795a66b5592f.mp4",poster:"media/388e2594cac5a7f5777b5a100c143035.jpg",label:"1 分鐘認識：智慧移動網",ask:"智慧移動網",short:"智慧移動網",cat:"異動/諮詢/維修",dur:"0:55"}
 ];
 const PROMO_VIDEOS=[
   {src:"media/333eed8fcf0c267f876d010ea7868a37.mp4",poster:"media/a5e196ff1d521565b34cbf1b2265971d.jpg",label:"Apple 生態圈",dur:"14:12"},
@@ -1579,7 +1579,7 @@ function quizHTML(){
     ${roundDone(0)&&!(U.roundEnd&&r===0)?`<div class="row" style="justify-content:space-between"><span class="muted">第 1 輪已完成，可以領優惠券</span>${COUPON.replace('btn dark','btn sm')}</div>`:U.roundEnd?"":`<p class="muted">答對蓋一個章，集滿第 1 輪 4 個章就能領優惠券，還有第 2、3 輪可以挑戰。</p>`}
   </div>`;
 }
-const FRAUD_EDU={src:"media/2d956da08b8d985786a6ec94d342f8d2.mp4",poster:"media/627e9fe842e60279e0b06e09a867c4d0.jpg",label:"1 分鐘看懂：12 種常見詐騙",dur:"1:19"};
+const FRAUD_EDU={src:"media/499def1b6b2f92bb3d00d3cfacc5225b.mp4",poster:"media/0c0821381fc2809b217432c912aa1058.jpg",label:"1 分鐘看懂：12 種常見詐騙",dur:"1:19"};
 function fraudVideoHTML(){return `<div class="box cls"><span class="tagc red" style="justify-self:start">防詐短片</span>${carousel([FRAUD_EDU,FRAUD],"fraud")}</div>`}
 function courseHTML(c,compact){
   const fam=S.me&&S.me.family,mine=S.enrolled.has(c.id),taken=c.seats-c.left;
