@@ -296,6 +296,17 @@ textarea,.search,#liff .rq textarea{border:1.5px solid #DEDEEA!important;border-
 .row2m div{border:1.5px solid #DEDEEA!important}
 .faces{border-top:1px solid #E4E4EE!important}
 .faces button{border:1.5px solid #DEDEEA!important;box-shadow:none!important}
+
+/* 分享給家人 */
+.card .ft a.share{display:block;text-align:center;font-size:13px;font-weight:700;color:#5B5BA5!important;border:0!important;box-shadow:none!important;background:none!important;padding:6px 0 2px;text-decoration:none}
+.card.fam .hd{background:#4BA882!important}
+.flist{display:grid;gap:8px}
+.flist button{display:flex;align-items:center;gap:10px;border:1.5px solid #DEDEEA;border-radius:14px;background:#fff;padding:8px 12px;text-align:left;font-size:15px;color:#2D2E67}
+.flist button[aria-pressed="true"]{border-color:#06C755;box-shadow:0 0 0 2px #06C755 inset}
+.flist .fav{width:34px;height:34px;border-radius:50%;background:#EDEDF6;display:grid;place-items:center;font-weight:900;font-size:15px;flex:none}
+.flist b{flex:1}.flist i{font-style:normal;font-weight:900;color:#06C755;width:18px}
+#sgo:disabled{opacity:.45}
+.card .hd .li,#liff .sh .li{color:#fff}.card .hd .li .ac,#liff .sh .li .ac{stroke:#F5C543}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -401,12 +412,12 @@ const DEMO=!sess;
 const ROOM=sess?sess.room:"demo";
 const KEY="qt-line2-"+ROOM;
 /* 每次打開都像第一次加入官方帳號；只有「現場連線、號碼還在排隊／剛辦完還沒評分」時才接回之前的對話 */
-const FRESH=()=>({msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null});
+const FRESH=()=>({msgs:[],myId:null,tkLive:false,tkStore:null,store:null,notified:{},calledSig:null,doneShown:false,rated:{},lastDone:null,shared:[]});
 if(/[?&#]fresh\b/.test(location.search+location.hash)){ls.wipe();try{history.replaceState(null,"",location.href.replace(/[?&]fresh(=1)?\b/,"").replace(/#&?fresh(=1)?$/,""))}catch(e){}}
 let state=FRESH(),saved=null,decided=true;
 try{const o=JSON.parse(ls.get(KEY)||"null");if(!DEMO&&o&&Array.isArray(o.msgs)&&o.myId&&o.tkLive&&Date.now()-(o.at||0)<6*3600e3){saved=o;decided=false}}catch(e){}
 if(!saved)ls.del(KEY);
-const save=()=>{if(DEMO||!decided)return;ls.set(KEY,JSON.stringify({at:Date.now(),msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone}))};
+const save=()=>{if(DEMO||!decided)return;ls.set(KEY,JSON.stringify({at:Date.now(),msgs:state.msgs.slice(-60),myId:state.myId,tkLive:state.tkLive,tkStore:state.tkStore,store:state.store,notified:state.notified,calledSig:state.calledSig,doneShown:state.doneShown,rated:state.rated,lastDone:state.lastDone,shared:state.shared}))};
 function decide(room){if(decided)return;decided=true;
   const t=room&&saved?Q.view(room).all.find(x=>x.id===saved.myId):null;
   const keep=t&&(t.st==="w"||t.st==="c"||(t.st==="d"&&!(saved.rated||{})[t.id]));
@@ -483,7 +494,8 @@ document.addEventListener("click",e=>{
     if(a==="hold")doHold();if(a==="mine")menu("mine");if(a==="take")menu("take");if(a==="stores")menu("store");
     if(a==="survey")openSurvey(null,b.dataset.tid);
     if(a==="here"){me("我到了");bot("好的，櫃台已經在等你了 🙌")}
-    if(a==="map")openMap(b.dataset.store);return}
+    if(a==="map")openMap(b.dataset.store);
+    if(a==="share"){e.preventDefault();openShare()}return}
 });
 $("#moreBtn").onclick=()=>{const L=$("#liff");L.hidden=false;
   L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="重新開始"><div class="sh"><div style="flex:1"><b>Demo 小工具</b><small>只在這支手機上清除，不會動到櫃台和其他人</small></div><button id="lx" aria-label="關閉">✕</button></div>
@@ -503,7 +515,7 @@ function ticketCard(t,title){const w=waitOf(t),docs=(CATS[t.cat]||CATS["異動/�
   return `<div class="card"><div class="hd">${title||"取號成功"}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><p>${esc(t.cat)}</p>
     <div class="row2"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div>
     <p>📋 請先準備：${docs.map(esc).join("、")}</p><p style="font-size:12px;color:#6b7086">輪到你時，會在這裡傳訊息通知你。不用一直盯著。</p>${state.tkLive||DEMO?"":demoTag(state.tkStore)}</div>
-    <div class="ft"><button data-card="mine">查看最新進度</button><button data-card="hold" data-hold="${t.id}">我需要晚一點（往後延 2 組）</button></div></div>`}
+    <div class="ft"><button data-card="mine">查看最新進度</button><button data-card="hold" data-hold="${t.id}">我需要晚一點（往後延 2 組）</button><a class="share" href="#" data-card="share" data-tid="${t.id}">↗ 分享號碼給家人</a></div></div>`}
 function liveButtons(){const t=mine();document.querySelectorAll("[data-hold]").forEach(b=>{b.disabled=!t||t.held||!active(t)||b.dataset.hold!==state.myId;if(t&&t.held&&b.dataset.hold===state.myId)b.textContent="已延後過（只能用一次）"});
   document.querySelectorAll("[data-face],[data-card=survey]").forEach(b=>{if(state.rated[b.dataset.tid])b.disabled=true})}
 function storeCard(n,title){const live=isLive(n),v=live?VL:null;
@@ -531,7 +543,7 @@ function menu(k,said){
     bot(id?"這次的服務你已經評過分了，謝謝你 🙏":"辦完業務之後，這裡會請你幫櫃台的服務打個分數。");return}
   if(k==="more"){me("更多服務");bot(`<div class="card"><div class="hd">更多服務</div><div class="bd grid3">${[["mine","帳單查詢"],["point","會員點數"],["phone","維修進度"]].map(([i,l])=>`<span>${svg(i)}${l}</span>`).join("")}</div><div class="ft"><button data-card="take">要到門市辦？先線上取號</button></div></div>`);return}
 }
-function calledCard(t,title){return `<div class="card or"><div class="hd">🔔 ${title}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${t.desk||1} 號櫃台</div><p>櫃台已經看過你寫的需求，正在等你。</p></div><div class="ft"><button data-card="here">我到了</button><button data-card="hold" data-hold="${t.id}">我還要 5 分鐘（往後延 2 組）</button></div></div>`}
+function calledCard(t,title){return `<div class="card or"><div class="hd">🔔 ${title}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${t.desk||1} 號櫃台</div><p>櫃台已經看過你寫的需求，正在等你。</p></div><div class="ft"><button data-card="here">我到了</button><button data-card="hold" data-hold="${t.id}">我還要 5 分鐘（往後延 2 組）</button><a class="share" href="#" data-card="share" data-tid="${t.id}">↗ 分享號碼給家人</a></div></div>`}
 
 /* ---------- LIFF：選擇門市 ---------- */
 let city=null;
@@ -592,6 +604,29 @@ function openMap(n){const L=$("#liff");L.hidden=false;
       <button class="go alt" id="mtake">在這間線上取號</button>
       <p class="muted">地圖在 LINE 裡直接顯示；按「開始導航」才會打開 Google 地圖 App（手機有裝的話）。</p></div></div>`;
   $("#lx").onclick=closeLiff;$("#mtake").onclick=()=>{closeLiff();if(state.store!==n&&!active(mine())){state.store=n;save()}menu("take")}}
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+/* 分享號碼給家人（借鏡官方帳號「分享給好友」）：家人在自己的 LINE 也看得到進度、一起收到叫號 */
+function openShare(){const t=mine();if(!t||!active(t)){bot("目前沒有排隊中的號碼可以分享喔。");return}
+  const w=t.st==="w"?waitOf(t):null,store=state.tkStore||myStore();
+  const txt=`我在台灣大哥大${store}排隊，號碼 ${t.no}${w?`，前面還有 ${w.ahead} 組，大約 ${w.mins} 分鐘`:"，已經叫到我了"}。（叫號說）`;
+  const FR=["家人群組","媽媽","爸爸","另一半","兒子","女兒"];let sel=new Set(state.shared);
+  const L=$("#liff");L.hidden=false;
+  const draw=()=>{L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="分享號碼給家人"><div class="sh"><div style="flex:1"><b>分享號碼給家人</b><small>${esc(store)}・${t.no}</small></div><button id="lx" aria-label="關閉">✕</button></div>
+    <div class="sb">
+      <p class="muted" style="margin:0">家人會在自己的 LINE 收到你的號碼，進度更新、輪到你時也會一起收到通知。適合幫爸媽取號、或請家人幫你留意。</p>
+      <div class="flist">${FR.map(n=>`<button data-fr="${esc(n)}" aria-pressed="${sel.has(n)}"><span class="fav">${n==="家人群組"?"👨‍👩‍👧":n.slice(0,1)}</span><b>${esc(n)}</b><i>${sel.has(n)?"✓":""}</i></button>`).join("")}</div>
+      <div class="note demo">示意：正式版用 LINE 的「分享給好友」選單挑朋友，不用輸入電話。</div>
+      <button class="go" id="sgo" ${sel.size?"":"disabled"}>分享給 ${sel.size||""} 位</button>
+      <a class="go alt" href="https://line.me/R/share?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">用 LINE 傳給其他人</a>
+    </div></div>`;
+    $("#lx").onclick=closeLiff;
+    L.querySelectorAll("[data-fr]").forEach(b=>b.onclick=()=>{const n=b.dataset.fr;sel.has(n)?sel.delete(n):sel.add(n);draw();L.querySelector(".sheet").classList.add("noanim")});
+    $("#sgo").onclick=()=>{state.shared=[...sel];save();closeLiff();me(`分享號碼給：${state.shared.join("、")}`);
+      bot(`✅ 已分享給 ${state.shared.map(esc).join("、")}。\n他們會在自己的 LINE 看到 ${t.no} 的進度，輪到你時也會一起收到通知。`);
+      bot(`<div class="card fam"><div class="hd">👀 家人收到的訊息</div><div class="bd"><p style="margin:0">你的家人在 <b>${esc(store)}</b> 排隊</p><div class="no">${t.no}</div>
+        ${w?`<div class="row2"><div>前面還有<b>${w.ahead} 組</b></div><div>預估等候<b>${w.mins} 分</b></div></div>`:`<p><b>已經叫號了</b>，請到櫃台</p>`}<p style="font-size:12px;color:#6b7086">輪到他時，你也會收到通知。</p></div>
+        <div class="ft"><button data-card="mine">查看最新進度</button></div></div>`)}};
+  draw()}
 function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
 function catWait(c,n,v){return isLive(n)?qMins(v):storeMins(n)}
 
@@ -671,7 +706,7 @@ async function take(){
       VL=Q.view(conn.data);
     }
     closeLiff();if(text)me(`我要辦：${F.cat}\n「${text}」`);else me(`我要辦：${F.cat}`);
-    const t=mine();if(t)bot(ticketCard(t));
+    const t=mine();if(t){bot(pick(["收到！幫你排好了 👍 不用在門市乾等，先去附近逛逛也沒關係。","好的，號碼幫你拿好了！輪到你之前我會先提醒你 🙂"]));bot(ticketCard(t))}
   }catch(e){$("#err").textContent=e&&(e.status===401||e.status===403)?"門市的叫號系統拒絕了這次取號，請洽現場人員。":"網路不太穩，請再按一次「取號」。";go.disabled=false;go.textContent="取號"}
 }
 async function doHold(){const t=mine();if(!t||t.held)return;me("我需要晚一點");
@@ -685,9 +720,9 @@ function onData(){
   const t=mine();
   if(state.myId&&!t){if(!state.notified.gone){state.notified.gone=1;bot("門市的叫號已重新開始，之前的號碼失效了。需要的話請重新取號。");state.myId=null;save()}}
   else if(t){
-    if(t.st==="w"){const w=waitOf(t);if(w.ahead<=2&&!state.notified.near){state.notified.near=1;save();bot(`⏰ 快輪到你了！\n${t.no} 前面剩 ${w.ahead} 組，約 ${w.mins} 分鐘。\n請回到櫃台附近，先把證件準備好。`);try{navigator.vibrate&&navigator.vibrate([150,80,150])}catch(e){}}}
-    if(t.st==="c"){const sig=t.id+":"+(t.ct||0)+":"+(t.rc||0);if(sig!==state.calledSig){const re=!!state.calledSig&&state.calledSig.split(":")[0]===t.id;state.calledSig=sig;save();bot(calledCard(t,re?"再次提醒":"輪到你了"));announce(t.no,t.desk||1)}}
-    if(t.st==="d"&&!state.doneShown){state.doneShown=true;state.lastDone=t.id;save();bot(doneCard(t))}
+    if(t.st==="w"){const w=waitOf(t);if(w.ahead<=2&&!state.notified.near){state.notified.near=1;save();bot(`還有 ${w.ahead} 組就到你囉，可以開始往門市走了 🚶 不用急，大約 ${w.mins} 分鐘。`);bot(ticketCard(t,"⏰ 快輪到你了"));if(state.shared.length)bot(`（已同步提醒：${state.shared.map(esc).join("、")}）`);try{navigator.vibrate&&navigator.vibrate([150,80,150])}catch(e){}}}
+    if(t.st==="c"){const sig=t.id+":"+(t.ct||0)+":"+(t.rc||0);if(sig!==state.calledSig){const re=!!state.calledSig&&state.calledSig.split(":")[0]===t.id;state.calledSig=sig;save();bot(re?"櫃台還在等你喔～到了跟櫃台說一聲就好 🙂":"到你了！🙌 慢慢走過來就好，櫃台已經看過你的需求、準備好了。");bot(calledCard(t,re?"再次提醒":"輪到你了"));if(!re&&state.shared.length)bot(`（已同步通知：${state.shared.map(esc).join("、")}）`);announce(t.no,t.desk||1)}}
+    if(t.st==="d"&&!state.doneShown){state.doneShown=true;state.lastDone=t.id;save();bot("辛苦了！今天的事都辦好了 🎉 花 10 秒幫櫃台打個分數，讓我們做得更好。");bot(doneCard(t))}
     if(t.st==="s"&&!state.notified.skip){state.notified.skip=1;save();bot(`😢 ${t.no} 已過號。櫃台叫號時沒有等到你。\n可以重新取號，或直接洽櫃台人員。`)}
   }
   liveButtons();
