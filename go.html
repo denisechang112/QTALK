@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2D2E67">
+<title>叫號說・門市取號</title>
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
+<style>
+:root{--ink:#2D2E67;--violet:#5B5BA5;--orange:#E8893A;--gold:#F5C543;--red:#DD4F3C;--green:#4BA882;--line:#06C755;--bg:#F2F2F7;--muted:#6b6b90;--border:#DEDEEA;
+  --f:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;--num:"Archivo Black","Noto Sans TC",Impact,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);-webkit-text-size-adjust:100%}
+.top{background:var(--ink);color:#fff;padding:calc(14px + env(safe-area-inset-top,0px)) 18px 14px;border-bottom:4px solid transparent;border-image:linear-gradient(90deg,#F5C543 0 25%,#E8893A 25% 50%,#DD4F3C 50% 62%,#5B5BA5 62% 82%,#4BA882 82% 100%) 1}
+.top b{font-size:20px;font-weight:900;letter-spacing:.02em}
+.top small{display:block;font-size:13px;color:#C9C9E6;margin-top:2px}
+main{max-width:480px;margin:0 auto;padding:18px 16px 32px;display:grid;gap:14px}
+.now{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.now div{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--muted)}
+.now b{display:block;font-family:var(--num);font-weight:400;font-size:28px;color:var(--ink);line-height:1.2}
+h1{margin:4px 0 0;font-size:21px;font-weight:900}
+.opt{position:relative;display:block;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:16px 16px 14px;box-shadow:0 6px 20px rgba(45,46,103,.08)}
+.opt.rec{border:2.5px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.opt:active{transform:translate(2px,2px)}
+.opt .hd{display:flex;align-items:center;gap:10px}
+.opt .ic{flex:none;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;font-weight:900;font-size:12px;color:#fff}
+.opt.rec .ic{background:var(--line)}
+.opt.web .ic{background:#EDEDF6;color:var(--ink)}
+.opt .ic svg{width:26px;height:26px}
+.opt h2{margin:0;font-size:19px;font-weight:900}
+.opt .badge{position:absolute;top:-11px;right:14px;background:var(--orange);color:#fff;font-size:12px;font-weight:900;padding:2px 10px;border-radius:999px;border:2px solid var(--ink)}
+.opt ul{margin:10px 0 12px;padding:0;list-style:none;display:grid;gap:4px;font-size:14px}
+.opt li{display:flex;gap:6px}.opt li::before{content:"✓";color:var(--green);font-weight:900}
+.opt.web li::before{color:var(--violet)}
+.opt .go{display:block;text-align:center;border-radius:14px;padding:11px;font-weight:900;font-size:17px}
+.opt.rec .go{background:var(--line);color:#fff;border:2px solid var(--ink)}
+.opt.web .go{background:#fff;color:var(--ink);border:1.5px solid var(--border)}
+.same{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;margin:0}
+.inline{background:#E9F9EF;border:1.5px solid var(--line);border-radius:14px;padding:8px 12px;font-size:13px;font-weight:700}
+.inline[hidden]{display:none}
+.mock{font-size:11.5px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="top"><b>叫號說・門市取號</b><small id="store">台北文創門市</small></div>
+<main>
+  <div class="now"><div>現在等候<b id="wq">—</b></div><div>預估等候<b id="wm">—</b></div></div>
+  <h1>你想用哪種方式取號？</h1>
+  <p class="inline" id="inLine" hidden>你正在 LINE 裡打開，直接用 LINE 取號最方便 👇</p>
+
+  <a class="opt rec" id="goLine" href="line.html">
+    <span class="badge">推薦</span>
+    <div class="hd"><span class="ic" aria-hidden="true">LINE</span><h2>用 LINE 取號</h2></div>
+    <ul><li>輪到你 LINE 直接通知，網頁關掉也不會漏</li><li>可以把號碼分享給家人一起留意</li><li>辦完幫櫃台評分，加入官方帳號好友</li></ul>
+    <span class="go">用 LINE 取號</span>
+  </a>
+
+  <a class="opt web" id="goWeb" href="./">
+    <div class="hd"><span class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M15 6v12" stroke-dasharray="2 2"/><path d="M7 10.5h5M7 13.5h3" stroke="#E8893A"/></svg></span><h2>直接取號（免登入）</h2></div>
+    <ul><li>不用加好友、不用登入、不用留電話</li><li>在這個網頁看進度，請先不要關掉</li></ul>
+    <span class="go">直接取號</span>
+  </a>
+
+  <p class="same">兩種方式排的是<b>同一條隊伍</b>，號碼順序完全一樣。<br>之後也可以在號碼牌上改用 LINE 接收通知。</p>
+  <p class="mock" id="mock">概念示意：正式版「用 LINE 取號」會直接打開台灣大哥大官方帳號。</p>
+</main>
+<script src="live.js"></script>
+<script src="stores.js"></script>
+<script>
+"use strict";
+(function(){
+  const Q=window.QTLive,sess=Q.parseLink(),hash=sess?"#"+Q.linkOf(sess,false):"";
+  document.getElementById("goLine").href="line.html"+hash;
+  document.getElementById("goWeb").href="./"+hash;
+  if(/\bLine\//i.test(navigator.userAgent))document.getElementById("inLine").hidden=false;
+  const show=(n,q,m)=>{document.getElementById("store").textContent=n;document.getElementById("wq").textContent=q+" 組";document.getElementById("wm").textContent=m+" 分"};
+  const T={"繳費/儲值":4,"續約/換約/新申辦":18,"異動/諮詢/維修":10,"網路取貨/預約取件":5};
+  if(!sess){const n="台北文創門市",m=window.QTStores?Math.max(2,window.QTStores.storeWait(n)):12;show(n,Math.max(1,Math.round(m/4)),m);return}
+  Q.connect(sess.host,sess.room,room=>{const v=Q.view(room),n=(v.meta&&v.meta.store)||"台北文創門市";
+    show(n,v.waiting.length,Math.max(2,Math.round(v.waiting.reduce((s,x)=>s+(T[x.cat]||10),0)/3+2)))},()=>{});
+})();
+</script>
+</body>
+</html>

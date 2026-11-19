@@ -730,7 +730,7 @@ function onData(){
 
 /* ---------- 模擬隊伍（示範模式，或選了還沒接系統的門市） ---------- */
 let demo={tickets:{},seq:0,timer:null};
-function demoView(){VD=Q.view({meta:{store:state.tkStore||myStore()},tickets:demo.tickets});onData()}
+function demoView(){VD=Q.view({meta:{store:state.tkStore||myStore()},tickets:demo.tickets});if(state.bindNo){const m=VD.all.find(x=>x.id===state.myId);if(m)m.no=state.bindNo}onData()}
 function demoSeed(n){demo.tickets={};clearInterval(demo.timer);const k=Math.min(6,Math.max(2,Math.round(storeMins(n)/5))),base=Date.now()-600000,cs=Object.keys(CATS);
   for(let i=0;i<k;i++)demo.tickets["-d"+(++demo.seq+100)]={cat:cs[(i*3+1)%4],st:i===0?"c":"w",desk:1,ct:base+i,t:base+i*1000};VD=Q.view({tickets:demo.tickets})}
 function demoTake(text,n){demoSeed(n);const id="-d"+(++demo.seq+100);demo.tickets[id]={cat:F.cat,st:"w",t:Date.now(),src:"line",p:F.p||undefined};state.myId=id;save();VD=Q.view({meta:{store:n},tickets:demo.tickets});demoRun()}
@@ -743,10 +743,22 @@ function demoRun(){clearInterval(demo.timer);demo.timer=setInterval(()=>{   // �
 /* ---------- 啟動 ---------- */
 function setStatus(s){const el=$("#st");el.className=s==="live"?"ok":s==="connecting"||s==="reconnecting"?"":"bad";el.lastElementChild.textContent=s==="live"?`已連上 ${liveStore}・自動回覆訊息中`:(Q.STATUS_ZH[s]||s)}
 drawMenu();
+/* 從叫號說 App（免登入）帶號碼過來：#l=…&t=<ticketId>（現場）或 ?bind=A118&ahead=3（示範） */
+const BIND=(()=>{try{const h=location.hash,q=new URLSearchParams(location.search),t=(h.match(/[&#]t=([^&]+)/)||[])[1];
+  if(t)return {id:decodeURIComponent(t)};if(q.get("bind"))return {no:q.get("bind"),ahead:Math.max(0,+q.get("ahead")||0),cat:q.get("cat")||"繳費/儲值",store:q.get("store")||"台北文創門市"}}catch(e){}return null})();
+function adoptLive(room){if(!BIND||!BIND.id||state.myId===BIND.id)return;const t=Q.view(room).all.find(x=>x.id===BIND.id);if(!t||!active(t))return;
+  state.myId=t.id;state.tkLive=true;state.tkStore=liveStore;state.store=liveStore;state.notified={};state.calledSig=null;state.doneShown=false;save();
+  bot(`歡迎加入 👋 已經幫你把叫號說的號碼 <b>${t.no}</b> 接過來了，不用重新取號。\n之後輪到你，我會在這裡通知你。`);setTimeout(()=>{VL=Q.view(room);const m=mine();if(m)bot(m.st==="c"?calledCard(m,"輪到你了"):ticketCard(m,"你的號碼"))},50)}
+function adoptDemo(){if(!BIND||!BIND.no)return;state.store=BIND.store;state.tkStore=BIND.store;state.tkLive=false;state.bindNo=BIND.no;
+  demo.tickets={};const base=Date.now()-600000,cs=Object.keys(CATS);
+  for(let i=0;i<=BIND.ahead;i++)demo.tickets["-d"+(++demo.seq+100)]={cat:cs[(i*3+1)%4],st:i===0?"c":"w",desk:1,ct:base+i,t:base+i*1000};
+  const id="-d"+(++demo.seq+100);demo.tickets[id]={cat:CATS[BIND.cat]?BIND.cat:"繳費/儲值",st:"w",t:Date.now(),src:"app"};state.myId=id;
+  demoView();bot(`歡迎加入 👋 已經幫你把叫號說的號碼 <b>${BIND.no}</b> 接過來了，不用重新取號。\n之後輪到你，我會在這裡通知你。`);const t=mine();if(t)bot(ticketCard(t,"你的號碼"));demoRun();
+  try{history.replaceState(null,"",location.pathname)}catch(e){}}
 function welcome(){bot(`歡迎加入台灣大哥大 Open Possible 👋\n🆕 現在可以直接在官方帳號線上取號：\n① 點下方「用戶服務 › 門市取號」\n② 選門市，用一句話說說你要辦什麼\n輪到你時，我們會在這裡傳訊息叫你；辦完還可以幫櫃台打個分數。`)}
-if(decided)welcome();else setTimeout(()=>decide(null),3000);
+if(decided){welcome();if(DEMO)adoptDemo()}else setTimeout(()=>decide(null),3000);
 if(DEMO){$("#mock").textContent="概念示意・示範模式（沒有連線，櫃台每 6 秒自動叫下一位）"}
-else{conn=Q.connect(sess.host,sess.room,room=>{decide(room);VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
+else{conn=Q.connect(sess.host,sess.room,room=>{decide(room);adoptLive(room);VL=Q.view(room);if(VL.meta&&VL.meta.store)liveStore=VL.meta.store;if(state.tkLive)onData();draw(false)},setStatus)}
 draw(true);
 </script>
 <script id="qt-lock">

@@ -633,6 +633,13 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 .cat .cat-i,.cats .cat-i{width:26px;height:26px;display:block;margin-bottom:4px}
 .cat[aria-pressed="true"] .li,.cats button[aria-pressed="true"] .li{color:currentColor}
 .cat[aria-pressed="true"] .li .ac,.cats button[aria-pressed="true"] .li .ac{stroke:currentColor}
+
+/* 加 LINE 好友引導 */
+.linebind{border:1.5px solid #06C755!important;background:#F2FBF5!important}
+.linebind .lb-top{display:flex;gap:10px;align-items:flex-start}
+.linebind .lb-ic{flex:none;width:40px;height:40px;border-radius:12px;background:#06C755;color:#fff;font-weight:900;font-size:11px;display:grid;place-items:center;letter-spacing:.02em}
+.linebind h4{margin:0 0 2px}
+.linebind .lb-go{display:block;text-align:center;text-decoration:none;background:#06C755!important;color:#fff!important;border:2px solid #2D2E67;box-shadow:2px 2px 0 #2D2E67}
 </style>
 
 <div class="outer">
@@ -1469,6 +1476,12 @@ function ticketInner(){
 }
 function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.serving.indexOf(t);
   return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
+/* 免登入取號後，引導加 LINE 好友：號碼直接帶過去，不用重新取號 */
+function lineBindUrl(t){const base=new URL("line.html",location.href.startsWith("http")?location.href:"https://denisechang112.github.io/QTALK/").href.replace(/[#?].*$/,"");
+  if(typeof LIVE!=="undefined"&&LIVE.on&&LIVE.sess&&LIVE.myId)return base+"#l="+LIVE.sess.host+"~"+LIVE.sess.room+"&t="+encodeURIComponent(LIVE.myId);
+  const w=waitFor(t);return base+"?bind="+encodeURIComponent(t.no)+"&ahead="+w.ahead+"&cat="+encodeURIComponent(t.cat)+"&store="+encodeURIComponent(HOME)}
+function lineBindHTML(t){return `<div class="box linebind"><div class="lb-top"><span class="lb-ic" aria-hidden="true">LINE</span><div><h4>加 LINE 好友，輪到你直接通知</h4><p class="muted">網頁關掉就收不到提醒，LINE 不會漏。號碼 <b>${t.no}</b> 會直接帶過去，不用重新取號；還能分享給家人一起留意。</p></div></div>
+  <a class="btn lb-go" id="lineBind" href="${lineBindUrl(t)}" target="_blank" rel="noopener">用 LINE 接收叫號通知</a></div>`}
 function mineHTML(){
   const st=meState();
   if(st==="none")return `<div class="box"><h4>還沒有號碼</h4><p class="muted">取號後，號碼、等候進度和要帶的證件都會在這裡。</p><button class="btn blue" id="goTake">去取號</button></div>${videosHTML()}`;
@@ -1483,6 +1496,7 @@ function mineHTML(){
   ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，先把下面的證件準備好。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
   ${st==="waiting"&&!near?`<button class="btn wide away ${U.out?"on":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>
   <p class="note" style="margin-top:-8px">${U.out?"放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。":"不想乾等可以先去附近逛，快到了會叫你。"}</p>`:""}
+  ${st==="waiting"&&!U.lineBound?lineBindHTML(t):""}
   <div class="box ${near?"docsnear":""}"><h4>${near?"現在就把這些拿出來":"排到之前，先準備好"}</h4><div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
     <p class="muted">${U.docs.size===docs.length?"全部準備好了，櫃台會更快幫你辦完。":"點一下勾選你帶了的東西。"}</p></div>
   ${st==="waiting"&&U.consent?`<div class="box" style="background:var(--cream)"><span class="tagc lilac" style="justify-self:start">跟你有關的優惠</span><h4>${CATS[t.cat].promo}</h4><p class="muted">到櫃台出示號碼即可使用。</p></div>`:""}

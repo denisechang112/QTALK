@@ -342,12 +342,13 @@ setInterval(()=>{if(sess&&!busy&&$("#sheet").hidden)render()},30000);
 /* ================= 場次面板：大螢幕、QR Code、排練、重設 ================= */
 function copy(text,label){(navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(()=>flash("已複製"+label),()=>{window.prompt("請手動複製"+label,text)})}
 function openSheet(){
-  const cust=Q.pageUrl("./",sess,false),scr=Q.pageUrl("screen.html",sess,false),staff=Q.pageUrl("counter.html",sess,true),line=Q.pageUrl("line.html",sess,false);
+  const go=Q.pageUrl("go.html",sess,false),cust=Q.pageUrl("./",sess,false),scr=Q.pageUrl("screen.html",sess,false),staff=Q.pageUrl("counter.html",sess,true),line=Q.pageUrl("line.html",sess,false);
   const sh=$("#sheet");sh.hidden=false;
   sh.innerHTML=`<div class="in" role="dialog" aria-modal="true" aria-label="場次與 QR Code">
     <div class="row" style="justify-content:space-between"><h2 style="margin:0;font-size:20px;font-weight:900">場次・QR Code</h2><button class="btn sm" data-s="close">關閉</button></div>
     <div class="qrbox"><div class="qr">${Q.qrSvg(scr)}</div><div style="display:grid;gap:6px"><h3>① 門市大螢幕</h3><p class="muted">用接投影機的電腦開啟，上面會顯示顧客取號用的 QR Code。</p><div class="row"><a class="btn sm dark" href="${esc(scr)}" target="_blank" rel="noopener">在新分頁開啟大螢幕</a><button class="btn sm" data-s="cscr">複製連結</button></div></div></div>
-    <div class="qrbox sec"><div class="qr">${Q.qrSvg(cust)}</div><div style="display:grid;gap:6px"><h3>② 顧客取號</h3><p class="muted">顧客用手機掃這個 QR Code 取號（大螢幕上也有同一個）。</p><div class="row"><button class="btn sm" data-s="ccust">複製連結</button></div></div></div>
+    <div class="qrbox sec"><div class="qr">${Q.qrSvg(go)}</div><div style="display:grid;gap:6px"><h3>② 顧客取號入口（貼在門市）</h3><p class="muted">掃了先選「用 LINE 取號」或「直接取號（免登入）」，兩種排同一條隊伍。大螢幕預設也是這個 QR Code。</p><div class="row"><a class="btn sm" href="${esc(go)}" target="_blank" rel="noopener">開啟入口頁</a></div></div></div>
+    <div class="qrbox sec"><div class="qr">${Q.qrSvg(cust)}</div><div style="display:grid;gap:6px"><h3>②-1 直接取號（免登入網頁版）</h3><p class="muted">跳過入口頁，直接進叫號說網頁取號。</p><div class="row"><button class="btn sm" data-s="ccust">複製連結</button></div></div></div>
     <div class="qrbox sec"><div class="qr">${Q.qrSvg(line)}</div><div style="display:grid;gap:6px"><h3>②-2 LINE 官方帳號取號（概念示意）</h3><p class="muted">同一個場次，改用「LINE 官方帳號」的介面取號，叫號時收到官方帳號訊息。大螢幕右下角也能切換成這個 QR Code。</p><div class="row"><a class="btn sm" href="${esc(line)}" target="_blank" rel="noopener">開啟 LINE 版</a><button class="btn sm" data-s="cline">複製連結</button></div></div></div>
     <div class="qrbox sec"><div class="qr">${sess.d?Q.qrSvg(staff):""}</div><div style="display:grid;gap:6px"><h3>③ 其他櫃台裝置加入</h3><p class="muted">${sess.d?"只給門市同仁掃。掃了就能叫號，也看得到顧客留言，請不要投影出來。":"這台裝置沒有櫃台金鑰，無法邀請其他裝置。"}</p>${sess.d?`<div class="row"><button class="btn sm" data-s="cstaff">複製連結</button></div>`:""}</div></div>
     <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">🤖 AI 分類（Gemini）</h3>
