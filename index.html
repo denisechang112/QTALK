@@ -14,6 +14,40 @@
 </head>
 <body>
 <title>叫號說 APP</title>
+<script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
+(function(){
+const P={
+ ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M15 6v12" stroke-dasharray="2 2"/><path d="M7 10.5h5M7 13.5h3" class="ac"/>',
+ phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M9.5 8h5M9.5 11h3.5" class="ac"/>',
+ pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4" class="ac"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2" class="ac"/>',
+ smile:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2" class="ac"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+ chat:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/><path d="M8.5 10h.01M12 10h.01M15.5 10h.01" stroke-width="2.6" class="ac"/>',
+ clip:'<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 4.5V3.5h6v1"/><path d="M8.5 10h7M8.5 13.5h7M8.5 17h4" class="ac"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0" class="ac"/>',
+ timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M10 3h4" class="ac"/>',
+ coin:'<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16" cy="14.5" r="1.6" class="ac"/>',
+ renew:'<path d="M19.5 12a7.5 7.5 0 0 1-13 5.1M4.5 12a7.5 7.5 0 0 1 13-5.1"/><path d="M17.5 3.5v3.4h-3.4M6.5 20.5v-3.4h3.4" class="ac"/>',
+ wrench:'<path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5 7.5 20l6.2-6.2a4.5 4.5 0 0 0 5.8-4.3l-2.6 2.6-3-.6-.6-3z"/>',
+ box:'<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/><path d="M7.8 5.3l8.5 4.5" class="ac"/>',
+ lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><path d="M12 14.5v2.5" class="ac"/>',
+ info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5" class="ac"/><path d="M12 7.8h.01" stroke-width="2.8"/>'
+};
+const sv=(k,cls)=>`<svg class="li ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
+window.__LI=sv;
+const EMO={"📋":"clip","🔔":"bell","📍":"pin","⏱":"timer","⏱️":"timer","🔒":"lock","📩":"chat","⏰":"clock","🏪":"pin","💡":"info","📊":"info"};
+const re=new RegExp("("+Object.keys(EMO).map(e=>e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\uFE0F?","g");
+function swap(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest("script,style,textarea,svg")&&re.test(n.nodeValue)?1:2});const L=[];let n;while((n=w.nextNode()))L.push(n);
+  L.forEach(t=>{re.lastIndex=0;const span=document.createElement("span");span.innerHTML=t.nodeValue.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).replace(re,m=>sv(EMO[m.replace(/️/,"")]||"info","inl"));t.replaceWith(...span.childNodes)})}
+const CAT={"繳費":"coin","續約":"renew","異動":"wrench","網路取貨":"box"};
+function cats(root){root.querySelectorAll(".cat[data-c],.cats button[data-c]").forEach(b=>{if(b.querySelector(".li"))return;const k=Object.keys(CAT).find(x=>(b.dataset.c||"").startsWith(x));if(k)b.insertAdjacentHTML("afterbegin",sv(CAT[k],"cat-i"))})}
+function run(){swap(document.body);cats(document)}
+new MutationObserver(()=>{mo.disconnect();run();mo.observe(document.body,{subtree:true,childList:true})}).observe;
+const mo=new MutationObserver(()=>{mo.disconnect();try{run()}catch(e){}mo.observe(document.body,{subtree:true,childList:true})});
+addEventListener("DOMContentLoaded",()=>{run();mo.observe(document.body,{subtree:true,childList:true})});
+})();
+</script>
+
 <script>/* 自動判斷：手機/平板打開 → 全螢幕 App 模式；電腦打開 → 模擬手機外框 */
 (function(){try{var u=navigator.userAgent,r=document.documentElement;
 var phone=/iPhone|iPod|iPad|Android|Windows Phone|Mobile/i.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1);
@@ -26,13 +60,13 @@ if((window.matchMedia&&matchMedia("(display-mode: standalone), (display-mode: fu
 /* Layout: mobile web page (not an app) in the comic blue world. One column; on desktop it sits in a phone-sized browser frame. 3 tabs: 排隊 / 我的號碼 / 小教室. A 3D cube-head mascot guides at the moment of need. */
 :root{
   color-scheme:light;
-  --sky:#3a4fd6; --sky-deep:#2a3ab0; --night:#1b2470;
-  --ink:#15142a; --paper:#fffaf0; --cream:#fdf0d2;
-  --orange:#f2711c; --yellow:#ffcf2e; --green:#3ec46d; --green-deep:#25964f;
-  --red:#e8402f; --lilac:#b9bff2; --muted:#5a5c78; --street:#6a6f8f;
+  --sky:#5B5BA5; --sky-deep:#46468A; --night:#2D2E67;
+  --ink:#2D2E67; --paper:#FFFFFF; --cream:#F6F6F9;
+  --orange:#E8893A; --yellow:#F5C543; --green:#4BA882; --green-deep:#3A8A69;
+  --red:#DD4F3C; --lilac:#D9D9EE; --muted:#5a5c78; --street:#6a6f8f;
   --f-body:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;
   --f-num:"Archivo Black","Noto Sans TC",Impact,sans-serif;
-  --line:3px solid var(--ink); --shadow:4px 4px 0 var(--ink);
+  --line:3px solid var(--ink); --shadow:3px 3px 0 var(--ink);
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -124,7 +158,7 @@ button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-vis
 .sheet h3{margin:0;font-size:22px;font-weight:900;line-height:1.3}
 .sheet p{margin:0;font-weight:700}
 .sheet .big{font-family:var(--f-num);font-size:64px;line-height:1}
-.sheet .desk{font-family:var(--f-num);font-size:84px;line-height:1;color:var(--yellow);text-shadow:4px 4px 0 var(--ink)}
+.sheet .desk{font-family:var(--f-num);font-size:84px;line-height:1;color:var(--yellow);text-shadow:3px 3px 0 var(--ink)}
 .sheet .acts{display:grid;gap:8px}
 .sheet label{font-weight:900;font-size:14px;display:grid;gap:4px;text-align:left}
 .sheet input[type=text],.sheet input[type=tel]{font:inherit;border:var(--line);border-radius:11px;padding:8px 10px;background:#fff;color:var(--ink)}
@@ -153,7 +187,7 @@ button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-vis
 .cta{display:block;width:100%;background:var(--yellow);color:var(--ink);border:var(--line);border-radius:14px;box-shadow:var(--shadow);font-size:20px;font-weight:900;padding:12px;letter-spacing:.04em;text-align:center;text-decoration:none}
 .cta:active,.btn:active,.cat:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
 .cta:disabled{opacity:.5;cursor:not-allowed}
-.btn{border:var(--line);background:#fff;color:var(--ink);font-weight:900;padding:8px 14px;border-radius:11px;box-shadow:3px 3px 0 var(--ink);font-size:15px;text-decoration:none;display:inline-block;text-align:center}
+.btn{border:var(--line);background:#fff;color:var(--ink);font-weight:900;padding:8px 14px;border-radius:11px;box-shadow:2px 2px 0 var(--ink);font-size:15px;text-decoration:none;display:inline-block;text-align:center}
 .btn.dark{background:var(--ink);color:var(--yellow)}
 .btn.blue{background:var(--sky);color:#fff}
 .btn.sm{font-size:13px;padding:4px 10px}
@@ -167,7 +201,7 @@ button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-vis
 /* scene (3D) */
 .shout{position:relative;background:var(--orange);border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:10px 16px 12px;color:#fff}
 .shout::after{content:"";position:absolute;left:36px;bottom:-18px;width:24px;height:20px;background:var(--orange);border-right:var(--line);border-bottom:var(--line);transform:skewX(-35deg)}
-.shout h3{margin:0;font-size:28px;font-weight:900;line-height:1.15;text-shadow:3px 3px 0 var(--ink)}
+.shout h3{margin:0;font-size:28px;font-weight:900;line-height:1.15;text-shadow:2px 2px 0 var(--ink)}
 .shout p{margin:4px 0 0;font-weight:700;font-size:14px}
 .scene{position:relative;border:var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;background:linear-gradient(var(--sky-deep),var(--sky) 70%);height:320px;touch-action:pan-y}
 .scene canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;cursor:grab}
@@ -192,7 +226,7 @@ button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-vis
 
 /* take */
 .cats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cat{border:var(--line);background:#fff;color:var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:10px 10px 8px;display:grid;gap:2px;text-align:left;font-weight:900;font-size:15px;line-height:1.3}
+.cat{border:var(--line);background:#fff;color:var(--ink);border-radius:14px;box-shadow:2px 2px 0 var(--ink);padding:10px 10px 8px;display:grid;gap:2px;text-align:left;font-weight:900;font-size:15px;line-height:1.3}
 .cat small{font-weight:700;font-size:12px;color:var(--muted)}
 .cat small b{font-family:var(--f-num);color:var(--orange);font-size:14px}
 .cat[aria-pressed="true"]{background:var(--sky);color:#fff}
@@ -251,7 +285,7 @@ details.more[open] summary::before{content:"－ "}
 .resv .t{font-family:var(--f-num);font-size:30px;line-height:1}
 
 /* my number */
-.ticket{background:linear-gradient(135deg,#d8dcf7,#b9bff2 40%,#e9ebfb 60%,#a9afe8);border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;color:var(--ink);display:grid;gap:10px}
+.ticket{background:linear-gradient(135deg,#d8dcf7,#D9D9EE 40%,#e9ebfb 60%,#a9afe8);border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px;color:var(--ink);display:grid;gap:10px}
 .ticket.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
 @keyframes pop{from{transform:scale(.85) rotate(-3deg);opacity:0}}
 .ticket .top{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:10px;align-items:center}
@@ -273,7 +307,7 @@ details.more[open] summary::before{content:"－ "}
 .scn{display:flex;align-items:center;gap:8px;font-size:14px}
 .fam{font-size:13px;font-weight:700;background:rgba(255,255,255,.6);border-radius:8px;padding:4px 8px}
 .called{background:var(--orange);color:#fff;border:var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;text-align:center;display:grid;gap:6px;animation:pop .45s}
-.called .desk{font-family:var(--f-num);font-size:90px;line-height:1;color:var(--yellow);text-shadow:4px 4px 0 var(--ink)}
+.called .desk{font-family:var(--f-num);font-size:90px;line-height:1;color:var(--yellow);text-shadow:3px 3px 0 var(--ink)}
 .called h3{margin:0;font-size:22px;font-weight:900}
 .docs{display:grid;gap:8px}
 .doc{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 10px;font-weight:700;text-align:left;color:var(--ink)}
@@ -290,7 +324,7 @@ details.more[open] summary::before{content:"－ "}
 .scale button[aria-pressed="true"]{background:var(--yellow);box-shadow:2px 2px 0 var(--ink)}
 .scale-l{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700}
 .faces{display:flex;gap:12px;justify-content:center}
-.faces button{font-size:32px;width:64px;height:64px;border:var(--line);border-radius:50%;background:#fff;box-shadow:3px 3px 0 var(--ink)}
+.faces button{font-size:32px;width:64px;height:64px;border:var(--line);border-radius:50%;background:#fff;box-shadow:2px 2px 0 var(--ink)}
 
 /* video */
 .vids{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:14px;scrollbar-width:none;margin:0 -14px;padding:2px 14px 8px 14px}
@@ -310,18 +344,18 @@ details.more[open] summary::before{content:"－ "}
 .vframe.tall video{background:linear-gradient(180deg,#3d54d6,#2c3fbf)}
 .vmax{position:absolute;right:6px;top:6px;z-index:2;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);border-radius:7px;box-shadow:1px 1px 0 var(--ink);font-size:10px;font-weight:900;line-height:1.4;padding:0 5px}
 #vplayer{position:absolute;inset:0;z-index:35;background:#05071c;overflow:hidden}
-#gameview{position:absolute;inset:0;z-index:37;background:#3a4fd6;display:flex;flex-direction:column}
+#gameview{position:absolute;inset:0;z-index:37;background:#5B5BA5;display:flex;flex-direction:column}
 #gameview[hidden]{display:none}
 #gameview .gbar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--ink);color:#fff;font-weight:900;font-size:13px;flex:none}
 #gameview .gbar button{border:2px solid #fff;background:transparent;color:#fff;border-radius:999px;padding:4px 10px;font:inherit;cursor:pointer;white-space:nowrap}
 #gameview .gbar .st{margin-left:auto;background:var(--yellow);color:var(--ink);border-radius:999px;padding:3px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #gameview .gbar.near .st{background:var(--red);color:#fff;animation:gpulse 1s infinite}
 @keyframes gpulse{50%{transform:scale(1.06)}}
-#gameview iframe{flex:1;border:0;width:100%;min-height:0;background:#3a4fd6;display:none}
+#gameview iframe{flex:1;border:0;width:100%;min-height:0;background:#5B5BA5;display:none}
 #gameview iframe.on{display:block}
 .gamecard{background:linear-gradient(135deg,#fff7d6,#ffe9c7)}
 .gamecard .gbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.gbtn{display:grid;justify-items:center;gap:2px;text-align:center;border:var(--line);border-radius:14px;background:#fff;padding:10px 6px;box-shadow:3px 3px 0 var(--ink);cursor:pointer;font:inherit;color:var(--ink)}
+.gbtn{display:grid;justify-items:center;gap:2px;text-align:center;border:var(--line);border-radius:14px;background:#fff;padding:10px 6px;box-shadow:2px 2px 0 var(--ink);cursor:pointer;font:inherit;color:var(--ink)}
 .gbtn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
 .gbtn .gi{font-size:30px;line-height:1}.gbtn b{font-size:16px}.gbtn small{font-size:11.5px;font-weight:700;opacity:.75;line-height:1.3}
 #vplayer .stage{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;transform-origin:center}
@@ -338,11 +372,11 @@ details.more[open] summary::before{content:"－ "}
 #admin .ahd button{background:var(--yellow);border:3px solid #fff;border-radius:10px;font-weight:900;font-size:13px;padding:3px 10px;color:var(--ink)}
 #admin .staff{background:var(--red);color:#fff;font-size:11px;font-weight:900;text-align:center;padding:3px}
 #admin .ab{padding:12px;display:grid;gap:12px}
-#admin .card{background:#fff;border:3px solid var(--ink);border-radius:14px;box-shadow:3px 3px 0 var(--ink);padding:12px}
+#admin .card{background:#fff;border:3px solid var(--ink);border-radius:14px;box-shadow:2px 2px 0 var(--ink);padding:12px}
 #admin .card h4{margin:0 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}
 #admin .card h4 em{font-style:normal;font-size:11px;color:var(--muted);font-weight:700;margin-left:auto}
 #admin .kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-#admin .kpi div{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px;text-align:center;box-shadow:3px 3px 0 var(--ink)}
+#admin .kpi div{background:#fff;border:3px solid var(--ink);border-radius:12px;padding:8px;text-align:center;box-shadow:2px 2px 0 var(--ink)}
 #admin .kpi b{display:block;font-size:22px;font-family:var(--f-num)}
 #admin .kpi span{font-size:11px;font-weight:700;color:var(--muted)}
 #admin .kpi .warn b{color:var(--red)}
@@ -521,7 +555,7 @@ html.is-wide.is-phone .appSide{zoom:1.12}
 .sd-now b{font-family:var(--f-num);font-weight:400;font-size:30px;line-height:1.1;color:var(--yellow)}
 .sd-tk{background:#fff;border:var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
 .sd-tk .hd{background:var(--sky);color:#fff;font-weight:900;font-size:13px;padding:6px 12px;border-bottom:var(--line)}
-.sd-tk.call .hd{background:var(--orange)}.sd-tk.done .hd{background:#3ec46d;color:var(--ink)}
+.sd-tk.call .hd{background:var(--orange)}.sd-tk.done .hd{background:#4BA882;color:var(--ink)}
 .sd-tk .bd{padding:12px;display:grid;gap:8px;text-align:center}
 .sd-tk .no{font-family:var(--f-num);font-size:54px;line-height:1}
 .sd-tk .cat{font-weight:900;font-size:13px}
@@ -542,6 +576,61 @@ html.fold-single:not(.is-phone) .phone{width:min(100%,880px);height:min(720px,ca
 html.fold-single .appBody{padding-inline:max(14px,calc((100% - 560px)/2))}
 .foldChip{position:absolute;right:12px;bottom:68px;z-index:30;border:var(--line);border-radius:999px;background:var(--yellow);color:var(--ink);font-weight:900;font-size:13px;padding:6px 12px;box-shadow:var(--shadow)}
 [data-foldpref][aria-pressed="true"]{background:var(--yellow)}
+
+/* ===== 叫號說新配色：取自台灣大哥大 logo（深藏青 #2D2E67、紫藍 #5B5BA5、暖橘 #E8893A、金黃 #F5C543、紅橘 #DD4F3C、綠 #4BA882）。舊版：git tag pre-palette-v3 ===== */
+/* ===== 新配色（logo 色）第 1 層：白底為主、紫藍只在標題列、橘色當主角、業務分四色 ===== */
+:root{--paper:#ffffff;--cream:#FFF3E6;--lilac:#C9C9E6}
+.phone{background:#F2F2F7!important}
+.appBody{color:#2D2E67}
+.appTop{background:#5B5BA5}
+.tabbar{background:#fff!important;border-top:2px solid #E2E2EE!important;box-shadow:none!important}
+.tabbar button{color:#8a8ab0}
+.tabbar button[aria-current="page"],.tabbar button.on,.tabbar button[aria-selected="true"]{color:#E8893A}
+.mq{background:#FFF3E6;border-color:#E8893A33}
+.cta{background:#E8893A;color:#fff;border-color:#2D2E67}
+.btn.blue,.tagc.blue{background:#5B5BA5}
+.ticket{background:#fff;border-top:8px solid #E8893A}
+.ticket .lab{background:#2D2E67;color:#F5C543}
+.stat div{background:#F2F2F7;color:#2D2E67;border:2px solid #2D2E67}
+.stat small{color:#6b6b90}.stat b{color:#E8893A}
+/* 業務分四色（取自 logo 寶石）*/
+.cat{border-left-width:8px!important}
+.cat:nth-of-type(1){border-left-color:#F5C543!important}.cat:nth-of-type(2){border-left-color:#E8893A!important}
+.cat:nth-of-type(3){border-left-color:#5B5BA5!important}.cat:nth-of-type(4){border-left-color:#4BA882!important}
+.cat:nth-of-type(1)[aria-pressed="true"]{background:#F5C543;color:#2D2E67}.cat:nth-of-type(2)[aria-pressed="true"]{background:#E8893A;color:#fff}
+.cat:nth-of-type(3)[aria-pressed="true"]{background:#5B5BA5;color:#fff}.cat:nth-of-type(4)[aria-pressed="true"]{background:#4BA882;color:#fff}
+.cat[aria-pressed="true"] *{color:inherit!important}
+
+/* ===== 新配色第 2 層：乾淨優雅的「外框」＋保留個性的「主角」 ===== */
+/* 外框：深藏青標題列＋logo 四色細線，容器改細框柔和陰影 */
+.appTop{background:#2D2E67!important;box-shadow:inset 0 -4px 0 0 transparent;position:relative}
+.appTop::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,#F5C543 0 25%,#E8893A 25% 50%,#DD4F3C 50% 62%,#5B5BA5 62% 82%,#4BA882 82% 100%)}
+.mq{background:#fff!important;border-top:0!important;border-bottom:1px solid #E4E4EE!important}
+.mq .pin{background:#E8893A;border-right:0}
+.box{border:1.5px solid #DEDEEA!important;box-shadow:0 6px 20px rgba(45,46,103,.08)!important;border-radius:20px}
+.h2 h2,.h2 h3{text-shadow:none!important;letter-spacing:.02em}
+.h2 span{border:0;box-shadow:none;border-radius:999px;padding:1px 10px}
+.cat{border:1.5px solid #DEDEEA!important;border-left:6px solid #ccc!important;box-shadow:0 3px 10px rgba(45,46,103,.06)!important;border-radius:14px}
+.cat:nth-of-type(1){border-left-color:#F5C543!important}.cat:nth-of-type(2){border-left-color:#E8893A!important}
+.cat:nth-of-type(3){border-left-color:#5B5BA5!important}.cat:nth-of-type(4){border-left-color:#4BA882!important}
+.cat[aria-pressed="true"]{border-color:transparent!important}
+.starters button{border:1.5px solid #DEDEEA;background:#F6F6FA;color:#2D2E67}
+textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-color:#DEDEEA!important;border-radius:12px!important}
+.stat div{border:0!important;background:#2D2E67!important}
+.stat small{color:#C9C9E6!important}.stat b{color:#F5C543!important}
+/* 主角：號碼牌、3D 小人、主要按鈕、遊戲 → 保留粗框與實心陰影，這是叫號說的個性 */
+.ticket{border:2.5px solid #2D2E67!important;box-shadow:4px 4px 0 #2D2E67!important;border-top:8px solid #E8893A!important}
+.ticket .pt{border:2.5px solid #2D2E67;background:linear-gradient(135deg,#F5C543,#E8893A)}
+.cta{border:2.5px solid #2D2E67!important;box-shadow:3px 3px 0 #2D2E67!important}
+.btn{border-width:1.5px}
+
+/* SVG 線稿圖示 */
+.li{width:1.15em;height:1.15em;vertical-align:-.2em;color:#2D2E67;flex:none}
+.li .ac{stroke:#E8893A}
+.li.inl{margin-right:.15em}
+.cat .cat-i,.cats .cat-i{width:26px;height:26px;display:block;margin-bottom:4px}
+.cat[aria-pressed="true"] .li,.cats button[aria-pressed="true"] .li{color:currentColor}
+.cat[aria-pressed="true"] .li .ac,.cats button[aria-pressed="true"] .li .ac{stroke:currentColor}
 </style>
 
 <div class="outer">
@@ -1542,8 +1631,8 @@ function bindLearn(){bindClassroom();bindVideos()}
 /* ================= flat fallback character (no WebGL) ================= */
 function hash(s){let h=7;for(const ch of s)h=(h*31+ch.charCodeAt(0))>>>0;return h}
 function char(o={}){
-  const ink="#15142a",sw=6;
-  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#ffcf2e",shirtS=o.shirtS||"#d9a91c";
+  const ink="#2D2E67",sw=6;
+  const skin=o.skin||"#f3d6b8",skinS=o.skinS||"#d9b494",hair=o.hair||"#1d1b2b",hairT=o.hairT||"#3a3850",shirt=o.shirt||"#F5C543",shirtS=o.shirtS||"#d9a91c";
   const wave=o.wave||0,bob=o.bob||0,blink=o.blink;
   const S=`stroke="${ink}" stroke-width="${sw}" stroke-linejoin="round"`;
   const eye=blink?`<rect x="62" y="124" width="16" height="5" fill="${ink}"/><rect x="104" y="124" width="16" height="5" fill="${ink}"/>`:`<rect x="64" y="114" width="12" height="20" rx="2" fill="${ink}"/><rect x="106" y="114" width="12" height="20" rx="2" fill="${ink}"/>`;
@@ -1554,14 +1643,14 @@ function char(o={}){
   if(st==="short"||st==="bob"||st==="long"){hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="28" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 ${st==="short"?92:150} L142 ${st==="short"?98:176} Z" fill="${hair}" ${S}/>`;
     if(st!=="short")hairSvg+=`<rect x="22" y="70" width="18" height="${st==="bob"?90:120}" fill="${hair}" ${S}/>`;}
   if(st==="bun")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/><rect x="30" y="70" width="112" height="22" fill="${hair}" ${S}/><rect x="84" y="14" width="44" height="34" fill="${hair}" ${S}/>`;
-  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#e8402f" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#e8402f" ${S}/>`;
+  if(st==="cap")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="#c73526" ${S}/><rect x="30" y="64" width="112" height="28" fill="#DD4F3C" ${S}/><path d="M24 92 L148 92 L134 104 L10 104 Z" fill="#DD4F3C" ${S}/>`;
   const TOP=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${hairT}" ${S}/>`;
   if(st==="spiky")hairSvg=`<path d="M46 52 L60 18 L78 46 L94 14 L110 44 L128 16 L140 44 L162 24 L164 50 Z" fill="${hair}" ${S}/>`+TOP+`<path d="M30 96 L30 70 L142 70 L142 96 L128 84 L114 96 L100 84 L86 96 L72 84 L58 96 L44 84 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 88 L142 96 Z" fill="${hair}" ${S}/>`;
   if(st==="ponytail")hairSvg=`<path d="M170 58 q34 24 14 84 q-14-34-14-48 z" fill="${hair}" ${S}/>`+TOP+`<rect x="30" y="70" width="112" height="24" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 100 L142 110 Z" fill="${hair}" ${S}/>`;
-  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#2a3ab0"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#3a4fd6"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#ffcf2e" ${S}/>`;
+  if(st==="beanie")hairSvg=`<path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${o.hatT||"#46468A"}" ${S}/><path d="M142 66 L172 40 L172 70 L142 96 Z" fill="${o.hatT||"#46468A"}" ${S}/><rect x="26" y="62" width="120" height="32" fill="${o.hat||"#5B5BA5"}" ${S}/><path d="M40 70v18M58 70v18M76 70v18M94 70v18M112 70v18M130 70v18" stroke="rgba(0,0,0,.25)" stroke-width="4"/><circle cx="104" cy="38" r="14" fill="#F5C543" ${S}/>`;
   if(st==="bald")hairSvg=`<rect x="30" y="96" width="10" height="34" fill="${hair}"/><path d="M142 96 L150 90 L150 124 L142 130 Z" fill="${hair}"/>`;
   if(st==="side")hairSvg=TOP+`<path d="M30 70 L142 70 L142 88 Q90 80 60 110 L30 110 Z" fill="${hair}" ${S}/><path d="M142 70 L172 44 L172 92 L142 98 Z" fill="${hair}" ${S}/>`;
-  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#ffcf2e" ${S}/>`:"");
+  const ACC=(o.beard?`<path d="M38 160 Q86 196 134 160 L134 178 L38 178 Z" fill="${hair}" ${S}/>`:"")+(o.phones?`<path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${ink}" stroke-width="13"/><path d="M22 126 q0-96 64-98 q64 2 64 98" fill="none" stroke="${o.phones}" stroke-width="6"/><rect x="12" y="110" width="24" height="44" rx="7" fill="${o.phones}" ${S}/>`:"")+(o.earring?`<circle cx="148" cy="150" r="6" fill="#F5C543" ${S}/>`:"");
   const dots=`<pattern id="dt${o.id||0}" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="1.8" fill="rgba(0,0,0,.18)"/></pattern>`;
   const armR=`<g transform="rotate(${-wave} 140 200)"><rect x="140" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>${o.phone?`<rect x="146" y="246" width="22" height="34" rx="4" fill="${ink}"/><rect x="150" y="250" width="14" height="22" fill="#6dc7e6"/>`:""}</g>`;
   return `<svg viewBox="0 0 200 310" width="${o.w||200}" height="${(o.w||200)*1.55}" style="overflow:visible"><defs>${dots}</defs><g transform="translate(0 ${bob})">
@@ -1570,7 +1659,7 @@ function char(o={}){
    <rect x="32" y="196" width="22" height="62" rx="4" fill="${shirt}" ${S}/>
    <path d="M118 194 L138 178 L138 248 L118 266 Z" fill="${shirtS}" ${S}/>
    <rect x="52" y="194" width="66" height="72" fill="${shirt}" ${S}/>
-   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#e8402f" stroke="${ink}" stroke-width="3"/>`:""}
+   ${o.tie?`<path d="M85 196 l-6 10 l6 40 l6 -40 z" fill="#DD4F3C" stroke="${ink}" stroke-width="3"/>`:""}
    ${armR}
    <path d="M142 70 L172 44 L172 152 L142 178 Z" fill="${skinS}" ${S}/><path d="M142 70 L172 44 L172 152 L142 178 Z" fill="url(#dt${o.id||0})"/>
    <path d="M30 70 L60 44 L172 44 L142 70 Z" fill="${skin}" ${S}/>
@@ -1582,13 +1671,13 @@ function char(o={}){
 }
 /* fallback (no WebGL): the same cube-head cast, drawn as isometric SVG */
 const ISO_STY=["short","bob","spiky","bun","cap","ponytail","beanie","long","side"];
-const ISO_SH=["#ffcf2e","#3ec46d","#f2711c","#ffffff","#e8402f","#b9bff2","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6"];
+const ISO_SH=["#F5C543","#4BA882","#E8893A","#ffffff","#DD4F3C","#D9D9EE","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6"];
 const ISO_SK=["#f3d6b8","#e8c09a","#c99a6e","#f6e2cf","#a8774f"];
 const ISO_HC=[["#1d1b2b","#3a3850"],["#5b3a29","#7a5440"],["#c9c9d6","#e2e2ea"],["#2a2f6b","#454b8f"],["#8a4b2a","#a8653f"],["#d9a91c","#f0c64a"]];
 const isoShade=(hex,f)=>{const n=parseInt(hex.slice(1),16);return "#"+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*(1+f)))).toString(16).padStart(2,"0")).join("")};
 const isoOf=new Map();let isoN=0;
 function isoSpec(id){if(!isoOf.has(id)){const i=40+(id==="GUIDE"?3:isoN++),st=ISO_STY[i%ISO_STY.length],sh=ISO_SH[(i*3+1)%ISO_SH.length],sk=ISO_SK[(i*2+i%3)%ISO_SK.length],hc=ISO_HC[(i*5)%ISO_HC.length];
-  isoOf.set(id,{id:900+isoOf.size,style:st,shirt:sh,shirtS:isoShade(sh,-.18),skin:sk,skinS:isoShade(sk,-.13),hair:hc[0],hairT:hc[1],hat:["#3a4fd6","#e8402f","#3ec46d"][i%3],hatT:["#2a3ab0","#b8301f","#2b9a52"][i%3],glasses:i%4===1,tie:sh==="#ffffff",beard:st==="short"&&i%3===0,phones:i%7===4?"#e8402f":null,earring:st==="bob"||st==="ponytail"})}
+  isoOf.set(id,{id:900+isoOf.size,style:st,shirt:sh,shirtS:isoShade(sh,-.18),skin:sk,skinS:isoShade(sk,-.13),hair:hc[0],hairT:hc[1],hat:["#5B5BA5","#DD4F3C","#4BA882"][i%3],hatT:["#46468A","#b8301f","#2b9a52"][i%3],glasses:i%4===1,tie:sh==="#ffffff",beard:st==="short"&&i%3===0,phones:i%7===4?"#DD4F3C":null,earring:st==="bob"||st==="ponytail"})}
   return isoOf.get(id)}
 function flatChar(id){return char({...isoSpec(id),w:200})}
 
@@ -1611,27 +1700,27 @@ const Q3=(()=>{
     const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");
     g.fillStyle=skin;g.fillRect(0,0,128,128);
     g.fillStyle="rgba(0,0,0,.06)";for(let y=0;y<16;y++)for(let x=0;x<16;x++){g.beginPath();g.arc(x*8+4,y*8+4,1.4,0,7);g.fill()}
-    g.fillStyle="#15142a";
+    g.fillStyle="#2D2E67";
     if(o.sleepy){g.fillRect(34,60,18,5);g.fillRect(76,60,18,5)}else{g.fillRect(38,52,10,16);g.fillRect(80,52,10,16)}
     g.fillStyle="rgba(232,64,47,.35)";g.beginPath();g.arc(30,80,9,0,7);g.arc(98,80,9,0,7);g.fill();
     if(o.beard){g.fillStyle=o.beard;g.beginPath();g.moveTo(14,96);g.quadraticCurveTo(64,140,114,96);g.lineTo(114,128);g.lineTo(14,128);g.fill()}
-    g.strokeStyle=o.beard?"#fffaf0":"#15142a";g.lineWidth=5;g.beginPath();
+    g.strokeStyle=o.beard?"#FFFFFF":"#2D2E67";g.lineWidth=5;g.beginPath();
     if(o.smile){g.arc(64,82,10,0.15*Math.PI,0.85*Math.PI)}else{g.moveTo(56,90);g.lineTo(72,90)}g.stroke();
-    g.strokeStyle="#15142a";
+    g.strokeStyle="#2D2E67";
     if(o.glasses){g.lineWidth=4;g.strokeRect(28,46,30,26);g.strokeRect(70,46,30,26);g.beginPath();g.moveTo(58,58);g.lineTo(70,58);g.stroke()}
     return new T.CanvasTexture(c);
   }
   /* queue cast: same design system as the video characters, but its own set (no repeats with the videos) */
   const shadeHex=(hex,f)=>{const n=parseInt(hex.slice(1),16);return "#"+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v*(1+f)))).toString(16).padStart(2,"0")).join("")};
   const STY=["short","bob","spiky","bun","cap","ponytail","beanie","long","fedora","side"];
-  const SHIRT=["#ffcf2e","#3ec46d","#f2711c","#ffffff","#e8402f","#b9bff2","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6","#f5e6c8"];
+  const SHIRT=["#F5C543","#4BA882","#E8893A","#ffffff","#DD4F3C","#D9D9EE","#6dc7e6","#ff8fb1","#9b6bd6","#2fb3a6","#f5e6c8"];
   const SKIN=["#f3d6b8","#e8c09a","#c99a6e","#f6e2cf","#a8774f"];
   const HAIRC=["#1d1b2b","#5b3a29","#c9c9d6","#2a2f6b","#8a4b2a","#d9a91c"];
-  const HATS=["#3a4fd6","#e8402f","#3ec46d"];
+  const HATS=["#5B5BA5","#DD4F3C","#4BA882"];
   const PANTS=["#2d2f4a","#3a4f8f","#7b6a9a","#5b3a29"];
   const SPEC=k=>{const i=28+k,st=STY[i%STY.length],sh=SHIRT[(i*4+1)%SHIRT.length];
     return {st,shirt:sh,skin:SKIN[(i*2+i%3)%SKIN.length],hair:HAIRC[(i*5)%HAIRC.length],hat:HATS[i%3],pants:PANTS[(i>>1)%4],
-      glasses:i%4===1||(st==="bun"&&i%2===0),tie:sh==="#ffffff",beard:(st==="fedora"||st==="short")&&i%3===0,phones:i%7===4?"#e8402f":(i%7===6?"#3a4fd6":null),earring:st==="bob"||st==="ponytail",bag:i%5===2,phone:i%3===1}};
+      glasses:i%4===1||(st==="bun"&&i%2===0),tie:sh==="#ffffff",beard:(st==="fedora"||st==="short")&&i%3===0,phones:i%7===4?"#DD4F3C":(i%7===6?"#5B5BA5":null),earring:st==="bob"||st==="ponytail",bag:i%5===2,phone:i%3===1}};
   const specOf=new Map();let specN=0;
   const specFor=id=>{if(!specOf.has(id))specOf.set(id,SPEC(id==="GUIDE"?3:(specN++%30)));return specOf.get(id)};
   const CH_SCALE=.86;
@@ -1673,9 +1762,9 @@ const Q3=(()=>{
   }
   function labelSprite(text,me){
     const c=document.createElement("canvas");c.width=192;c.height=64;const g=c.getContext("2d");
-    g.fillStyle=me?"#ffcf2e":"#15142a";g.strokeStyle="#15142a";g.lineWidth=6;
+    g.fillStyle=me?"#F5C543":"#2D2E67";g.strokeStyle="#2D2E67";g.lineWidth=6;
     const r=14;g.beginPath();g.moveTo(r+3,3);g.arcTo(189,3,189,61,r);g.arcTo(189,61,3,61,r);g.arcTo(3,61,3,3,r);g.arcTo(3,3,189,3,r);g.fill();g.stroke();
-    g.fillStyle=me?"#15142a":"#ffffff";g.font="34px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(text,96,34);
+    g.fillStyle=me?"#2D2E67":"#ffffff";g.font="34px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(text,96,34);
     const s=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false}));s.scale.set(.96/CH_SCALE,.32/CH_SCALE,1);s.renderOrder=10;return s;
   }
   // main renderer
@@ -1690,13 +1779,13 @@ const Q3=(()=>{
   scene.add(box(60,.16,1.1,toon(0x9da2bd),20,.02,-2.2,.04));
   for(let i=0;i<20;i++)scene.add(box(.7,.02,.12,toon(0xc9cce0),i*3-6,.01,1.3,.01));
   // buildings
-  const bgreen=toon(0x3ec46d,dots("#3ec46d","#25964f"));
+  const bgreen=toon(0x3ec46d,dots("#4BA882","#3A8A69"));
   [[-4,2.6],[ -2.2,3.6],[-.6,2.2],[1.2,4.2],[3,2.8],[4.8,3.4],[6.6,2.4],[8.4,3.8],[10.2,2.6],[12,3.2],[13.8,4],[15.6,2.4],[17.4,3.4],[19.2,2.8],[21,3.6]].forEach(([x,hh],i)=>scene.add(box(1.5,hh,1,i%3===1?toon(0x25964f):bgreen,x,hh/2,-3.4)));
   // counter
   const desk=box(1.6,.38,.8,toon(0xfdf0d2),-2.2,.19,.1);scene.add(desk);
   scene.add(box(1.7,.08,.9,toon(0xf2711c),-2.2,.42,.1));
   // store clerk in uniform (orange polo, white collar, name badge) behind the counter
-  specOf.set("CLERK",{st:"side",shirt:"#ffffff",skin:"#f3d6b8",hair:"#1d1b2b",hat:"#3a4fd6",pants:"#2d2f4a",glasses:false,tie:false,beard:false,phones:null,earring:false,bag:false,phone:false});
+  specOf.set("CLERK",{st:"side",shirt:"#ffffff",skin:"#f3d6b8",hair:"#1d1b2b",hat:"#5B5BA5",pants:"#2d2f4a",glasses:false,tie:false,beard:false,phones:null,earring:false,bag:false,phone:false});
   const clerk=makeChar("CLERK");
   // uniform: white tee, black shoulder yoke, orange sleeve stripes, name badge
   clerk.add(box(.74,.22,.46,toon(0x15142a),0,1.07,0,.015));
@@ -1704,12 +1793,12 @@ const Q3=(()=>{
   clerk.add(box(.2,.07,.24,toon(0xf2711c),-.47,.86,0,.012),box(.2,.07,.24,toon(0xf2711c),.47,.86,0,.012));
   { // name badge: "Denise"
     const nc=document.createElement("canvas");nc.width=256;nc.height=80;const g=nc.getContext("2d");
-    g.fillStyle="#ffffff";g.fillRect(0,0,256,80);g.fillStyle="#f2711c";g.fillRect(0,0,30,80);
-    g.fillStyle="#15142a";g.font="bold 46px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText("Denise",143,43);
+    g.fillStyle="#ffffff";g.fillRect(0,0,256,80);g.fillStyle="#E8893A";g.fillRect(0,0,30,80);
+    g.fillStyle="#2D2E67";g.font="bold 46px 'Archivo Black','Noto Sans TC',sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText("Denise",143,43);
     const nt=new T.CanvasTexture(nc);const nm=new T.MeshBasicMaterial({map:nt});const side=toon(0xffffff);
     const badge=new T.Group();badge.add(new T.Mesh(new T.BoxGeometry(.58,.18,.03),[side,side,side,side,nm,side]));
     badge.position.set(0,1.08,.25);clerk.add(badge);
-    if(document.fonts&&document.fonts.load)document.fonts.load("bold 46px 'Archivo Black'").then(()=>{g.fillStyle="#ffffff";g.fillRect(30,0,226,80);g.fillStyle="#15142a";g.fillText("Denise",143,43);nt.needsUpdate=true}).catch(()=>{});
+    if(document.fonts&&document.fonts.load)document.fonts.load("bold 46px 'Archivo Black'").then(()=>{g.fillStyle="#ffffff";g.fillRect(30,0,226,80);g.fillStyle="#2D2E67";g.fillText("Denise",143,43);nt.needsUpdate=true}).catch(()=>{});
   }
   clerk.position.set(-2.2,0,-.55);
   const clerkLbl=labelSprite("店員",false);clerkLbl.position.set(0,2.55,0);clerk.add(clerkLbl);

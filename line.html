@@ -10,7 +10,7 @@
 <title>叫號說・LINE 官方帳號（概念示意）</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
-:root{--chat:#efe6da;--me:#9ee26b;--hdr:#f1e4d2;--teal:#f2711c;--ink:#15142a;--muted:#6b7086;--orange:#f2711c;--yellow:#ffcf2e;--sky:#3a4fd6;--green:#06b04f;--red:#e8402f;
+:root{--chat:#efe6da;--me:#9ee26b;--hdr:#f1e4d2;--teal:#E8893A;--ink:#2D2E67;--muted:#6b7086;--orange:#E8893A;--yellow:#F5C543;--sky:#5B5BA5;--green:#06b04f;--red:#DD4F3C;
   --f:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#1f2a44;font-family:var(--f);color:var(--ink);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
@@ -73,7 +73,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .rmgrid button{position:relative;border:0;border-radius:12px;background:linear-gradient(#f4f4f6,#e7e7ea);min-height:74px;padding:0 10px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:4px;text-align:left;font-weight:900;font-size:19px;color:var(--ink);box-shadow:2px 3px 4px rgba(0,0,0,.16);overflow:hidden}
 .rmgrid button span{border-left:4px solid #f15a00;padding-left:7px;line-height:1.15;white-space:nowrap}
 .rmgrid button em{font-style:normal;font-size:40px;line-height:1;flex:none;filter:drop-shadow(1px 2px 1px rgba(0,0,0,.15))}
-.rmgrid button b.new{position:absolute;top:0;left:0;background:#e8402f;color:#fff;font-size:10.5px;font-weight:900;padding:1px 7px;border-radius:12px 0 10px 0;letter-spacing:.05em}
+.rmgrid button b.new{position:absolute;top:0;left:0;background:#DD4F3C;color:#fff;font-size:10.5px;font-weight:900;padding:1px 7px;border-radius:12px 0 10px 0;letter-spacing:.05em}
 .rmgrid button.hot{background:linear-gradient(#fff6ec,#ffe2c6);box-shadow:2px 3px 4px rgba(0,0,0,.16),0 0 0 2px #f15a00 inset}
 .rmgrid button:active{filter:brightness(.95)}
 .rmgrid.ban{grid-template-columns:1fr 1fr;gap:8px}
@@ -88,7 +88,7 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .bn.big em{position:absolute;left:8%;top:50%;transform:translateY(-50%) rotate(-8deg);font-style:normal;font-size:70px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
 .bn.g5{min-height:66px;background:radial-gradient(ellipse at 50% 120%,#ffd66b 0,#3e7bff 30%,transparent 60%),linear-gradient(#0a2a7a,#123a9e)}
 .bn.qt{min-height:66px;background:linear-gradient(135deg,#ff9a3d,#f15a00 60%,#d84800)}
-.bn.qt b.new{position:absolute;top:0;right:0;left:auto;background:#e8402f;color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:0 6px 0 8px}
+.bn.qt b.new{position:absolute;top:0;right:0;left:auto;background:#DD4F3C;color:#fff;font-size:10px;font-weight:900;padding:1px 6px;border-radius:0 6px 0 8px}
 .rmimg{position:relative;display:block;padding:0;line-height:0}
 .rmimg img{width:100%;height:auto;display:block;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .rmimg .hs{position:absolute;border:0;background:transparent;padding:0;border-radius:14px;cursor:pointer}
@@ -100,11 +100,11 @@ html.is-phone .wrap{display:block}html.is-phone .phone{width:100%;height:100%;bo
 .hub p{margin:0 0 12px;text-align:center;font-size:12px;color:var(--muted)}
 /* 叫號說 App 的風格：粗黑框、純色塊、硬陰影 */
 .hub .g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 9px}
-.hub .g button{border:2.5px solid var(--ink);border-radius:14px;background:#fff;box-shadow:3px 3px 0 var(--ink);padding:10px 2px 8px;display:grid;justify-items:center;gap:6px;font-size:13px;font-weight:900;color:var(--ink);transition:transform .08s,box-shadow .08s}
+.hub .g button{border:2px solid var(--ink);border-radius:14px;background:#fff;box-shadow:2px 2px 0 var(--ink);padding:10px 2px 8px;display:grid;justify-items:center;gap:6px;font-size:13px;font-weight:900;color:var(--ink);transition:transform .08s,box-shadow .08s}
 .hub .g button:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
-.hub .chip{width:48px;height:48px;border:2.5px solid var(--ink);border-radius:13px;display:grid;place-items:center;overflow:hidden}
+.hub .chip{width:48px;height:48px;border:2px solid var(--ink);border-radius:13px;display:grid;place-items:center;overflow:hidden}
 .hub .chip svg{width:38px;height:38px}
-.hub .chip.mai{background:#fdf0d2 url(line-assets/mai.png) 72% 4%/170% auto no-repeat}
+.hub .chip.mai{background:#F6F6F9 url(line-assets/mai.png) 72% 4%/170% auto no-repeat}
 .bar{background:#e4ddd2;display:flex;align-items:center;gap:8px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));flex:none}
 .bar .kb{border:0;background:none;padding:0;width:32px;height:32px;color:var(--ink);flex:none}
 .bar .kb svg{width:30px;height:30px}
@@ -182,7 +182,7 @@ textarea{width:100%;min-height:76px;border:2px solid #d5d9e6;border-radius:12px;
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
 
 /* ===== 叫號說 App 的設計語言：取號／選門市／滿意度畫面、官方帳號傳來的號碼卡片，跟 App 同一套 ===== */
-:root{--paper:#fffaf0;--cream:#fdf0d2;--lilac:#b9bff2;--qg:#3ec46d;--line:2.5px solid var(--ink);--shadow:3px 3px 0 var(--ink);--f-num:"Archivo Black","Noto Sans TC",Impact,sans-serif}
+:root{--paper:#FFFFFF;--cream:#F6F6F9;--lilac:#D9D9EE;--qg:#4BA882;--line:2px solid var(--ink);--shadow:2px 2px 0 var(--ink);--f-num:"Archivo Black","Noto Sans TC",Impact,sans-serif}
 #liff .sheet{background:var(--paper);border:var(--line);border-bottom:0;border-radius:20px 20px 0 0}
 #liff .sh{background:var(--sky);color:#fff;border-bottom:var(--line)}
 #liff .sh small{color:#dfe2ff}#liff .sh small a{color:var(--yellow)}
@@ -214,7 +214,7 @@ textarea:focus,.search:focus{outline:3px solid var(--yellow);outline-offset:1px}
 .chk{background:var(--cream);border:var(--line)}
 .note{background:#e3f7ea;border:2px solid var(--ink);color:var(--ink);font-weight:700}
 .note.demo,.card p.demo{background:var(--cream);border:1.5px dashed var(--ink);color:var(--ink)}
-.go{background:var(--yellow);color:var(--ink);border:var(--line);box-shadow:4px 4px 0 var(--ink);font-size:20px;letter-spacing:.04em}
+.go{background:var(--yellow);color:var(--ink);border:var(--line);box-shadow:3px 3px 0 var(--ink);font-size:20px;letter-spacing:.04em}
 .go:disabled{opacity:.5;box-shadow:2px 2px 0 var(--ink)}
 /* 號碼卡片 */
 .card{border:var(--line);box-shadow:var(--shadow);border-radius:18px;background:var(--paper)}
@@ -222,7 +222,7 @@ textarea:focus,.search:focus{outline:3px solid var(--yellow);outline-offset:1px}
 .card.or .hd{background:var(--orange)}.card.gr .hd{background:var(--qg);color:var(--ink)}
 .card .no{font-family:var(--f-num);font-weight:400;font-size:52px}
 .card .no.sm{font-size:32px}
-.card .bd{background:linear-gradient(135deg,#d8dcf7,#b9bff2 40%,#e9ebfb 60%,#a9afe8)}
+.card .bd{background:linear-gradient(135deg,#d8dcf7,#D9D9EE 40%,#e9ebfb 60%,#a9afe8)}
 .card.or .bd,.card.gr .bd{background:var(--paper)}
 .card .row2 div{background:#fff;border:2px solid var(--ink);color:var(--ink)}
 .card .row2 b{font-family:var(--f-num);font-weight:400}
@@ -234,7 +234,72 @@ textarea:focus,.search:focus{outline:3px solid var(--yellow);outline-offset:1px}
 .faces{border-top:var(--line);gap:8px;padding:10px 10px 0;background:var(--paper)}
 .faces button{border:var(--line)!important;border-radius:12px;background:#fff;box-shadow:var(--shadow);color:var(--ink)}
 .card .grid3 span{background:#fff;border:2px solid var(--ink)}
+
+/* ===== 叫號說新配色：取自台灣大哥大 logo（深藏青 #2D2E67、紫藍 #5B5BA5、暖橘 #E8893A、金黃 #F5C543、紅橘 #DD4F3C、綠 #4BA882）。舊版：git tag pre-palette-v3 ===== */
+/* ===== 新配色（logo 色） ===== */
+:root{--paper:#ffffff;--cream:#FFF3E6}
+.card .bd{background:#fff}
+.card{border-top-width:2px}
+.card .hd{background:#5B5BA5}
+.card .ft button:first-child,.go{background:#E8893A;color:#fff}
+.card .no{color:#2D2E67}
+
+/* v3 */
+.card{border:1.5px solid #DEDEEA!important;box-shadow:0 6px 18px rgba(45,46,103,.10)!important}
+.card .hd{background:#2D2E67!important;border-bottom:0!important;background-image:linear-gradient(90deg,#F5C543 0 25%,#E8893A 25% 50%,#DD4F3C 50% 62%,#5B5BA5 62% 82%,#4BA882 82% 100%)!important;background-size:100% 4px!important;background-repeat:no-repeat!important;background-position:bottom!important}
+.card .row2 div{border:0!important;background:#F2F2F7!important}
+.card .ft{border-top:1px solid #E4E4EE!important}
+.card .ft button:not(:first-child),.card .ft a{border:1.5px solid #DEDEEA!important;box-shadow:none!important}
+.card .ft button:first-child{border:2.5px solid #2D2E67!important;box-shadow:3px 3px 0 #2D2E67!important}
+
+/* 線稿圖示預覽 */
+.li{width:1.15em;height:1.15em;vertical-align:-.2em;color:#2D2E67;flex:none}
+.li .ac{stroke:#E8893A}
+.li.inl{margin-right:.15em}
+.cat .cat-i,.cats .cat-i{width:26px;height:26px;display:block;margin-bottom:4px}
+.cat[aria-pressed="true"] .li,.cats button[aria-pressed="true"] .li{color:currentColor}
+.cat[aria-pressed="true"] .li .ac,.cats button[aria-pressed="true"] .li .ac{stroke:currentColor}
+
+/* LINE 功能卡改線稿 */
+.hub .chip:not(.mai){background:#fff!important;}
+.hub .chip{border:1.5px solid #DEDEEA!important;border-radius:14px}
+.hub .chip svg.li{width:30px;height:30px}
+.hub .g button{border:1.5px solid #DEDEEA!important;box-shadow:0 3px 10px rgba(45,46,103,.07)!important;font-weight:700!important}
+.hub .chip.mai{border:1.5px solid #DEDEEA!important}
 </style>
+<script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
+(function(){
+const P={
+ ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M15 6v12" stroke-dasharray="2 2"/><path d="M7 10.5h5M7 13.5h3" class="ac"/>',
+ phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M9.5 8h5M9.5 11h3.5" class="ac"/>',
+ pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4" class="ac"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2" class="ac"/>',
+ smile:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2" class="ac"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+ chat:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/><path d="M8.5 10h.01M12 10h.01M15.5 10h.01" stroke-width="2.6" class="ac"/>',
+ clip:'<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 4.5V3.5h6v1"/><path d="M8.5 10h7M8.5 13.5h7M8.5 17h4" class="ac"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0" class="ac"/>',
+ timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M10 3h4" class="ac"/>',
+ coin:'<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16" cy="14.5" r="1.6" class="ac"/>',
+ renew:'<path d="M19.5 12a7.5 7.5 0 0 1-13 5.1M4.5 12a7.5 7.5 0 0 1 13-5.1"/><path d="M17.5 3.5v3.4h-3.4M6.5 20.5v-3.4h3.4" class="ac"/>',
+ wrench:'<path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5 7.5 20l6.2-6.2a4.5 4.5 0 0 0 5.8-4.3l-2.6 2.6-3-.6-.6-3z"/>',
+ box:'<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/><path d="M7.8 5.3l8.5 4.5" class="ac"/>',
+ lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><path d="M12 14.5v2.5" class="ac"/>',
+ info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5" class="ac"/><path d="M12 7.8h.01" stroke-width="2.8"/>'
+};
+const sv=(k,cls)=>`<svg class="li ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
+window.__LI=sv;
+const EMO={"📋":"clip","🔔":"bell","📍":"pin","⏱":"timer","⏱️":"timer","🔒":"lock","📩":"chat","⏰":"clock","🏪":"pin","💡":"info","📊":"info"};
+const re=new RegExp("("+Object.keys(EMO).map(e=>e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\uFE0F?","g");
+function swap(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest("script,style,textarea,svg")&&re.test(n.nodeValue)?1:2});const L=[];let n;while((n=w.nextNode()))L.push(n);
+  L.forEach(t=>{re.lastIndex=0;const span=document.createElement("span");span.innerHTML=t.nodeValue.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).replace(re,m=>sv(EMO[m.replace(/️/,"")]||"info","inl"));t.replaceWith(...span.childNodes)})}
+const CAT={"繳費":"coin","續約":"renew","異動":"wrench","網路取貨":"box"};
+function cats(root){root.querySelectorAll(".cat[data-c],.cats button[data-c]").forEach(b=>{if(b.querySelector(".li"))return;const k=Object.keys(CAT).find(x=>(b.dataset.c||"").startsWith(x));if(k)b.insertAdjacentHTML("afterbegin",sv(CAT[k],"cat-i"))})}
+function run(){swap(document.body);cats(document)}
+new MutationObserver(()=>{mo.disconnect();run();mo.observe(document.body,{subtree:true,childList:true})}).observe;
+const mo=new MutationObserver(()=>{mo.disconnect();try{run()}catch(e){}mo.observe(document.body,{subtree:true,childList:true})});
+addEventListener("DOMContentLoaded",()=>{run();mo.observe(document.body,{subtree:true,childList:true})});
+})();
+</script>
 </head>
 <body>
 <div class="wrap"><div class="phone" id="phone">
@@ -359,14 +424,15 @@ function drawMenu(){const m=RM[tab];
 }
 /* 門市取號功能卡的圖示：跟叫號說 App 同一套（黑框＋亮色塊） */
 const APPIC={
-  take:["#ffcf2e",'<path d="M6 13a3 3 0 0 1 3-3h22a3 3 0 0 1 3 3v3.5a3.5 3.5 0 0 0 0 7V27a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-3.5a3.5 3.5 0 0 0 0-7z" fill="#fff"/><path d="M24 11v18" stroke-dasharray="2.4 2.4"/><path d="M11 17h8M11 23h6"/><circle cx="29" cy="20" r="2.2" fill="#f2711c" stroke="none"/>'],
-  mine:["#3a4fd6",'<rect x="11" y="5" width="18" height="30" rx="4" fill="#fff"/><path d="M17 9h6"/><rect x="14" y="14" width="12" height="11" rx="2.5" fill="#ffcf2e"/><text x="20" y="22.6" font-size="7.5" font-weight="900" text-anchor="middle" fill="#15142a" stroke="none" font-family="Arial Black,sans-serif">A1</text><path d="M17 30h6"/>'],
-  store:["#3ec46d",'<path d="M20 35s-10-9-10-17a10 10 0 0 1 20 0c0 8-10 17-10 17z" fill="#f2711c"/><circle cx="20" cy="17.5" r="4" fill="#fff"/>'],
-  now:["#b9bff2",'<circle cx="20" cy="20" r="13" fill="#fff"/><path d="M20 12v8l5.5 3.5" stroke="#f2711c" stroke-width="3"/><circle cx="20" cy="20" r="1.8" fill="#15142a" stroke="none"/>'],
-  rate:["#f2711c",'<circle cx="20" cy="20" r="13" fill="#ffcf2e"/><path d="M14 22.5c1.5 2.8 3.6 4 6 4s4.5-1.2 6-4"/><path d="M15.5 16.5h.01M24.5 16.5h.01" stroke-width="4"/>']
+  take:["#F5C543",'<path d="M6 13a3 3 0 0 1 3-3h22a3 3 0 0 1 3 3v3.5a3.5 3.5 0 0 0 0 7V27a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3v-3.5a3.5 3.5 0 0 0 0-7z" fill="#fff"/><path d="M24 11v18" stroke-dasharray="2.4 2.4"/><path d="M11 17h8M11 23h6"/><circle cx="29" cy="20" r="2.2" fill="#E8893A" stroke="none"/>'],
+  mine:["#5B5BA5",'<rect x="11" y="5" width="18" height="30" rx="4" fill="#fff"/><path d="M17 9h6"/><rect x="14" y="14" width="12" height="11" rx="2.5" fill="#F5C543"/><text x="20" y="22.6" font-size="7.5" font-weight="900" text-anchor="middle" fill="#2D2E67" stroke="none" font-family="Arial Black,sans-serif">A1</text><path d="M17 30h6"/>'],
+  store:["#4BA882",'<path d="M20 35s-10-9-10-17a10 10 0 0 1 20 0c0 8-10 17-10 17z" fill="#E8893A"/><circle cx="20" cy="17.5" r="4" fill="#fff"/>'],
+  now:["#D9D9EE",'<circle cx="20" cy="20" r="13" fill="#fff"/><path d="M20 12v8l5.5 3.5" stroke="#E8893A" stroke-width="3"/><circle cx="20" cy="20" r="1.8" fill="#2D2E67" stroke="none"/>'],
+  rate:["#E8893A",'<circle cx="20" cy="20" r="13" fill="#F5C543"/><path d="M14 22.5c1.5 2.8 3.6 4 6 4s4.5-1.2 6-4"/><path d="M15.5 16.5h.01M24.5 16.5h.01" stroke-width="4"/>']
 };
 function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;const [bg,body]=APPIC[k]||APPIC.take;
-  return `<span class="chip" style="background:${bg}"><svg viewBox="0 0 40 40" fill="none" stroke="#15142a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`}
+  return `<span class="chip" style="background:${bg}"><svg viewBox="0 0 40 40" fill="none" stroke="#2D2E67" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg></span>`}
+function appIcon(k){if(k==="ai")return `<span class="chip mai" role="img" aria-label="智能小麥"></span>`;return `<span class="chip">${window.__LI({take:"ticket",mine:"phone",store:"pin",now:"clock",rate:"smile"}[k]||"ticket")}</span>`}   // SVG 線稿版
 function hubCard(){return `<div class="hub"><h3>門市取號</h3><p>先在 LINE 排隊，輪到你再進門市</p><div class="g">${MENU.svc.map(([k,l])=>`<button data-menu="${k}">${appIcon(k.split(":")[0])}<span>${k==="take"?"線上取號":l}</span></button>`).join("")}</div></div>`}
 function showMenu(open){const m=$("#menu");m.hidden=!open;$("#menuTog").setAttribute("aria-expanded",String(open));$("#menuTog").classList.toggle("closed",!open)}
 $("#menuTog").onclick=()=>{const m=$("#menu");if(!$("#typing").hidden){$("#typing").hidden=true;$("#menuTog").hidden=false;showMenu(true);return}showMenu(m.hidden)};

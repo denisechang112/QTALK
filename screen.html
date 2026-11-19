@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#15142a">
+<meta name="theme-color" content="#2D2E67">
 <meta name="robots" content="noindex">
 <title>叫號說・門市大螢幕</title>
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700;900&family=Archivo+Black&display=swap">
 <style>
-:root{--sky:#3a4fd6;--deep:#2a3ab0;--night:#1b2470;--ink:#15142a;--paper:#fffaf0;--cream:#fdf0d2;--orange:#f2711c;--yellow:#ffcf2e;--green:#3ec46d;--red:#e8402f;--lilac:#b9bff2;--muted:#5a5c78;
+:root{--sky:#5B5BA5;--deep:#46468A;--night:#2D2E67;--ink:#2D2E67;--paper:#FFFFFF;--cream:#F6F6F9;--orange:#E8893A;--yellow:#F5C543;--green:#4BA882;--red:#DD4F3C;--lilac:#D9D9EE;--muted:#5a5c78;
   --f:"Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;--fn:"Archivo Black","Noto Sans TC",Impact,sans-serif;
   --u:min(1vw,1.78vh);--line:calc(var(--u)*.35) solid var(--ink)}
 *{box-sizing:border-box}
@@ -72,7 +72,47 @@ button:focus-visible{outline:calc(var(--u)*.3) solid var(--yellow);outline-offse
 @media (max-aspect-ratio:1/1){ /* 直式或手機：上下排 */
   :root{--u:1.9vw}html,body{overflow:auto;height:auto}#stage{height:auto;min-height:100%}.body{grid-template-columns:1fr}.call .no{font-size:calc(var(--u)*14)}.right{grid-template-rows:auto auto}.take .qr{height:auto;width:min(100%,calc(var(--u)*30))}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+
+/* ===== 叫號說新配色：取自台灣大哥大 logo（深藏青 #2D2E67、紫藍 #5B5BA5、暖橘 #E8893A、金黃 #F5C543、紅橘 #DD4F3C、綠 #4BA882）。舊版：git tag pre-palette-v3 ===== */
+.li{width:1.1em;height:1.1em;vertical-align:-.18em}.li .ac{stroke:#E8893A}
+
+/* 大螢幕：深藏青底＋logo 五色細線 */
+html,body{background:#23245a!important}
+.bar{border-bottom:5px solid transparent;border-image:linear-gradient(90deg,#F5C543 0 25%,#E8893A 25% 50%,#DD4F3C 50% 62%,#5B5BA5 62% 82%,#4BA882 82% 100%) 1}
 </style>
+<script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
+(function(){
+const P={
+ ticket:'<path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z"/><path d="M15 6v12" stroke-dasharray="2 2"/><path d="M7 10.5h5M7 13.5h3" class="ac"/>',
+ phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M9.5 8h5M9.5 11h3.5" class="ac"/>',
+ pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.4" class="ac"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2" class="ac"/>',
+ smile:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c.9 1.4 2.1 2 3.5 2s2.6-.6 3.5-2" class="ac"/><path d="M9 9.5h.01M15 9.5h.01" stroke-width="2.6"/>',
+ chat:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z"/><path d="M8.5 10h.01M12 10h.01M15.5 10h.01" stroke-width="2.6" class="ac"/>',
+ clip:'<rect x="5" y="4.5" width="14" height="16.5" rx="2"/><path d="M9 4.5V3.5h6v1"/><path d="M8.5 10h7M8.5 13.5h7M8.5 17h4" class="ac"/>',
+ bell:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0" class="ac"/>',
+ timer:'<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M10 3h4" class="ac"/>',
+ coin:'<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><circle cx="16" cy="14.5" r="1.6" class="ac"/>',
+ renew:'<path d="M19.5 12a7.5 7.5 0 0 1-13 5.1M4.5 12a7.5 7.5 0 0 1 13-5.1"/><path d="M17.5 3.5v3.4h-3.4M6.5 20.5v-3.4h3.4" class="ac"/>',
+ wrench:'<path d="M14.5 4.5a4.5 4.5 0 0 0-4.3 5.8L4 16.5 7.5 20l6.2-6.2a4.5 4.5 0 0 0 5.8-4.3l-2.6 2.6-3-.6-.6-3z"/>',
+ box:'<path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/><path d="M7.8 5.3l8.5 4.5" class="ac"/>',
+ lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/><path d="M12 14.5v2.5" class="ac"/>',
+ info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5" class="ac"/><path d="M12 7.8h.01" stroke-width="2.8"/>'
+};
+const sv=(k,cls)=>`<svg class="li ${cls||""}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[k]}</svg>`;
+window.__LI=sv;
+const EMO={"📋":"clip","🔔":"bell","📍":"pin","⏱":"timer","⏱️":"timer","🔒":"lock","📩":"chat","⏰":"clock","🏪":"pin","💡":"info","📊":"info"};
+const re=new RegExp("("+Object.keys(EMO).map(e=>e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\uFE0F?","g");
+function swap(root){const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement&&!n.parentElement.closest("script,style,textarea,svg")&&re.test(n.nodeValue)?1:2});const L=[];let n;while((n=w.nextNode()))L.push(n);
+  L.forEach(t=>{re.lastIndex=0;const span=document.createElement("span");span.innerHTML=t.nodeValue.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])).replace(re,m=>sv(EMO[m.replace(/️/,"")]||"info","inl"));t.replaceWith(...span.childNodes)})}
+const CAT={"繳費":"coin","續約":"renew","異動":"wrench","網路取貨":"box"};
+function cats(root){root.querySelectorAll(".cat[data-c],.cats button[data-c]").forEach(b=>{if(b.querySelector(".li"))return;const k=Object.keys(CAT).find(x=>(b.dataset.c||"").startsWith(x));if(k)b.insertAdjacentHTML("afterbegin",sv(CAT[k],"cat-i"))})}
+function run(){swap(document.body);cats(document)}
+new MutationObserver(()=>{mo.disconnect();run();mo.observe(document.body,{subtree:true,childList:true})}).observe;
+const mo=new MutationObserver(()=>{mo.disconnect();try{run()}catch(e){}mo.observe(document.body,{subtree:true,childList:true})});
+addEventListener("DOMContentLoaded",()=>{run();mo.observe(document.body,{subtree:true,childList:true})});
+})();
+</script>
 </head>
 <body>
 <div id="stage">
