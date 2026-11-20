@@ -789,6 +789,7 @@ function clipChunk(l,ch){const k=l+"/"+ch;if(!clipBuf[k])clipBuf[k]=(async()=>{c
 async function playClips(keys){const c=ctx(),idx=await clipIndex("zh");if(!keys.every(k=>idx[k]))return;const bufs=await Promise.all(keys.map(k=>clipChunk("zh",idx[k][0])));let t=c.currentTime+.05;
   keys.forEach((k,i)=>{const s=c.createBufferSource();s.buffer=bufs[i];s.connect(c.destination);s.start(t,Math.max(0,idx[k][1]-.04),idx[k][2]+.12);t+=idx[k][2]+.17})}
 const ZH_FEMALE=/Hanhan|Yating|HsiaoChen|HsiaoYu|Mei-?Jia|Meijia|美佳|Tingting|Ting-Ting|Sinji|Google\s*國語|Google\s*普通|Xiaoxiao|Xiaoyi|Huihui|Female|女/i,ZH_MALE=/Zhiwei|YunJhe|Yunxi|Yunyang|Kangkang|Li-?mu|Liang|Male|男/i;
+try{speechSynthesis.getVoices();speechSynthesis.addEventListener("voiceschanged",()=>speechSynthesis.getVoices())}catch(e){}   // 先把語音清單載入，叫號時才挑得到女聲
 function zhFemale(){try{const vs=speechSynthesis.getVoices(),n=v=>v.lang.toLowerCase().replace("_","-");const tw=vs.filter(v=>n(v)==="zh-tw"),zh=vs.filter(v=>n(v).startsWith("zh")&&!/hk|yue/.test(n(v)));
   for(const L of [tw,zh]){const f=L.filter(v=>ZH_FEMALE.test(v.name));const p=f.find(v=>v.localService!==false)||f[0]||L.find(v=>!ZH_MALE.test(v.name));if(p)return p}}catch(e){}return null}
 function announce(no,desk){chime();try{navigator.vibrate&&navigator.vibrate([250,100,250,100,250])}catch(e){}

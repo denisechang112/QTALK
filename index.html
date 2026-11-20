@@ -1212,6 +1212,7 @@ function pickZhFemale(){try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_
   const tw=vs.filter(v=>n(v)==="zh-tw"),zh=vs.filter(v=>n(v).startsWith("zh")&&!/hk|yue/.test(n(v)));
   for(const L of [tw,zh]){const f=L.filter(v=>ZH_FEMALE.test(v.name));const pick=f.find(v=>v.localService!==false)||f[0]||L.find(v=>!ZH_MALE.test(v.name));if(pick)return pick}
   return null}catch(e){return null}}
+try{speechSynthesis.getVoices();speechSynthesis.addEventListener("voiceschanged",()=>speechSynthesis.getVoices())}catch(e){}   // 先把語音清單載入，叫號時才挑得到女聲
 function pickVoice(lang){if(/^zh/i.test(lang)){const z=pickZhFemale();if(z)return z}try{const vs=speechSynthesis.getVoices().filter(v=>!ODD_VOICE.test(v.name)),l=lang.toLowerCase(),norm=v=>v.lang.toLowerCase().replace("_","-");
   const exact=vs.filter(v=>norm(v)===l),near=vs.filter(v=>norm(v).startsWith(l.slice(0,2)));
   for(const L of [exact,near]){if(!L.length)continue;const loc=L.filter(v=>v.localService!==false);return loc.find(v=>v.default)||loc.find(v=>GOOD_VOICE.test(v.name))||loc[0]||L.find(v=>GOOD_VOICE.test(v.name))||L[0]}
@@ -1221,7 +1222,7 @@ function pickVoice(lang){if(/^zh/i.test(lang)){const z=pickZhFemale();if(z)retur
 const CLIP_LANGS=["zh","en","ja","ko","vi","id"];
 const IS_MOBILE=/iPhone|iPad|iPod|Android|Mobile/i.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
 function hasVoice(lang){const v=pickVoice(lang);return !!(v&&v.localService!==false&&v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))}
-function wantClips(l){if(!CLIP_LANGS.includes(l))return false;if(l==="zh")return !pickZhFemale();   // 中文：跟 LINE 一樣先用系統女聲，沒有才播預錄
+function wantClips(l){if(!CLIP_LANGS.includes(l))return false;if(l==="zh")return false;   // 中文：跟 LINE 完全一樣——先用系統的台灣國語女聲；1.5 秒內沒出聲才改播預錄（預錄也是女聲）
   return (IS_MOBILE||l==="ko")?!hasVoice(TTS_LANG[l]):true}
 const CLIP_RX={zh:[/^([A-Z]) (\d+) 號，請到 (\d+) 號櫃台/,/^前面剩 (\d+) 組/],en:[/^Number ([A-Z]\d+), please go to counter (\d+)\./,/^(\d+) groups ahead/],
   ja:[/^([A-Z]\d+) 番の方、(\d+) 番窓口/,/^あと (\d+) 組/],ko:[/^([A-Z]\d+)번 고객님, (\d+)번 창구/,/^앞에 (\d+)팀/],
