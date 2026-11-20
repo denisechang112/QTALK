@@ -683,9 +683,10 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 .pk-slots button:disabled{opacity:.45}.pk-slots button:disabled small{color:#B5372A}
 
 /* 電腦預覽：淺色背景＋深色手機外框，讓手機邊界清楚（手機上不影響） */
-html:not(.is-phone) body{background:radial-gradient(ellipse at 50% 0%,#FFFFFF 0,#E9E9F2 55%,#D9D9E8 100%)!important}
-html:not(.is-phone) .phone{border:10px solid #1C1D3F!important;border-radius:44px!important;box-shadow:0 0 0 2px #5B5BA5,0 24px 60px rgba(28,29,63,.35),0 4px 12px rgba(28,29,63,.2)!important}
-html:not(.is-phone) .foldTog button{box-shadow:0 2px 6px rgba(45,46,103,.15)}
+/* 投影用：深色背景（投影不刺眼、不泛白），手機用黑色外框＋淺紫亮邊＋光暈，邊界在大螢幕上也清楚 */
+html:not(.is-phone) body{background:radial-gradient(ellipse 55% 70% at 50% 45%,#3A3B7E 0,#22234F 45%,#121330 100%)!important}
+html:not(.is-phone) .phone{border:10px solid #0B0B18!important;border-radius:44px!important;box-shadow:0 0 0 3px #A9A9DA,0 0 0 4px rgba(255,255,255,.25),0 0 60px 8px rgba(245,197,67,.18),0 30px 70px rgba(0,0,0,.55)!important}
+html:not(.is-phone) .foldTog button{box-shadow:0 2px 8px rgba(0,0,0,.35)}
 </style>
 
 <div class="outer">
