@@ -681,6 +681,11 @@ textarea,input[type=text],input[type=tel]{border-width:1.5px!important;border-co
 .pk-slots small{display:block;font-size:11px;color:#3A8A69}
 .pk-slots button[aria-pressed="true"]{background:#E8893A;color:#fff;border-color:#E8893A}.pk-slots button[aria-pressed="true"] small{color:#fff}
 .pk-slots button:disabled{opacity:.45}.pk-slots button:disabled small{color:#B5372A}
+
+/* 電腦預覽：淺色背景＋深色手機外框，讓手機邊界清楚（手機上不影響） */
+html:not(.is-phone) body{background:radial-gradient(ellipse at 50% 0%,#FFFFFF 0,#E9E9F2 55%,#D9D9E8 100%)!important}
+html:not(.is-phone) .phone{border:10px solid #1C1D3F!important;border-radius:44px!important;box-shadow:0 0 0 2px #5B5BA5,0 24px 60px rgba(28,29,63,.35),0 4px 12px rgba(28,29,63,.2)!important}
+html:not(.is-phone) .foldTog button{box-shadow:0 2px 6px rgba(45,46,103,.15)}
 </style>
 
 <div class="outer">
