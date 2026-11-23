@@ -113,7 +113,7 @@ body{background:#F2F2F7!important}
 
 .dls{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;align-items:center}
 .dls span{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px}
-.dpk{background:#FFF3E6;color:#9a4a0a}.dcp{background:#FFF8D6;color:#7a5a00}
+.dls span{display:inline-flex;align-items:center;gap:4px}.dls svg.qi{width:16px;height:16px}.dpk{background:#FFF3E6;color:#9a4a0a}.dcp{background:#FFF8D6;color:#7a5a00}
 .dls.soon{background:#FFF3E6;border-radius:10px;padding:6px}
 .dsoon{font-size:12.5px;color:#DD4F3C}
 </style>
@@ -289,7 +289,7 @@ const pkLine=t=>`<p class="pkl">📱 ${esc(t.mdl||"新機")} 預購 ${esc(t.ord|
 /* 門市優惠：客人預選的「備貨」與優惠券，叫號前 3 位提醒先備好 */
 function dealsHTML(t,i){const D=Q.DEALS||{},C=Q.COUPONS||{},pk=t.pk||[],cp=t.cp||[];if(!pk.length&&!cp.length)return "";
   const soon=i!=null&&i<3&&pk.length;
-  return `<div class="dls${soon?" soon":""}">${soon?'<b class="dsoon">⏰ 該備貨了</b>':""}${pk.map(id=>`<span class="dpk">🛍️ ${esc((D[id]||{}).prep||(D[id]||{}).t||id)}</span>`).join("")}${cp.map(id=>`<span class="dcp">🎁 ${esc((C[id]||{}).t||id)}</span>`).join("")}</div>`}
+  return `<div class="dls${soon?" soon":""}">${soon?'<b class="dsoon">⏰ 該備貨了</b>':""}${pk.map(id=>`<span class="dpk">${Q.icon?Q.icon(id):""}${esc((D[id]||{}).prep||(D[id]||{}).t||id)}</span>`).join("")}${cp.map(id=>`<span class="dcp">${Q.icon?Q.icon(id):""}${esc((C[id]||{}).t||id)}</span>`).join("")}</div>`}
 function pkBoxHTML(){const b=V.all.filter(t=>t.st==="b");if(!b.length)return "";
   return `<div class="box pkbox"><h2>今天預約取機・還沒報到<span class="tag pk">${b.length} 位</span></h2>${b.map(t=>`<div class="q"><div class="n">${t.no}<small>${esc(t.slot||"")} 取機</small></div><div class="row"><span class="tag pk">未報到</span></div>${pkLine(t)}</div>`).join("")}<p class="muted">顧客到店按「我到門市了」報到後，會自動排進等候名單（優先叫號）。</p></div>`}
 const extra=t=>`${t.k==="r"?`<span class="tag pk">取機預約${t.slot?"・"+esc(t.slot):""}</span>`:""}${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;

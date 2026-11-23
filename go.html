@@ -50,6 +50,7 @@ h1{margin:4px 0 0;font-size:21px;font-weight:900}
 .qtb b{font-weight:900;letter-spacing:.04em;white-space:nowrap}
 .top .qtb{font-size:20px}.top .qtb small{color:#C9C9E6}
 .top>small{margin-top:6px!important}
+.demo-sw{display:flex;gap:10px;align-items:center;margin:14px 0 4px;padding:10px 12px;border:1.5px dashed #b9b9d4;border-radius:14px;font-size:14px;cursor:pointer}.demo-sw input{width:22px;height:22px;accent-color:#E8893A;flex:none}.demo-sw span{display:grid}.demo-sw small{color:#6b6b90;font-size:12px}
 </style>
 </head>
 <body>
@@ -73,6 +74,7 @@ h1{margin:4px 0 0;font-size:21px;font-weight:900}
   </a>
 
   <p class="same">兩種方式排的是<b>同一條隊伍</b>，號碼順序完全一樣。<br>之後也可以在號碼牌上改用 LINE 接收通知。</p>
+  <label class="demo-sw"><input type="checkbox" id="launchSw"><span><b>Demo：新機開賣日模式</b><small>打開後 App 和 LINE 都會出現 iPhone Duo 預約取機</small></span></label>
   <p class="mock" id="mock">概念示意：正式版「用 LINE 取號」會直接打開台灣大哥大官方帳號。</p>
 </main>
 <script src="live.js"></script>
@@ -83,6 +85,8 @@ h1{margin:4px 0 0;font-size:21px;font-weight:900}
   const Q=window.QTLive,sess=Q.parseLink(),hash=sess?"#"+Q.linkOf(sess,false):"";
   document.getElementById("goLine").href="line.html"+hash;
   document.getElementById("goWeb").href="./"+hash;
+  const sw=document.getElementById("launchSw");try{if(/[?&]launch\b/.test(location.search))localStorage.setItem("qt-launch","1");sw.checked=localStorage.getItem("qt-launch")==="1"}catch(e){}
+  sw.onchange=()=>{try{localStorage.setItem("qt-launch",sw.checked?"1":"0")}catch(e){}};
   if(/\bLine\//i.test(navigator.userAgent))document.getElementById("inLine").hidden=false;
   const show=(n,q,m)=>{document.getElementById("store").textContent=n;document.getElementById("wq").textContent=q+" 組";document.getElementById("wm").textContent=m+" 分"};
   const T={"繳費/儲值":4,"續約/換約/新申辦":18,"異動/諮詢/維修":10,"網路取貨/預約取件":5};

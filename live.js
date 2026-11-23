@@ -218,6 +218,31 @@
     exp100: { v: "$100", u: "折價", t: "配件滿千折百", from: "體驗區任務" },
     a9: { v: "9 折", u: "加購", t: "辦完 30 分鐘內加購配件", from: "防詐小測驗" }
   };
+
+  /* 優惠圖示：和 LINE「門市取號」6 格同一套線稿（深藍線＋橘色重點） */
+  var ICON = {
+    trade: '<rect x="3.5" y="3.5" width="9" height="16" rx="2"/><path d="M7 16.5h2"/><path class="ac" d="M15.5 8.5a5 5 0 0 1 5 5"/><path class="ac" d="M20.5 10.5v3h-3"/><path class="ac" d="M20.5 17.5a5 5 0 0 1-5 2.5"/><path class="ac" d="M15.5 17.5v2.5h3"/>',
+    glass: '<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path class="ac" d="M9 9.5l4-4M9 14l6-6"/>',
+    acc100: '<path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-6.6 6.6a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.4"/><path class="ac" d="M10.8 15.7l4.9-4.9"/><path class="ac" d="M11.2 11.3h.01M15.3 15.4h.01" stroke-width="2.8"/>',
+    port: '<path d="M4 8h14l-3.5-3.5"/><path d="M20 16H6l3.5 3.5"/><circle class="ac" cx="12" cy="12" r="1.7"/>',
+    family: '<circle cx="8.5" cy="7.5" r="3"/><path d="M3 20a5.5 5.5 0 0 1 11 0"/><circle class="ac" cx="17" cy="9.5" r="2.4"/><path class="ac" d="M15.5 14.3A4.5 4.5 0 0 1 21.5 18.5V20h-5"/>',
+    case: '<path d="M8.5 3v4M15.5 3v4"/><path d="M5.5 7h13v3.5a6.5 6.5 0 0 1-13 0z"/><path d="M12 17v4"/><path class="ac" d="M12.9 9l-2.2 2.8h2.6l-2.2 2.8"/>',
+    loaner: '<rect x="3.5" y="3" width="9" height="17" rx="2"/><path d="M7 17h2"/><path class="ac" d="M18.2 7.2a3 3 0 0 0-2.8 4.1L13 13.7l1.9 1.9 2.4-2.4a3 3 0 0 0 4.1-2.8l-1.8 1.7-1.7-.4-.4-1.7z"/>',
+    esim: '<rect x="6" y="6" width="12" height="12" rx="2.2"/><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3"/><rect class="ac" x="9.5" y="9.5" width="5" height="5" rx="1"/>',
+    autopay: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 9.5h18"/><path class="ac" d="M8.5 14.5l2 2 4-4"/>',
+    exp: '<rect x="7" y="2.5" width="10" height="19" rx="2.2"/><path d="M10.5 18.5h3"/><path class="ac" d="M12 7.5l.9 1.9 1.9.9-1.9.9-.9 1.9-.9-1.9-1.9-.9 1.9-.9z"/><path class="ac" d="M3.5 6l1.6 1M3 10.5h2M20.5 6l-1.6 1M21 10.5h-2"/>',
+    add9: '<path d="M5 8h14l-1 12.5H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path class="ac" d="M10 16l4-4.5"/><path class="ac" d="M10.2 12h.01M13.8 16h.01" stroke-width="2.8"/>',
+    gift: '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M3 7.5h18v3H3zM12 7.5V20"/><path class="ac" d="M12 7.5c-1.2-3-5-3.6-5-1.2s5 1.2 5 1.2zm0 0c1.2-3 5-3.6 5-1.2s-5 1.2-5 1.2z"/>',
+    game: '<path d="M7 7.5h10a4 4 0 0 1 4 4V15a2.5 2.5 0 0 1-4.4 1.6L15 14.5H9l-1.6 2.1A2.5 2.5 0 0 1 3 15v-3.5a4 4 0 0 1 4-4z"/><path d="M7.5 10v3.5M5.8 11.8h3.4"/><path class="ac" d="M15.5 10.8h.01M17.5 12.8h.01" stroke-width="2.8"/>',
+    check: '<circle cx="12" cy="12" r="8.5"/><path class="ac" d="M8 12.5l2.7 2.7L16 10"/>',
+    book: '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path class="ac" d="M9 7.5h6M9 11h4"/>',
+    bag: '<path d="M5 8h14l-1 12.5H6z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path class="ac" d="M9 12a3 3 0 0 0 6 0"/>',
+    coins: '<ellipse cx="9.5" cy="6.5" rx="6" ry="2.5"/><path d="M3.5 6.5v4c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4"/><path class="ac" d="M8.5 15v2.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4c0-1.2-1.9-2.2-4.5-2.4"/>',
+    pin: '<path d="M12 21s-6.5-5.5-6.5-11a6.5 6.5 0 0 1 13 0c0 5.5-6.5 11-6.5 11z"/><circle class="ac" cx="12" cy="10" r="2.3"/>'
+  };
+  var CP_ICON = { c100: "gift", g100: "game", exp100: "exp", a9: "check" };
+  /* icon(名稱, {c:線條色, a:重點色}) → 一段 SVG 字串 */
+  function icon(k, o) { o = o || {}; var p = ICON[k] || ICON[CP_ICON[k]] || ICON.gift; return '<svg class="qi" viewBox="0 0 24 24" fill="none" stroke="' + (o.c || "#2D2E67") + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p.replace(/class="ac"/g, 'stroke="' + (o.a || "#E8893A") + '"') + "</svg>"; }
   function dealsFor(cat, walkIn) { var a = (DEAL_BY_CAT[cat] || DEAL_BY_CAT["異動/諮詢/維修"]).slice(); if (cat === "繳費/儲值") return a; if (walkIn) { a = ["exp"].concat(a.slice(0, 1)).concat(["add9"]); } return a.slice(0, 3); }
-  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH, DEALS: DEALS, COUPONS: COUPONS, dealsFor: dealsFor };
+  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH, DEALS: DEALS, COUPONS: COUPONS, dealsFor: dealsFor, icon: icon, CP_ICON: CP_ICON };
 })();

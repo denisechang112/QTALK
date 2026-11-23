@@ -753,6 +753,21 @@ html:not(.is-phone) .foldTog button{box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .lz-fine{margin:0;font-size:11.5px!important;color:#6b6b90;font-weight:700!important}
 .sheet.lz .acts{padding:12px 14px 4px}
 .sheet.lz>.lz-fine{padding:0 14px 14px;text-align:center}
+
+/* 線稿圖示（和 LINE 6 格同一套） */
+svg.qi{display:block}
+.lz-ic{background:#fff!important;border:1.5px solid #DEDEEA;width:46px!important;height:46px!important;border-radius:14px!important;box-shadow:0 3px 10px rgba(45,46,103,.07)}
+.lz-ic svg.qi{width:30px;height:30px}
+.lz-ic.sm{width:38px!important;height:38px!important;flex:none;display:grid;place-items:center}.lz-ic.sm svg.qi{width:24px;height:24px}
+.lz-sum{display:flex;align-items:center;gap:10px}
+.lz-dt i{display:flex;align-items:center;gap:3px}.lz-dt i svg.qi{width:14px;height:14px}
+.lz-hero h3{display:flex;align-items:center;gap:10px}
+.lz-hic{width:40px;height:40px;flex:none;border-radius:12px;background:#fff;display:grid;place-items:center}.lz-hic svg{width:28px;height:28px}
+.lz-open{display:inline-flex;align-items:center;gap:4px}.lz-open svg.qi{width:16px;height:16px}
+.hic{display:inline-grid;vertical-align:-6px;margin-right:6px;width:28px;height:28px;border:1.5px solid #DEDEEA;border-radius:9px;background:#fff;place-items:center}.hic svg.qi{width:19px;height:19px}
+.dealbox summary .hic{vertical-align:-8px}
+.dl-ic{flex:none;width:42px;height:42px;border:1.5px solid #DEDEEA;border-radius:13px;background:#fff;display:grid;place-items:center;box-shadow:0 3px 10px rgba(45,46,103,.07)}.dl-ic svg.qi{width:27px;height:27px}
+.sd-deal svg.qi{display:inline-block;width:16px;height:16px;vertical-align:-3px;margin-right:2px}
 </style>
 
 <div class="outer">
@@ -860,7 +875,7 @@ const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},se
 /* 從 LINE 官方帳號打開（等候時看看）：帶著同一張號碼進來，通知仍由 LINE 傳送 */
 const VIA=(()=>{try{const _q=new URLSearchParams(location.search);const _pk=_q.get("pk"),_cp=_q.get("cp");const q=new URLSearchParams(location.search),h=location.hash,g=k=>q.get(k)||((h.match(new RegExp("[&#]"+k+"=([^&]+)"))||[])[1]?decodeURIComponent(h.match(new RegExp("[&#]"+k+"=([^&]+)"))[1]):null);
   if(g("via")!=="line")return null;return {me:g("me"),bind:g("bind"),ahead:Math.max(0,+g("ahead")||0),cat:g("cat"),open:g("open"),pk:_pk?_pk.split(",").filter(Boolean):[],cp:_cp?_cp.split(",").filter(Boolean):[]}}catch(e){return null}})();
-const APP_KEYS=["qt-launch","qt-pick","qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
+const APP_KEYS=["qt-pick","qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
 let LAUNCH=/[?&#]launch\b/.test(location.search+location.hash)||store.get("qt-launch")==="1";   // 新機開賣日模式（預設關閉）
 function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
 if(/[?&#]fresh\b/.test(location.search+location.hash)){wipeLocal();try{history.replaceState(null,"",location.href.replace(/([?&#])fresh(=1)?(&)?/,(m,a,b,c)=>c?a:"").replace(/[?&]$/,"").replace(/[?&](?=#)/,""))}catch(e){}}
@@ -1063,7 +1078,7 @@ function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.c
   el.innerHTML=`<div class="sd-now"><div><small>現在叫號</small><b>${now?now.no:"—"}</b></div><div style="text-align:right"><small>請到</small><b>${now?now.desk+1:"—"}</b><small>號櫃台</small></div></div>
     ${tk}
     ${nx?`<h5>接下來</h5><div class="sd-next">${nx}</div>`:""}
-    ${t&&((t.pk||[]).length||(t.cp||[]).length)&&(st==="waiting"||st==="called")?`<p class="sd-deal">🛍️ 已預選 ${(t.pk||[]).length} 項・🎁 優惠券 ${(t.cp||[]).length} 張</p>`:""}
+    ${t&&((t.pk||[]).length||(t.cp||[]).length)&&(st==="waiting"||st==="called")?`<p class="sd-deal">${QI("bag")}已預選 ${(t.pk||[]).length} 項・${QI("gift")}優惠券 ${(t.cp||[]).length} 張</p>`:""}
     <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>`;
   el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="single"){setFoldSingle(true);return}if(k==="take"){go("queue");setTimeout(()=>{const f=$("#take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"start"})},60)}else{U.mineOK=true;go("mine")}})}
 document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;const v=b.dataset.fold;FOLD_FORCE=v!=="0";if(v!=="0")FOLD_SINGLE=v==="2";applyWide()});
@@ -1600,6 +1615,7 @@ function ticketInner(){
 function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.serving.indexOf(t);
   return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${(t.pk&&t.pk.length)||(t.cp&&t.cp.length)?`<p class="cl-see">✅ 櫃台已經看到你的${t.pk&&t.pk.length?"預選":""}${t.pk&&t.pk.length&&t.cp&&t.cp.length?"和":""}${t.cp&&t.cp.length?"優惠券":""}，不用出示，跟櫃台說號碼就好</p>`:""}${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
 /* ================= 門市優惠：必買懶人包＋優惠券（示意內容）。優惠與預選綁在號碼上 → 免登入也能用，櫃台叫到號碼就看得到 ================= */
+const QI=(k,o)=>(window.QTLive&&QTLive.icon?QTLive.icon(k,o):"");
 const QD=()=>window.QTLive||{DEALS:{},COUPONS:{},dealsFor:()=>[]};
 function isWalk(t){return !U.viaLine&&(t.src||"app")!=="line"}
 function savePk(arr){const t=S.me;if(!t)return;const first=arr.length>((t.pk||[]).length)&&!(t.cp||[]).includes("c100");t.pk=arr;if(first)setTimeout(()=>grantCp("c100","第一次預選"),0);if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
@@ -1610,18 +1626,18 @@ function grantCp(id,why){const c=QD().COUPONS[id];if(!c)return;
   toast("promo",`${why||"恭喜"}！獲得 ${c.v}${c.u}券`,`${c.t}・已加到你的號碼 ${t.no}，到櫃台自動帶入`,5000);buzz([40,40,40]);if(!GAME_OPEN)fullRender()}
 addEventListener("message",e=>{const d=e.data;if(!d||d.qt!=="game")return;if(d.win)grantCp("g100",d.k==="fd"?"防詐偵探破案":"小小店長過關")});
 function dealsBoxHTML(t,st){const D=QD(),walk=isWalk(t),ids=D.dealsFor(t.cat,walk),pk=t.pk||[],quick=t.cat==="繳費/儲值";if(!ids.length)return "";
-  const title=quick?"🛍️ 順便一提":walk?"🛍️ 等的時候，在店裡可以…":"🛍️ 今天必買 3 件事";
+  const title=`<span class="hic">${QI("bag")}</span>`+(quick?"順便一提":walk?"等的時候，在店裡可以…":"今天必買 3 件事");
   const sub=quick?"":walk?`依你要辦的「${esc(t.cat.split("/")[0])}」挑的，選了櫃台會先備好`:"在 LINE 選的也會同步在這裡";
   const body=ids.map((id,i)=>{const d=D.DEALS[id];if(!d)return "";const on=pk.includes(id);
     const btn=d.walk?((t.cp||[]).includes("exp100")?`<span class="dl-ck on">✓ 已領券</span>`:`<button type="button" class="dl-ck" data-exp="1">我在體驗區</button>`):`<button type="button" class="dl-ck ${on?"on":""}" data-pick="${id}" aria-pressed="${on}">${on?"✓ 已選":"＋ 預選"}</button>`;
-    return `<div class="dl"><span class="dl-n">${quick?d.ic:i+1}</span><span class="dl-t"><b>${esc(d.t)}</b><small>${esc(d.s)}</small></span>${btn}</div>`}).join("");
-  const inner=`<h4 class="dl-h">${title}<button type="button" class="lz-open" data-lazy="1">📒 懶人包</button></h4>${sub?`<p class="muted" style="margin:-4px 0 0">${sub}</p>`:""}${body}${pk.length?`<p class="dl-done">✅ 已預選 ${pk.length} 項，櫃台叫到 ${t.no} 時就會看到</p>`:""}`;
-  return PREF.big?`<details class="box dealbox"><summary>🛍️ 今天的門市優惠（${ids.length} 項）</summary>${inner}</details>`:`<div class="box dealbox">${inner}</div>`}
+    return `<div class="dl"><span class="dl-ic">${QI(id)}</span><span class="dl-t"><b>${esc(d.t)}</b><small>${esc(d.s)}</small></span>${btn}</div>`}).join("");
+  const inner=`<h4 class="dl-h">${title}<button type="button" class="lz-open" data-lazy="1">${QI("book",{c:"#9a4a0a"})}懶人包</button></h4>${sub?`<p class="muted" style="margin:-4px 0 0">${sub}</p>`:""}${body}${pk.length?`<p class="dl-done">✅ 已預選 ${pk.length} 項，櫃台叫到 ${t.no} 時就會看到</p>`:""}`;
+  return PREF.big?`<details class="box dealbox"><summary><span class="hic">${QI("bag")}</span>今天的門市優惠（${ids.length} 項）</summary>${inner}</details>`:`<div class="box dealbox">${inner}</div>`}
 function couponsBoxHTML(t,st){const C=QD().COUPONS,cp=t.cp||[];const walk=isWalk(t);
   const cards=cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・今天・限本門市</small></span></div>`:""}).join("");
   const hint=cp.length?"":`<p class="muted" style="margin:0">玩下面的小遊戲過關，就能拿 $100 配件券 🎮</p>`;
   const toLine=walk&&cp.length&&!U.lineBound&&typeof lineBindUrl==="function"?`<a class="cpn-line" href="${lineBindUrl(t)}" target="_blank" rel="noopener"><span class="lb-ic">LINE</span><span><b>存到 LINE，優惠券才不會不見</b><small>網頁關掉就找不到了，加好友一鍵帶過去</small></span></a>`:"";
-  return `<div class="box cpnbox"><h4>🎁 我的優惠券 <small class="muted">${cp.length} 張</small></h4>${cards}${hint}${toLine}</div>`}
+  return `<div class="box cpnbox"><h4><span class="hic">${QI("gift")}</span>我的優惠券 <small class="muted">${cp.length} 張</small></h4>${cards}${hint}${toLine}</div>`}
 function bindDeals(){bindLazyOpen();document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{const id=b.dataset.pick,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id))});
   const x=document.querySelector("[data-exp]");if(x)x.onclick=()=>modal(`<div class="sheet"><h3>體驗區任務</h3><p>到門市體驗區試用 iPhone Duo，掃旁邊立牌上的 QR Code，就能領 $100 配件券。</p><p class="muted">（Demo：直接按下面的按鈕模擬掃碼）</p><div class="acts"><button class="btn ghost" type="button" data-m="x">等一下</button><button class="btn pk-go" type="button" data-m="ok">我掃好了</button></div></div>`,m=>m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.m==="ok")grantCp("exp100","體驗任務完成")}))}
 
@@ -1636,20 +1652,20 @@ function bindLazyOpen(){document.querySelectorAll("[data-lazy]").forEach(b=>b.on
 function lzDeal(id,canPick,pk){const d=QD().DEALS[id];if(!d)return "";const on=pk.includes(id);
   const val=d.free?d.free:d.sv?`省 $${d.sv.toLocaleString()}${d.per?"/月":""}`:"";
   const act=d.walk?`<span class="lz-tag">到店才有</span>`:canPick?`<button type="button" class="lz-pk ${on?"on":""}" data-lzpk="${id}" aria-pressed="${on}">${on?"✓ 已預選":"＋ 預選"}</button>`:"";
-  return `<div class="lz-d"><span class="lz-ic" aria-hidden="true">${d.ic}</span><span class="lz-dt"><b>${esc(d.t)}</b><small>${esc(d.s)}</small><i>📍 ${esc(d.at||"櫃台")}</i></span><span class="lz-r">${val?`<span class="lz-v">${val}</span>`:""}${act}</span></div>`}
+  return `<div class="lz-d"><span class="lz-ic" aria-hidden="true">${QI(id)}</span><span class="lz-dt"><b>${esc(d.t)}</b><small>${esc(d.s)}</small><i>${QI("pin",{c:"#4A3F8F"})}${esc(d.at||"櫃台")}</i></span><span class="lz-r">${val?`<span class="lz-v">${val}</span>`:""}${act}</span></div>`}
 function lazyHTML(){const D=QD(),C=D.COUPONS,st=meState(),has=st==="waiting"||st==="called",t=has?S.me:null,pk=(t&&t.pk)||[],cp=(t&&t.cp)||U.pendCp||[];
   const cat=U.lzCat||(t&&t.cat)||U.picked||LZ_CATS[0];const ids=D.dealsFor(cat,false);
   const sum=lzSave(ids.concat(LZ_ALL.filter(x=>!ids.includes(x))));
   const ways=[["c100","取號後，第一次預選就送",null],["g100","玩「小小店長」或「防詐小偵探」過關","game"],["exp100","到體驗區試 iPhone Duo、掃立牌 QR","exp"]];
   return `<div class="sheet lz" role="document">
-    <div class="lz-hero"><button type="button" class="lz-x" data-lzx aria-label="關閉">✕</button><small>${esc(HOME)}・今天</small><h3>📒 門市必買優惠懶人包</h3><p>30 秒看完，進店就知道怎麼下手</p>
+    <div class="lz-hero"><button type="button" class="lz-x" data-lzx aria-label="關閉">✕</button><small>${esc(HOME)}・今天</small><h3><span class="lz-hic">${QI("book",{c:"#2D2E67",a:"#E8893A"})}</span>門市必買優惠懶人包</h3><p>30 秒看完，進店就知道怎麼下手</p>
       <div class="lz-stats"><span><b>${Object.keys(D.DEALS).length}</b>項優惠</span><span><b>$${lzMax().toLocaleString()}</b>最多省</span><span><b>${cp.length}</b>張券在手</span></div></div>
     <ol class="lz-steps"><li><b>看</b>挑你要的</li><li><b>選</b>${has?"按預選":"取號後預選"}</li><li><b>拿</b>櫃台先備好</li></ol>
     <section><h4>① 依你要辦的事</h4><div class="lz-cats" role="tablist">${LZ_CATS.map(c=>`<button type="button" role="tab" data-lzc="${c}" aria-selected="${c===cat}">${c.split("/")[0]}${t&&t.cat===c?" ・我":""}</button>`).join("")}</div>
       <div class="lz-list">${ids.map(id=>lzDeal(id,has,pk)).join("")}</div></section>
     <section><h4>② 人人都能用</h4><div class="lz-list">${LZ_ALL.filter(x=>!ids.includes(x)).map(id=>lzDeal(id,has,pk)).join("")}${lzDeal("exp",false,pk)}</div></section>
-    <div class="lz-sum">💰 辦「${esc(cat.split("/")[0])}」照這樣買，今天約省 <b>$${sum.toLocaleString()}</b></div>
-    <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?"✅":"🎁"}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?`<button type="button" class="lz-pk" data-lzgo="${go}">去拿</button>`:""}</span></div>`}).join("")}</div>
+    <div class="lz-sum"><span class="lz-ic sm">${QI("coins")}</span><span>辦「${esc(cat.split("/")[0])}」照這樣買，今天約省 <b>$${sum.toLocaleString()}</b></span></div>
+    <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?QI("check",{a:"#4BA882"}):QI(QTLive.CP_ICON[id])}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?`<button type="button" class="lz-pk" data-lzgo="${go}">去拿</button>`:""}</span></div>`}).join("")}</div>
       <p class="lz-fine">每張號碼同一種券限領 1 次・券和預選都綁在號碼上，到櫃台自動帶入，不用出示</p></section>
     <div class="acts">${has?`<button class="btn pk-go" type="button" data-lzx>${pk.length?`好了，已預選 ${pk.length} 項`:"看完了"}</button>`:`<button class="btn pk-go" type="button" data-lztake>去取號，開始預選</button>`}</div>
     <p class="lz-fine">示意優惠內容・實際以門市公告為準</p></div>`}

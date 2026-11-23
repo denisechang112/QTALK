@@ -367,6 +367,13 @@ p.sys{margin:0;font-size:11px;color:#6f6656;text-align:center}
 p.prep{margin:4px 0 0;font-size:12.5px;background:#F2FBF5;border-radius:8px;padding:6px 8px;color:#2D2E67}
 .hub .g button{position:relative}
 .hbadge{position:absolute;top:6px;right:14px;z-index:2;background:#DD4F3C;color:#fff;font-style:normal;font-size:11px;font-weight:900;border-radius:999px;min-width:18px;padding:0 5px;line-height:18px}
+.lswrow{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid #e6e6ee;text-align:left}.lswrow span{flex:1;display:grid}.lswrow small{font-size:12px;color:#6b6b90}.lswrow input{width:22px;height:22px;accent-color:#E8893A}
+
+.hdi{display:inline-grid;vertical-align:-5px;margin-right:6px}.hdi svg.qi{width:22px;height:22px}
+.rc-img.dl{display:grid;place-items:center;background:#FFF3E6}
+.rc-img .dchip{position:static;padding:0;color:inherit;width:64px;height:64px;border-radius:18px;background:#fff;border:1.5px solid #DEDEEA;box-shadow:0 3px 10px rgba(45,46,103,.08);display:grid;place-items:center}.rc-img .dchip svg.qi{width:40px;height:40px}
+button.watch svg.qi,.pkd svg.qi{display:inline-block;width:18px;height:18px;vertical-align:-4px;margin-right:4px}
+.pkd{margin:4px 0 0}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -565,8 +572,9 @@ document.addEventListener("click",e=>{
 $("#moreBtn").onclick=()=>{const L=$("#liff");L.hidden=false;
   L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="重新開始"><div class="sh"><div style="flex:1"><b>Demo 小工具</b><small>只在這支手機上清除，不會動到櫃台和其他人</small></div><button id="lx" aria-label="關閉">✕</button></div>
     <div class="sb"><p>清除這個聊天室的對話和號碼，回到「第一次加入官方帳號」的畫面。</p>
-    <button class="go" id="rst">清除紀錄，重新開始</button></div></div>`;
-  $("#lx").onclick=closeLiff;$("#rst").onclick=resetChat};
+    <button class="go" id="rst">清除紀錄，重新開始</button>
+    <label class="lswrow"><span><b>新機開賣日模式</b><small>「門市取號」選單出現 iPhone Duo 預約取機；App 也會一起打開</small></span><input type="checkbox" id="lsLaunch" ${LAUNCH?"checked":""}></label></div></div>`;
+  $("#lx").onclick=closeLiff;$("#rst").onclick=resetChat;$("#lsLaunch").onchange=e=>{LAUNCH=e.target.checked;try{localStorage.setItem("qt-launch",LAUNCH?"1":"0")}catch(_){}closeLiff();bot(LAUNCH?"已打開新機開賣日模式 📱 點「門市取號」就看得到 iPhone Duo 預約取機。":"已關閉新機開賣日模式，回到一般取號。")}};
 $("#backBtn").onclick=()=>{if(!$("#liff").hidden)closeLiff()};
 
 /* ---------- 我的號碼狀態 ---------- */
@@ -719,7 +727,8 @@ function recoCard(t){const w=t.st==="w"?waitOf(t).mins:3;
   items.push(`<div class="rc"><div class="rc-img learn"><i>📚</i></div><b>等候小教室</b><small>防詐小測驗、短課程</small><button data-card="watch" data-open="learn" data-lbl="等候小教室">▶ 進教室</button></div>`);
   return `<div class="card reco"><div class="hd">等候時看看・約 ${w} 分</div><div class="rcs">${items.join("")}</div></div>`}
 /* ===== 新機開賣日：預約取機（網址加 ?launch 或 #…&launch 才出現，預設關閉） ===== */
-const LAUNCH=/[?&#]launch\b/.test(location.search+location.hash);
+let LAUNCH=/[?&#]launch\b/.test(location.search+location.hash)||(()=>{try{return localStorage.getItem("qt-launch")==="1"}catch(e){return false}})();   // 新機開賣日模式：和 App 共用同一個開關
+if(/[?&#]launch\b/.test(location.search+location.hash))try{localStorage.setItem("qt-launch","1")}catch(e){}
 const PK_SLOTS=["10:00","10:30","11:00","11:30","13:00","13:30"],PK_MODEL="iPhone Duo",PK_ORD="●●●●2048";
 const hshL=x=>[...String(x)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
 const stockL=n=>{const h=hshL(n)%10;return h<6?["有貨","g"]:h<9?["剩少量","y"]:["已售完","x"]};
@@ -762,15 +771,15 @@ async function pkCheckIn(){const p=state.pk;if(!p)return;me("我到門市了");
     bot(`報到成功 👍 你是取機預約，${w?`前面只剩 ${w.ahead} 位，大約 ${w.mins} 分鐘就叫你。`:"櫃台準備好了。"}\n手機已經從倉庫拿到櫃台了。`);if(t)bot(ticketCard(t,"取機預約・已報到"))}
   catch(e){bot("網路不太穩，報到沒有成功，請再按一次。")}}
 /* ===== 門市優惠（示意內容）：在家先選、優惠券；綁在號碼上，櫃台叫到號碼就看得到 ===== */
-const QD=Q.DEALS||{},QC=Q.COUPONS||{};
+const QD=Q.DEALS||{},QC=Q.COUPONS||{},QI=(k,o)=>Q.icon?Q.icon(k,o):"",HI=k=>`<span class="hdi">${QI(k,{c:"#fff",a:"#F5C543"})}</span>`;
 const tkPk=t=>(t&&t.pk)||[],tkCp=t=>(t&&t.cp)||[];
 function myCp(){const t=mine();return active(t)?tkCp(t):[]}
 async function setTk(fields){const t=mine();if(!t)return;
   if(state.tkLive&&conn){await conn.patch("/tickets/"+t.id,fields);VL=Q.view(conn.data)}
   else{Object.assign(demo.tickets[state.myId]||{},fields);demoView()}}
-function dealCardItem(id,on){const d=QD[id];if(!d)return "";return `<div class="rc"><div class="rc-img dl"><i>${d.ic}</i></div><b>${esc(d.t)}</b><small>${esc(d.s)}</small><button data-card="pick" data-d="${id}" class="${on?"on":""}">${on?"✓ 已選好":"先選好"}</button></div>`}
+function dealCardItem(id,on){const d=QD[id];if(!d)return "";return `<div class="rc"><div class="rc-img dl"><span class="dchip">${QI(id)}</span></div><b>${esc(d.t)}</b><small>${esc(d.s)}</small><button data-card="pick" data-d="${id}" class="${on?"on":""}">${on?"✓ 已選好":"先選好"}</button></div>`}
 function homeCard(t){const ids=Q.dealsFor(t.cat,false),pk=tkPk(t);
-  return `<div class="card reco deal"><div class="hd">🛍️ ${esc(state.tkStore||myStore())}・${esc(t.cat.split("/")[0])}必買</div><div class="rcs">${ids.map(id=>dealCardItem(id,pk.includes(id))).join("")}</div><p class="dnote">示意優惠・只是預選，到店才結帳</p><div class="ft"><button class="watch" data-card="watch" data-open="lazy" data-lbl="門市必買優惠懶人包">📒 看完整懶人包（${Object.keys(QD).length} 項）</button></div></div>`}
+  return `<div class="card reco deal"><div class="hd">${HI("bag")}${esc(state.tkStore||myStore())}・${esc(t.cat.split("/")[0])}必買</div><div class="rcs">${ids.map(id=>dealCardItem(id,pk.includes(id))).join("")}</div><p class="dnote">示意優惠・只是預選，到店才結帳</p><div class="ft"><button class="watch" data-card="watch" data-open="lazy" data-lbl="門市必買優惠懶人包">${QI("book",{c:"#1E8E3E",a:"#1E8E3E"})}看完整懶人包（${Object.keys(QD).length} 項）</button></div></div>`}
 async function togglePick(id){const t=mine();if(!active(t)){bot("這張號碼已經辦完或失效了，下次取號再選喔 🙂");return}
   const pk=tkPk(t),on=pk.includes(id),arr=on?pk.filter(x=>x!==id):pk.concat(id),d=QD[id];
   try{await setTk({pk:arr})}catch(e){bot("網路不太穩，沒有送出，請再按一次。");return}
@@ -779,15 +788,15 @@ async function togglePick(id){const t=mine();if(!active(t)){bot("這張號碼已
   const first=!tkCp(t).includes("c100");bot(`收到 👍 櫃台叫到 ${t.no} 時就會看到，會先幫你準備「${esc(d.prep||d.t)}」。${id==="trade"?"\n記得帶舊手機喔。":""}`);
   if(first){try{await setTk({cp:tkCp(mine()).concat("c100")})}catch(e){}bot("順便送你一張到店小禮 👇");bot(couponCard("c100",t))}
   draw(true)}
-function couponCard(id,t){const c=QC[id];return `<div class="card cpc"><div class="hd">🎁 ${esc(c.from)}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>今天・限本門市</small></span></div><p class="dnote" style="padding:0">已加到你的號碼 ${t.no}，到櫃台自動帶入</p></div></div>`}
+function couponCard(id,t){const c=QC[id];return `<div class="card cpc"><div class="hd">${HI("gift")}${esc(c.from)}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>今天・限本門市</small></span></div><p class="dnote" style="padding:0">已加到你的號碼 ${t.no}，到櫃台自動帶入</p></div></div>`}
 function myDealsCard(t){const cp=tkCp(t),pk=tkPk(t);
-  return `<div class="card cpc"><div class="hd">🎁 我的優惠・${esc(state.tkStore||myStore())}</div><div class="bd">
+  return `<div class="card cpc"><div class="hd">${HI("gift")}我的優惠・${esc(state.tkStore||myStore())}</div><div class="bd">
     ${cp.length?cp.map(id=>{const c=QC[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・今天・限本門市</small></span></div>`:""}).join(""):`<p style="margin:0">目前還沒有優惠券，選一個必買優惠或玩小遊戲就能拿 🎮</p>`}
-    ${pk.length?`<p style="margin:4px 0 0">🛍️ 已預選：${pk.map(id=>esc((QD[id]||{}).t||id)).join("、")}</p>`:""}
+    ${pk.length?`<p class="pkd">${QI("bag")}已預選：${pk.map(id=>esc((QD[id]||{}).t||id)).join("、")}</p>`:""}
     <p class="dnote" style="padding:0">都綁在你的號碼 ${t.no}，到櫃台自動帶入</p></div>
-    <div class="ft"><button data-card="home">看今天必買 3 件事</button><button class="watch" data-card="watch" data-open="lazy" data-lbl="門市必買優惠懶人包">📒 完整懶人包</button><button class="watch" data-card="watch" data-open="game:lm" data-lbl="小小店長">▶ 玩遊戲再拿券</button></div></div>`}
+    <div class="ft"><button data-card="home">看今天必買 3 件事</button><button class="watch" data-card="watch" data-open="lazy" data-lbl="門市必買優惠懶人包">${QI("book",{c:"#1E8E3E",a:"#1E8E3E"})}完整懶人包</button><button class="watch" data-card="watch" data-open="game:lm" data-lbl="小小店長">▶ 玩遊戲再拿券</button></div></div>`}
 function storeDealsCard(){const n=myStore(),ids=["acc100","trade","case"];
-  return `<div class="card reco deal"><div class="hd">🛍️ ${esc(n)}・本月優惠</div><div class="rcs">${ids.map(id=>{const d=QD[id];return `<div class="rc"><div class="rc-img dl"><i>${d.ic}</i></div><b>${esc(d.t)}</b><small>${esc(d.s)}</small><button data-card="take">取號領券</button></div>`}).join("")}</div><p class="dnote">你目前還沒有號碼，取號後就能預選、領券 🙂</p></div>`}
+  return `<div class="card reco deal"><div class="hd">${HI("bag")}${esc(n)}・本月優惠</div><div class="rcs">${ids.map(id=>{const d=QD[id];return `<div class="rc"><div class="rc-img dl"><span class="dchip">${QI(id)}</span></div><b>${esc(d.t)}</b><small>${esc(d.s)}</small><button data-card="take">取號領券</button></div>`}).join("")}</div><p class="dnote">你目前還沒有號碼，取號後就能預選、領券 🙂</p></div>`}
 function preparedHTML(t){const pk=tkPk(t),cp=tkCp(t);if(!pk.length&&!cp.length)return "";
   return `<p class="prep">${pk.length?`✅ 已備好：${pk.map(id=>esc((QD[id]||{}).prep||(QD[id]||{}).t||id)).join("、")}`:""}${pk.length&&cp.length?"<br>":""}${cp.length?`🎁 優惠：${cp.map(id=>esc((QC[id]||{}).t||id)).join("、")}`:""}</p>`}
 function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
