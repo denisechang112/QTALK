@@ -110,6 +110,12 @@ body{background:#F2F2F7!important}
 .qtb small{font-size:.5em;font-weight:700;letter-spacing:.14em;opacity:.82;white-space:nowrap}
 .qtb b{font-weight:900;letter-spacing:.04em;white-space:nowrap}
 .top h1{display:flex;align-items:center;gap:4px}.top .qtb{font-size:18px}.top .qtb small{color:#C9C9E6}
+
+.dls{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;align-items:center}
+.dls span{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px}
+.dpk{background:#FFF3E6;color:#9a4a0a}.dcp{background:#FFF8D6;color:#7a5a00}
+.dls.soon{background:#FFF3E6;border-radius:10px;padding:6px}
+.dsoon{font-size:12.5px;color:#DD4F3C}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -280,6 +286,10 @@ function sayHTML(t,cls){
 }
 /* 開賣日預約取機：已報到的插在前面（優先），還沒報到的另外列出來先備貨 */
 const pkLine=t=>`<p class="pkl">📱 ${esc(t.mdl||"新機")} 預購 ${esc(t.ord||"")}・<b>手機已備好</b>${t.esim?"・需要轉 eSIM":""}</p>`;
+/* 門市優惠：客人預選的「備貨」與優惠券，叫號前 3 位提醒先備好 */
+function dealsHTML(t,i){const D=Q.DEALS||{},C=Q.COUPONS||{},pk=t.pk||[],cp=t.cp||[];if(!pk.length&&!cp.length)return "";
+  const soon=i!=null&&i<3&&pk.length;
+  return `<div class="dls${soon?" soon":""}">${soon?'<b class="dsoon">⏰ 該備貨了</b>':""}${pk.map(id=>`<span class="dpk">🛍️ ${esc((D[id]||{}).prep||(D[id]||{}).t||id)}</span>`).join("")}${cp.map(id=>`<span class="dcp">🎁 ${esc((C[id]||{}).t||id)}</span>`).join("")}</div>`}
 function pkBoxHTML(){const b=V.all.filter(t=>t.st==="b");if(!b.length)return "";
   return `<div class="box pkbox"><h2>今天預約取機・還沒報到<span class="tag pk">${b.length} 位</span></h2>${b.map(t=>`<div class="q"><div class="n">${t.no}<small>${esc(t.slot||"")} 取機</small></div><div class="row"><span class="tag pk">未報到</span></div>${pkLine(t)}</div>`).join("")}<p class="muted">顧客到店按「我到門市了」報到後，會自動排進等候名單（優先叫號）。</p></div>`}
 const extra=t=>`${t.k==="r"?`<span class="tag pk">取機預約${t.slot?"・"+esc(t.slot):""}</span>`:""}${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
@@ -293,7 +303,7 @@ function render(){
         <div class="seg">${[1,2,3].map(d=>`<button data-desk="${d}" aria-pressed="${d===desk}">${d} 號櫃台<small>${V.desks[d]?V.desks[d].no:"—"}</small></button>`).join("")}</div></div>
       <div class="box now"><h2>${desk} 號櫃台・目前服務</h2>
         ${cur?`<div class="row" style="justify-content:space-between"><div class="no">${cur.no}</div><div class="row">${tagOf(cur.cat)}${extra(cur)}</div></div>
-          ${sayHTML(cur,"say")}${aiHTML(cur,true)}
+          ${dealsHTML(cur)}${sayHTML(cur,"say")}${aiHTML(cur,true)}
           <div class="say" style="font-weight:500"><small>請準備</small>${esc(PREP[(aiInfo.get(cur.id)||{}).cat||cur.cat]||PREP[cur.cat]||"")}</div>
           ${confirmFor===cur.id?`<div class="confirm"><b>這位實際辦了什麼？</b><small>用來計算 AI 分類準確率</small>
             <div class="cgrid">${CAT_LIST.map(c=>`<button class="btn sm ${c===((aiInfo.get(cur.id)||{}).cat||cur.cat)?"dark":""}" data-actual="${c}">${c}</button>`).join("")}</div>
@@ -307,7 +317,7 @@ function render(){
     </div>
     ${pkBoxHTML()}
     <div class="box"><h2>等候中<span class="tag white">${V.waiting.length} 組</span>${V.waiting.some(t=>t.k==="r")?`<span class="tag pk">預約 ${V.waiting.filter(t=>t.k==="r").length}</span>`:""}</h2>
-      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div><button class="btn sm" data-call="${t.id}">叫這位</button>${t.k==="r"?pkLine(t):""}${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
+      ${V.waiting.length?V.waiting.map((t,i)=>`<div class="q"><div class="n">${t.no}<small>第 ${i+1} 位・等 ${mins(t)} 分</small></div><div class="row">${tagOf(t.cat)}${extra(t)}</div>${dealsHTML(t,i)}<button class="btn sm" data-call="${t.id}">叫這位</button>${t.k==="r"?pkLine(t):""}${sayHTML(t,"t")}${aiHTML(t,false)}</div>`).join("")
       :`<p class="muted">還沒有人取號。請顧客掃大螢幕上的 QR Code；排練時可以到「場次・QR Code」加測試顧客。</p>`}
     </div>
   </div>`;

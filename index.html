@@ -695,6 +695,25 @@ html:not(.is-phone) .foldTog button{box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .qtb small{font-size:.5em;font-weight:700;letter-spacing:.14em;opacity:.82;white-space:nowrap}
 .qtb b{font-weight:900;letter-spacing:.04em;white-space:nowrap}
 .appTop .qtb small{color:#C9C9E6}
+
+/* 門市優惠 */
+.dealbox{border:1.5px solid #E8893A!important}
+.dealbox summary{font-weight:900;cursor:pointer}
+.dl{display:flex;gap:10px;align-items:center;border:1.5px solid #DEDEEA;border-radius:14px;padding:8px 10px;background:#fff}
+.dl-n{width:24px;height:24px;border-radius:50%;background:#E8893A;color:#fff;font-weight:900;font-size:12.5px;display:grid;place-items:center;flex:none}
+.dl-t{flex:1;min-width:0;display:grid}.dl-t b{font-size:14.5px}.dl-t small{font-size:12px;color:var(--muted)}
+.dl-ck{flex:none;border:1.5px solid #DEDEEA;border-radius:999px;background:#fff;color:#2D2E67;font-weight:900;font-size:12.5px;padding:4px 11px;white-space:nowrap}
+.dl-ck.on{background:#4BA882;border-color:#4BA882;color:#fff}
+.dl-done{margin:0;font-size:12.5px;font-weight:700;color:#3A8A69}
+.cpn{display:flex;border:1.5px solid #DEDEEA;border-radius:14px;overflow:hidden;background:#fff}
+.cpn-l{min-width:84px;display:grid;place-items:center;text-align:center;background:linear-gradient(135deg,#F5C543,#E8893A);color:#fff;font-family:var(--f-num);font-size:22px;line-height:1.1;padding:10px 6px}
+.cpn-l small{display:block;font-family:var(--f-body);font-size:11px;font-weight:700}
+.cpn-r{display:grid;align-content:center;padding:8px 12px;border-left:2px dashed #DEDEEA}.cpn-r b{font-size:14px}.cpn-r small{font-size:11.5px;color:#DD4F3C;font-weight:700}
+.cpn-line{display:flex;gap:10px;align-items:center;border:1.5px solid #06C755;background:#F2FBF5;border-radius:14px;padding:8px 10px;text-decoration:none;color:#2D2E67}
+.cpn-line .lb-ic{flex:none;width:36px;height:36px;border-radius:10px;background:#06C755;color:#fff;font-weight:900;font-size:10px;display:grid;place-items:center}
+.cpn-line small{display:block;font-size:11.5px;color:var(--muted)}
+.cl-see{margin:6px 0 0;font-size:13px;font-weight:700;background:rgba(255,255,255,.9);color:#2D2E67;border-radius:10px;padding:6px 10px}
+.sd-deal{margin:0;font-size:12.5px;font-weight:700;background:#FFF3E6;border-radius:10px;padding:6px 10px}
 </style>
 
 <div class="outer">
@@ -800,8 +819,8 @@ const tag=c=>`<span class="tagc ${CATS[c].c}">${c}</span>`;
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 /* Demo 用：清掉這支手機上的紀錄，回到「第一次打開」的樣子（網址加 ?fresh，或設定裡的按鈕） */
 /* 從 LINE 官方帳號打開（等候時看看）：帶著同一張號碼進來，通知仍由 LINE 傳送 */
-const VIA=(()=>{try{const q=new URLSearchParams(location.search),h=location.hash,g=k=>q.get(k)||((h.match(new RegExp("[&#]"+k+"=([^&]+)"))||[])[1]?decodeURIComponent(h.match(new RegExp("[&#]"+k+"=([^&]+)"))[1]):null);
-  if(g("via")!=="line")return null;return {me:g("me"),bind:g("bind"),ahead:Math.max(0,+g("ahead")||0),cat:g("cat"),open:g("open")}}catch(e){return null}})();
+const VIA=(()=>{try{const _q=new URLSearchParams(location.search);const _pk=_q.get("pk"),_cp=_q.get("cp");const q=new URLSearchParams(location.search),h=location.hash,g=k=>q.get(k)||((h.match(new RegExp("[&#]"+k+"=([^&]+)"))||[])[1]?decodeURIComponent(h.match(new RegExp("[&#]"+k+"=([^&]+)"))[1]):null);
+  if(g("via")!=="line")return null;return {me:g("me"),bind:g("bind"),ahead:Math.max(0,+g("ahead")||0),cat:g("cat"),open:g("open"),pk:_pk?_pk.split(",").filter(Boolean):[],cp:_cp?_cp.split(",").filter(Boolean):[]}}catch(e){return null}})();
 const APP_KEYS=["qt-launch","qt-pick","qt-fold","qt-big","qt-voice","qt-lang","qt-tips","qt-install","qt-live-me"];
 let LAUNCH=/[?&#]launch\b/.test(location.search+location.hash)||store.get("qt-launch")==="1";   // 新機開賣日模式（預設關閉）
 function wipeLocal(){APP_KEYS.forEach(k=>{try{localStorage.removeItem(k)}catch(e){}})}
@@ -1005,6 +1024,7 @@ function renderSide(){const el=$("#appSide");if(!el||!document.documentElement.c
   el.innerHTML=`<div class="sd-now"><div><small>現在叫號</small><b>${now?now.no:"—"}</b></div><div style="text-align:right"><small>請到</small><b>${now?now.desk+1:"—"}</b><small>號櫃台</small></div></div>
     ${tk}
     ${nx?`<h5>接下來</h5><div class="sd-next">${nx}</div>`:""}
+    ${t&&((t.pk||[]).length||(t.cp||[]).length)&&(st==="waiting"||st==="called")?`<p class="sd-deal">🛍️ 已預選 ${(t.pk||[]).length} 項・🎁 優惠券 ${(t.cp||[]).length} 張</p>`:""}
     <p class="sd-tip">📖 折疊機展開時，號碼一直留在左邊；右邊可以看影片、玩遊戲、逛小教室，輪到你會跳通知。</p>`;
   el.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{const k=b.dataset.side;if(k==="single"){setFoldSingle(true);return}if(k==="take"){go("queue");setTimeout(()=>{const f=$("#take");if(f&&f.scrollIntoView)f.scrollIntoView({behavior:"smooth",block:"start"})},60)}else{U.mineOK=true;go("mine")}})}
 document.addEventListener("click",e=>{const b=e.target.closest("#foldTog [data-fold]");if(!b)return;const v=b.dataset.fold;FOLD_FORCE=v!=="0";if(v!=="0")FOLD_SINGLE=v==="2";applyWide()});
@@ -1494,7 +1514,7 @@ function afterTake(){
   Q3.sync();go("mine");buzz(60);
   if(U.viaLine)toast("info",`已帶入號碼 ${S.me.no}`,"這張號碼是在 LINE 取的，叫號會從 LINE 通知你。",4200);else toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
   setTimeout(()=>tip("took"),1200);
-  if(U.consent)setTimeout(()=>{if(S.me&&meState()==="waiting")toast("promo",CATS[S.me.cat].promo,"跟你這次要辦的事有關，到櫃台出示號碼即可使用。")},7000);
+  if(U.pendCp&&U.pendCp.length&&S.me&&!LIVE.on){S.me.cp=[...new Set([...(S.me.cp||[]),...U.pendCp])];U.pendCp=[]}
 }
 
 /* ---- reservation ---- */
@@ -1538,7 +1558,32 @@ function ticketInner(){
     ${t.family?`<div class="fam">叫號時也會通知 ${esc(t.family.name)}（${maskPhone(t.family.phone)}）</div>`:""}`;
 }
 function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.serving.indexOf(t);
-  return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
+  return `<div class="called"><span style="font-weight:900">輪到你了！${t.no}</span><div class="desk">${d+1}</div><h3>請到 ${d+1} 號櫃台</h3>${(t.pk&&t.pk.length)||(t.cp&&t.cp.length)?`<p class="cl-see">✅ 櫃台已經看到你的${t.pk&&t.pk.length?"預選":""}${t.pk&&t.pk.length&&t.cp&&t.cp.length?"和":""}${t.cp&&t.cp.length?"優惠券":""}，不用出示，跟櫃台說號碼就好</p>`:""}${!t.held&&U.out?`<button class="btn" id="hold">我還要 5 分鐘</button>`:""}</div>`}
+/* ================= 門市優惠：必買懶人包＋優惠券（示意內容）。優惠與預選綁在號碼上 → 免登入也能用，櫃台叫到號碼就看得到 ================= */
+const QD=()=>window.QTLive||{DEALS:{},COUPONS:{},dealsFor:()=>[]};
+function isWalk(t){return !U.viaLine&&(t.src||"app")!=="line"}
+function savePk(arr){const t=S.me;if(!t)return;t.pk=arr;if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
+function grantCp(id,why){const c=QD().COUPONS[id];if(!c)return;
+  if(!S.me||!["waiting","called"].includes(meState())){U.pendCp=U.pendCp||[];if(!U.pendCp.includes(id)){U.pendCp.push(id);toast("promo",`獲得 ${c.v}${c.u}券`,`${c.t}。取號後會自動加到你的號碼上。`,4500)}return}
+  const t=S.me,cur=t.cp||[];if(cur.includes(id)){toast("info","這張券已經領過了","每張號碼同一種券只能領一次。",3500);return}
+  const arr=cur.concat(id);t.cp=arr;if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{cp:arr}).catch(()=>{});
+  toast("promo",`${why||"恭喜"}！獲得 ${c.v}${c.u}券`,`${c.t}・已加到你的號碼 ${t.no}，到櫃台自動帶入`,5000);buzz([40,40,40]);if(!GAME_OPEN)fullRender()}
+addEventListener("message",e=>{const d=e.data;if(!d||d.qt!=="game")return;if(d.win)grantCp("g100",d.k==="fd"?"防詐偵探破案":"小小店長過關")});
+function dealsBoxHTML(t,st){const D=QD(),walk=isWalk(t),ids=D.dealsFor(t.cat,walk),pk=t.pk||[],quick=t.cat==="繳費/儲值";if(!ids.length)return "";
+  const title=quick?"🛍️ 順便一提":walk?"🛍️ 等的時候，在店裡可以…":"🛍️ 今天必買 3 件事";
+  const sub=quick?"":walk?`依你要辦的「${esc(t.cat.split("/")[0])}」挑的，選了櫃台會先備好`:"在 LINE 選的也會同步在這裡";
+  const body=ids.map((id,i)=>{const d=D.DEALS[id];if(!d)return "";const on=pk.includes(id);
+    const btn=d.walk?((t.cp||[]).includes("exp100")?`<span class="dl-ck on">✓ 已領券</span>`:`<button type="button" class="dl-ck" data-exp="1">我在體驗區</button>`):`<button type="button" class="dl-ck ${on?"on":""}" data-pick="${id}" aria-pressed="${on}">${on?"✓ 已選":"＋ 預選"}</button>`;
+    return `<div class="dl"><span class="dl-n">${quick?d.ic:i+1}</span><span class="dl-t"><b>${esc(d.t)}</b><small>${esc(d.s)}</small></span>${btn}</div>`}).join("");
+  const inner=`<h4>${title}</h4>${sub?`<p class="muted" style="margin:-4px 0 0">${sub}</p>`:""}${body}${pk.length?`<p class="dl-done">✅ 已預選 ${pk.length} 項，櫃台叫到 ${t.no} 時就會看到</p>`:""}`;
+  return PREF.big?`<details class="box dealbox"><summary>🛍️ 今天的門市優惠（${ids.length} 項）</summary>${inner}</details>`:`<div class="box dealbox">${inner}</div>`}
+function couponsBoxHTML(t,st){const C=QD().COUPONS,cp=t.cp||[];const walk=isWalk(t);
+  const cards=cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・今天・限本門市</small></span></div>`:""}).join("");
+  const hint=cp.length?"":`<p class="muted" style="margin:0">玩下面的小遊戲過關，就能拿 $100 配件券 🎮</p>`;
+  const toLine=walk&&cp.length&&!U.lineBound&&typeof lineBindUrl==="function"?`<a class="cpn-line" href="${lineBindUrl(t)}" target="_blank" rel="noopener"><span class="lb-ic">LINE</span><span><b>存到 LINE，優惠券才不會不見</b><small>網頁關掉就找不到了，加好友一鍵帶過去</small></span></a>`:"";
+  return `<div class="box cpnbox"><h4>🎁 我的優惠券 <small class="muted">${cp.length} 張</small></h4>${cards}${hint}${toLine}</div>`}
+function bindDeals(){document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{const id=b.dataset.pick,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id))});
+  const x=document.querySelector("[data-exp]");if(x)x.onclick=()=>modal(`<div class="sheet"><h3>體驗區任務</h3><p>到門市體驗區試用 iPhone Duo，掃旁邊立牌上的 QR Code，就能領 $100 配件券。</p><p class="muted">（Demo：直接按下面的按鈕模擬掃碼）</p><div class="acts"><button class="btn ghost" type="button" data-m="x">等一下</button><button class="btn pk-go" type="button" data-m="ok">我掃好了</button></div></div>`,m=>m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.m==="ok")grantCp("exp100","體驗任務完成")}))}
 /* ================= 新機開賣日：預約取機（開關打開才出現，預設關閉，不影響一般取號） ================= */
 const PK_SLOTS=["10:00","10:30","11:00","11:30","13:00","13:30"],PK_MODEL="iPhone Duo",PK_ORD="●●●●2048";
 const hsh=x=>[...String(x)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
@@ -1585,7 +1630,7 @@ function pickupTopHTML(){if(U.pickup)return pickupCardHTML();if(LAUNCH&&meState(
 /* 免登入取號後，引導加 LINE 好友：號碼直接帶過去，不用重新取號 */
 function lineBindUrl(t){const base=new URL("line.html",location.href.startsWith("http")?location.href:"https://denisechang112.github.io/QTALK/").href.replace(/[#?].*$/,"");
   if(typeof LIVE!=="undefined"&&LIVE.on&&LIVE.sess&&LIVE.myId)return base+"#l="+LIVE.sess.host+"~"+LIVE.sess.room+"&t="+encodeURIComponent(LIVE.myId);
-  const w=waitFor(t);return base+"?bind="+encodeURIComponent(t.no)+"&ahead="+w.ahead+"&cat="+encodeURIComponent(t.cat)+"&store="+encodeURIComponent(HOME)}
+  const w=waitFor(t);return base+"?bind="+encodeURIComponent(t.no)+"&ahead="+w.ahead+"&cat="+encodeURIComponent(t.cat)+"&store="+encodeURIComponent(HOME)+((t.pk||[]).length?"&pk="+t.pk.join(","):"")+((t.cp||[]).length?"&cp="+t.cp.join(","):"")}
 function lineBindHTML(t){return `<div class="box linebind"><div class="lb-top"><span class="lb-ic" aria-hidden="true">LINE</span><div><h4>加 LINE 好友，輪到你直接通知</h4><p class="muted">網頁關掉就收不到提醒，LINE 不會漏。號碼 <b>${t.no}</b> 會直接帶過去，不用重新取號；還能分享給家人一起留意。</p></div></div>
   <a class="btn lb-go" id="lineBind" href="${lineBindUrl(t)}" target="_blank" rel="noopener">用 LINE 接收叫號通知</a></div>`}
 function mineHTML(){
@@ -1606,7 +1651,7 @@ function mineHTML(){
   ${st==="waiting"&&!U.lineBound&&!U.viaLine?lineBindHTML(t):""}
   <div class="box ${near?"docsnear":""}"><h4>${near?"現在就把這些拿出來":"排到之前，先準備好"}</h4><div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
     <p class="muted">${U.docs.size===docs.length?"全部準備好了，櫃台會更快幫你辦完。":"點一下勾選你帶了的東西。"}</p></div>
-  ${st==="waiting"&&U.consent?`<div class="box" style="background:var(--cream)"><span class="tagc lilac" style="justify-self:start">跟你有關的優惠</span><h4>${CATS[t.cat].promo}</h4><p class="muted">到櫃台出示號碼即可使用。</p></div>`:""}
+  ${st==="waiting"||st==="called"?dealsBoxHTML(t,st)+couponsBoxHTML(t,st):""}
   ${st==="waiting"&&!near?gameCardHTML(w.mins):""}
   ${st==="waiting"&&!near?miniClassHTML(w.mins):""}
   ${videosHTML()}`;
@@ -1627,7 +1672,7 @@ function doneHTML(){
   return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>${videosHTML()}`;
 }
 function bindMine(){
-  bindPickup();
+  bindPickup();bindDeals();
   const g=$("#goTake");if(g)g.onclick=()=>go("queue");
   const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
   const hl=$("#holdLater");if(hl)hl.onclick=()=>{holdMe();fullRender()};
@@ -2058,7 +2103,7 @@ function liveSync(room){
   const V=window.QTLive.view(room);LIVE.view=V;LIVE.pub=(V.meta&&V.meta.pub)||null;
   if(V.meta&&V.meta.store&&V.meta.store!==HOME){if(cityOf(V.meta.store))setHome(V.meta.store);else{const sn=$("#storeName");if(sn)sn.textContent=V.meta.store}}
   const obj=t=>{let o=LIVE.objs.get(t.id);if(!o){o={id:t.id,me:false,text:"",family:null,held:true};LIVE.objs.set(t.id,o)}
-    o.no=t.no;o.cat=CATS[t.cat]?t.cat:"異動/諮詢/維修";o.prio=!!t.p;o.held=!!t.held;return o};
+    o.no=t.no;o.cat=CATS[t.cat]?t.cat:"異動/諮詢/維修";o.prio=!!t.p;o.held=!!t.held;o.pk=t.pk||[];o.cp=t.cp||[];o.src=t.src||"app";return o};
   const prevState=meState(),prevMe=S.me;
   S.queue=V.waiting.map(obj);
   S.serving=[1,2,3].map(d=>V.desks[d]?obj(V.desks[d]):null);
@@ -2098,7 +2143,7 @@ async function liveTake(){
   const txt=U.draft.trim().slice(0,50);let sent=txt;
   try{
     if(!LIVE.conn||!LIVE.view)throw new Error("not ready");
-    const t={cat:U.picked,st:"w",t:window.QTLive.TS,lang:PREF.lang,src:"app"};if(U.prio)t.p=true;
+    const t={cat:U.picked,st:"w",t:window.QTLive.TS,lang:PREF.lang,src:"app"};if(U.prio)t.p=true;if(U.pendCp&&U.pendCp.length){t.cp=[...new Set(U.pendCp)];U.pendCp=[]}
     if(txt){let sealed=null;try{sealed=await window.QTLive.crypto.seal(LIVE.pub,txt)}catch(e){}if(sealed)t.say=sealed;else sent=""}   // 沒辦法加密就不送出留言
     LIVE.tookAt=Date.now();
     const id=await LIVE.conn.post("/tickets",t);
@@ -2122,14 +2167,15 @@ reset();
 function adoptViaSim(){if(!VIA||!VIA.bind||(typeof LIVE!=="undefined"&&LIVE.on))return;
   const cat=CATS[VIA.cat]?VIA.cat:"繳費/儲值",cs=Object.keys(CATS);
   while(S.queue.length>VIA.ahead)S.queue.pop();while(S.queue.length<VIA.ahead)enqueue(cs[S.queue.length%cs.length],"",{});
-  S.me=enqueue(cat,"",{me:true});S.me.no=VIA.bind;S.me.sc={name:"從 LINE 取的號碼"};S.me.log=[];S.me.start=VIA.ahead;afterTake()}
+  S.me=enqueue(cat,"",{me:true});S.me.no=VIA.bind;S.me.pk=VIA.pk||[];S.me.cp=VIA.cp||[];S.me.src="line";S.me.sc={name:"從 LINE 取的號碼"};S.me.log=[];S.me.start=VIA.ahead;afterTake()}
+/* 從 LINE 打開時也記得清 URL 的 pk/cp */
 function openVia(o){if(!o)return;
   if(o==="learn"){go("learn");return}
   if(o.startsWith("game:")){openGame(o.slice(5));return}
   if(o.startsWith("v:")){const lbl=o.slice(2);for(const tab of ["mine","queue","learn"]){if(U.tab!==tab){if(tab==="mine")U.mineOK=true;go(tab)}
     const v=[...document.querySelectorAll("video")].find(x=>(x.getAttribute("aria-label")||"").includes(lbl));
     if(v){v.scrollIntoView({block:"center"});openPlayer(v);const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});return}}}}
-if(VIA){try{adoptViaSim()}catch(e){}setTimeout(()=>{try{openVia(VIA.open)}catch(e){}},VIA.me?1600:500);try{history.replaceState(null,"",location.href.replace(/[?&](via|bind|ahead|cat|open|me)=[^&#]*/g,"").replace(/&(via|me|open)=[^&]*/g,"").replace(/\?(?=#|$)/,""))}catch(e){}}
+if(VIA){try{adoptViaSim()}catch(e){}setTimeout(()=>{try{openVia(VIA.open)}catch(e){}},VIA.me?1600:500);try{history.replaceState(null,"",location.href.replace(/[?&](via|bind|ahead|cat|open|me|pk|cp)=[^&#]*/g,"").replace(/&(via|me|open)=[^&]*/g,"").replace(/\?(?=#|$)/,""))}catch(e){}}
 if(LIVE.on)liveStart();
 ;/* qt-lock */if(document.documentElement.classList.contains("is-phone"))/* 手機上鎖住畫面：手指拖曳時，只讓真的能捲的區塊捲動，其他一律不讓整頁（或 App 內瀏覽器的視窗）跟著移動 */
 (function(){var sx=0,sy=0;

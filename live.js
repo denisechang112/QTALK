@@ -83,7 +83,7 @@
   function order(tickets) {
     var ids = Object.keys(tickets || {}).filter(function (id) { var t = tickets[id]; return t && typeof t === "object" && typeof t.st === "string"; }).sort();
     var a = 0, r = 0;   // 一般號 A101 起；開賣日預約取機 R001 起，兩種各自編號，互不影響
-    return ids.map(function (id) { var t = tickets[id], no = t.k === "r" ? "R" + String(++r).padStart(3, "0") : "A" + (101 + a++), o = { id: id, no: no }; for (var k in t) o[k] = t[k]; return o; });
+    return ids.map(function (id) { var t = tickets[id], no = t.k === "r" ? "R" + String(++r).padStart(3, "0") : "A" + (101 + a++), o = { id: id, no: no }; for (var k in t) o[k] = t[k]; ["pk", "cp"].forEach(function (k) { var v = o[k]; if (v && !Array.isArray(v)) o[k] = typeof v === "object" ? Object.keys(v).sort().map(function (x) { return v[x]; }) : []; }); return o; });
   }
   /* st：w 等候、c 已叫號、d 完成、s 過號、x 取消、b 已預約取機（還沒到店報到） */
   function view(room) {
@@ -197,5 +197,27 @@
   function ruleGuess(text) { for (var i = 0; i < RULES.length; i++) if (RULES[i][1].test(text || "")) return RULES[i][0]; return null; }
   var TS = { ".sv": "timestamp" };
   var STATUS_ZH = { connecting: "連線中…", live: "已連線", reconnecting: "重新連線中…", offline: "連不上網路", denied: "資料庫拒絕存取（請檢查安全規則）", notfound: "找不到資料庫（請檢查網址）" };
-  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH };
+  /* ---------- 門市優惠（示意內容，正式活動請與行銷、門市營運確認）：優惠與預選都綁在號碼上，不綁帳號 ---------- */
+  var DEALS = {
+    trade: { ic: "♻️", t: "舊機回收加碼折抵", s: "最高再折 $1,000・請帶舊手機", prep: "舊機回收估價" },
+    glass: { ic: "🛡️", t: "續約送玻璃保護貼", s: "現場免費代貼", prep: "玻璃保護貼（代貼）" },
+    acc100: { ic: "🔌", t: "配件滿千折百", s: "保護殼、快充頭都適用", prep: "配件（保護殼、快充頭）" },
+    port: { ic: "📶", t: "攜碼送 mo 幣", s: "攜碼新申辦加贈", prep: "攜碼文件" },
+    family: { ic: "👨‍👩‍👧", t: "家人一起辦享家庭方案", s: "第二門起月租優惠", prep: "家庭方案試算" },
+    case: { ic: "📱", t: "保護殼＋快充頭組合價", s: "比單買省 $300", prep: "保護殼＋快充頭" },
+    loaner: { ic: "🔧", t: "維修期間免費借備用機", s: "送修當天可借", prep: "備用機" },
+    esim: { ic: "📲", t: "取機當天轉 eSIM 免手續費", s: "櫃台協助轉移", prep: "eSIM 轉移" },
+    autopay: { ic: "💳", t: "設定自動扣繳送 mo 幣", s: "繳費順便設定", prep: "" },
+    exp: { ic: "👀", t: "去體驗區試 iPhone Duo", s: "掃體驗區 QR 送 $100 配件券", walk: true },
+    add9: { ic: "🛍️", t: "辦完 30 分鐘內加購 9 折", s: "保護殼、玻璃貼、快充頭", prep: "加購配件" }
+  };
+  var DEAL_BY_CAT = { "續約/換約/新申辦": ["trade", "glass", "acc100"], "網路取貨/預約取件": ["esim", "case", "glass"], "異動/諮詢/維修": ["loaner", "case", "family"], "繳費/儲值": ["autopay"] };
+  var COUPONS = {
+    c100: { v: "$100", u: "折價", t: "配件滿千折百", from: "到店小禮" },
+    g100: { v: "$100", u: "折價", t: "配件滿千折百", from: "小遊戲過關" },
+    exp100: { v: "$100", u: "折價", t: "配件滿千折百", from: "體驗區任務" },
+    a9: { v: "9 折", u: "加購", t: "辦完 30 分鐘內加購配件", from: "防詐小測驗" }
+  };
+  function dealsFor(cat, walkIn) { var a = (DEAL_BY_CAT[cat] || DEAL_BY_CAT["異動/諮詢/維修"]).slice(); if (cat === "繳費/儲值") return a; if (walkIn) { a = ["exp"].concat(a.slice(0, 1)).concat(["add9"]); } return a.slice(0, 3); }
+  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH, DEALS: DEALS, COUPONS: COUPONS, dealsFor: dealsFor };
 })();

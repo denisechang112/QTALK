@@ -345,6 +345,7 @@ const couponHTML=()=>couponOK()?`<a class="coupon" href="${COUPON_URL}" target="
 const RANKS=[[12,"防詐大師","騙子看到你都繞路走！"],[9,"防詐高手","再差一點點就是大師了"],[5,"防詐小達人","已經抓到很多騙子囉"],[0,"見習偵探","多玩幾次，越玩越厲害"]];
 function result(){
  const c=G.res.filter(Boolean).length,k=G.k;SAVE.best[k]=Math.max(SAVE.best[k]||0,c);persist();
+ try{parent!==window&&parent.postMessage({qt:"game",k:"fd",win:c>=3,score:c},"*")}catch(e){}   /* 通知叫號說：抓到 3 位以上送優惠券 */
  const s=starsFor(c);(c>=3?SFX.win:SFX.ok)();
  $("#resChap").textContent=CHAPS[k].t.replace("　"," ");
  $("#resScore").textContent=`${c}/4`;
