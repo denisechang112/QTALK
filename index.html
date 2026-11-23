@@ -714,6 +714,45 @@ html:not(.is-phone) .foldTog button{box-shadow:0 2px 8px rgba(0,0,0,.35)}
 .cpn-line small{display:block;font-size:11.5px;color:var(--muted)}
 .cl-see{margin:6px 0 0;font-size:13px;font-weight:700;background:rgba(255,255,255,.9);color:#2D2E67;border-radius:10px;padding:6px 10px}
 .sd-deal{margin:0;font-size:12.5px;font-weight:700;background:#FFF3E6;border-radius:10px;padding:6px 10px}
+
+/* 門市必買優惠懶人包 */
+.lzban{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:var(--line);border-radius:20px;box-shadow:4px 4px 0 var(--ink);padding:12px 14px;background:linear-gradient(120deg,#FFF3E6,#FFF8D6);color:var(--ink);cursor:pointer;font:inherit}
+.lzb-ic{flex:none;width:52px;height:52px;border-radius:14px;background:var(--orange);color:#fff;border:var(--line);display:grid;place-items:center;box-shadow:2px 2px 0 var(--ink)}.lzb-ic svg{width:30px;height:30px}
+.lzb-t{display:grid;flex:1;min-width:0}.lzb-t small{font-size:12px;font-weight:700;color:#9a4a0a}.lzb-t b{font-size:17px;white-space:nowrap;font-weight:900;line-height:1.25}.lzb-t em{font-style:normal;font-size:12px;font-weight:700;color:#DD4F3C}
+.lzb-go{flex:none;background:var(--orange);color:#fff;border:var(--line);border-radius:12px;padding:6px 9px;font-weight:900;font-size:12.5px;line-height:1.3;text-align:center;box-shadow:2px 2px 0 var(--ink)}
+.dl-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lz-open{flex:none;border:1.5px solid #E8893A;background:#FFF3E6;color:#9a4a0a;border-radius:999px;padding:3px 10px;font:inherit;font-size:12.5px;font-weight:900;cursor:pointer}
+.sheet.lz{padding:0;gap:0;max-height:100%;align-self:stretch;background:var(--cream)}
+.lz-hero{position:relative;background:linear-gradient(135deg,#2D2E67,#4A3F8F);color:#fff;padding:16px 16px 14px;display:grid;gap:4px}
+.lz-hero small{font-weight:700;opacity:.8;font-size:12.5px}.lz-hero h3{font-size:22px}.lz-hero p{font-weight:700;color:#F5C543;font-size:14px}
+.lz-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.18);color:#fff;font-size:16px;cursor:pointer}
+.lz-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.lz-stats span{background:rgba(255,255,255,.12);border-radius:12px;padding:6px 4px;text-align:center;font-size:11.5px;font-weight:700;display:grid}
+.lz-stats b{font-family:var(--f-num);font-size:20px;color:#F5C543;line-height:1.2}
+.lz-steps{list-style:none;margin:0;padding:10px 14px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#fff;border-bottom:1.5px solid #DEDEEA}
+.lz-steps li{display:grid;justify-items:center;font-size:12px;font-weight:700;color:#6b6b90;text-align:center;position:relative}
+.lz-steps b{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#fff;font-size:15px;margin-bottom:2px}
+.lz-steps li+li::before{content:"›";position:absolute;left:-8px;top:4px;color:#b5b5cc;font-weight:900}
+.sheet.lz section{padding:12px 14px 4px;display:grid;gap:8px}
+.sheet.lz h4{margin:0;font-size:16px;font-weight:900}
+.lz-cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.lz-cats button{flex:none;border:1.5px solid #DEDEEA;background:#fff;color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13.5px;font-weight:900;cursor:pointer}
+.lz-cats button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.lz-list{display:grid;gap:8px}
+.lz-d{display:flex;gap:10px;align-items:center;background:#fff;border:1.5px solid #DEDEEA;border-radius:14px;padding:9px 10px}
+.lz-ic{font-size:24px;flex:none;width:38px;height:38px;display:grid;place-items:center;background:#FFF3E6;border-radius:12px}
+.lz-dt{flex:1;min-width:0;display:grid;gap:1px}.lz-dt b{font-size:14.5px;line-height:1.3}.lz-dt small{font-size:12px;color:#6b6b90;font-weight:700}.lz-dt i{font-style:normal;font-size:11.5px;color:#4A3F8F;font-weight:700}
+.lz-r{flex:none;display:grid;gap:4px;justify-items:end}
+.lz-v{font-family:var(--f-num);font-size:13px;font-weight:900;color:#DD4F3C;white-space:nowrap}
+.lz-pk{border:1.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:4px 10px;font:inherit;font-size:12.5px;font-weight:900;cursor:pointer;white-space:nowrap}
+.lz-pk.on{background:var(--green);border-color:var(--green);color:#fff}
+.lz-tag{font-size:11.5px;font-weight:900;color:#9a4a0a;background:#FFF3E6;border-radius:999px;padding:3px 8px;white-space:nowrap}
+.lz-w.got{background:#F2FBF5;border-color:#bfe3cf}
+.lz-sum{margin:10px 14px 0;background:#FFF8D6;border:1.5px dashed #E8B53A;border-radius:14px;padding:10px 12px;font-weight:700;font-size:14px}
+.lz-sum b{font-family:var(--f-num);font-size:20px;color:#DD4F3C}
+.lz-fine{margin:0;font-size:11.5px!important;color:#6b6b90;font-weight:700!important}
+.sheet.lz .acts{padding:12px 14px 4px}
+.sheet.lz>.lz-fine{padding:0 14px 14px;text-align:center}
 </style>
 
 <div class="outer">
@@ -858,7 +897,7 @@ function meState(){const t=S.me;if(!t)return"none";if(S.serving.includes(t))retu
 
 /* ================= toast / modal / guide ================= */
 function toast(kind,title,body,ms){
-  const lab={sms:["簡訊","簡訊・叫號說"],info:["提醒",HOME],promo:["優惠","門市優惠・你已同意接收"]}[kind];
+  const lab={sms:["簡訊","簡訊・叫號說"],info:["提醒",HOME],promo:["優惠",`門市優惠・${HOME}`]}[kind];
   $("#toast").innerHTML=`<div class="toast ${kind}" role="status"><div class="ic">${lab[0]}</div><div><small>${lab[1]}</small><b>${esc(title)}</b>${body?`<p>${esc(body)}</p>`:""}</div></div>`;
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").innerHTML="",ms||5200);
   $("#toast").firstChild.onclick=()=>{clearTimeout(toastTimer);$("#toast").innerHTML=""};
@@ -1411,12 +1450,13 @@ function queueHTML(){
     <span class="hint">◀ 拖曳・點角色看排隊狀態 ▶</span>
   </div>
   ${pickupTopHTML()}
+  ${lazyBanHTML()}
   ${has?"":takeHTML()}
   ${has||LIVE.on?"":resvHTML()}
   ${videosHTML(KNOW_VIDEOS,"取號前，先看懂")}`;
 }
 function bindQueue(){
-  bindLive();bindPickup();Q3.mount($("#scene"));
+  bindLive();bindLazyOpen();bindPickup();Q3.mount($("#scene"));
   if(!(meState()==="waiting"||meState()==="called")){bindTake();bindResv()}
   bindVideos();
 }
@@ -1562,7 +1602,7 @@ function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.s
 /* ================= 門市優惠：必買懶人包＋優惠券（示意內容）。優惠與預選綁在號碼上 → 免登入也能用，櫃台叫到號碼就看得到 ================= */
 const QD=()=>window.QTLive||{DEALS:{},COUPONS:{},dealsFor:()=>[]};
 function isWalk(t){return !U.viaLine&&(t.src||"app")!=="line"}
-function savePk(arr){const t=S.me;if(!t)return;t.pk=arr;if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
+function savePk(arr){const t=S.me;if(!t)return;const first=arr.length>((t.pk||[]).length)&&!(t.cp||[]).includes("c100");t.pk=arr;if(first)setTimeout(()=>grantCp("c100","第一次預選"),0);if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
 function grantCp(id,why){const c=QD().COUPONS[id];if(!c)return;
   if(!S.me||!["waiting","called"].includes(meState())){U.pendCp=U.pendCp||[];if(!U.pendCp.includes(id)){U.pendCp.push(id);toast("promo",`獲得 ${c.v}${c.u}券`,`${c.t}。取號後會自動加到你的號碼上。`,4500)}return}
   const t=S.me,cur=t.cp||[];if(cur.includes(id)){toast("info","這張券已經領過了","每張號碼同一種券只能領一次。",3500);return}
@@ -1575,15 +1615,54 @@ function dealsBoxHTML(t,st){const D=QD(),walk=isWalk(t),ids=D.dealsFor(t.cat,wal
   const body=ids.map((id,i)=>{const d=D.DEALS[id];if(!d)return "";const on=pk.includes(id);
     const btn=d.walk?((t.cp||[]).includes("exp100")?`<span class="dl-ck on">✓ 已領券</span>`:`<button type="button" class="dl-ck" data-exp="1">我在體驗區</button>`):`<button type="button" class="dl-ck ${on?"on":""}" data-pick="${id}" aria-pressed="${on}">${on?"✓ 已選":"＋ 預選"}</button>`;
     return `<div class="dl"><span class="dl-n">${quick?d.ic:i+1}</span><span class="dl-t"><b>${esc(d.t)}</b><small>${esc(d.s)}</small></span>${btn}</div>`}).join("");
-  const inner=`<h4>${title}</h4>${sub?`<p class="muted" style="margin:-4px 0 0">${sub}</p>`:""}${body}${pk.length?`<p class="dl-done">✅ 已預選 ${pk.length} 項，櫃台叫到 ${t.no} 時就會看到</p>`:""}`;
+  const inner=`<h4 class="dl-h">${title}<button type="button" class="lz-open" data-lazy="1">📒 懶人包</button></h4>${sub?`<p class="muted" style="margin:-4px 0 0">${sub}</p>`:""}${body}${pk.length?`<p class="dl-done">✅ 已預選 ${pk.length} 項，櫃台叫到 ${t.no} 時就會看到</p>`:""}`;
   return PREF.big?`<details class="box dealbox"><summary>🛍️ 今天的門市優惠（${ids.length} 項）</summary>${inner}</details>`:`<div class="box dealbox">${inner}</div>`}
 function couponsBoxHTML(t,st){const C=QD().COUPONS,cp=t.cp||[];const walk=isWalk(t);
   const cards=cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・今天・限本門市</small></span></div>`:""}).join("");
   const hint=cp.length?"":`<p class="muted" style="margin:0">玩下面的小遊戲過關，就能拿 $100 配件券 🎮</p>`;
   const toLine=walk&&cp.length&&!U.lineBound&&typeof lineBindUrl==="function"?`<a class="cpn-line" href="${lineBindUrl(t)}" target="_blank" rel="noopener"><span class="lb-ic">LINE</span><span><b>存到 LINE，優惠券才不會不見</b><small>網頁關掉就找不到了，加好友一鍵帶過去</small></span></a>`:"";
   return `<div class="box cpnbox"><h4>🎁 我的優惠券 <small class="muted">${cp.length} 張</small></h4>${cards}${hint}${toLine}</div>`}
-function bindDeals(){document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{const id=b.dataset.pick,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id))});
+function bindDeals(){bindLazyOpen();document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{const id=b.dataset.pick,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id))});
   const x=document.querySelector("[data-exp]");if(x)x.onclick=()=>modal(`<div class="sheet"><h3>體驗區任務</h3><p>到門市體驗區試用 iPhone Duo，掃旁邊立牌上的 QR Code，就能領 $100 配件券。</p><p class="muted">（Demo：直接按下面的按鈕模擬掃碼）</p><div class="acts"><button class="btn ghost" type="button" data-m="x">等一下</button><button class="btn pk-go" type="button" data-m="ok">我掃好了</button></div></div>`,m=>m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.m==="ok")grantCp("exp100","體驗任務完成")}))}
+
+/* ================= 門市必買優惠懶人包：一頁看完今天這家店值得買什麼、怎麼拿券、去哪裡拿 ================= */
+const LZ_CATS=["續約/換約/新申辦","網路取貨/預約取件","異動/諮詢/維修","繳費/儲值"];
+const LZ_ALL=["acc100","case","add9"];   // 人人都能用
+const lzSave=ids=>ids.reduce((a,id)=>a+((QD().DEALS[id]||{}).per?0:((QD().DEALS[id]||{}).sv||0)),0);
+function lzMax(){const D=QD();let m=0;LZ_CATS.forEach(c=>{m=Math.max(m,lzSave(D.dealsFor(c,false).concat(LZ_ALL.filter(x=>!D.dealsFor(c,false).includes(x)))))});return m}
+function lazyBanHTML(){const D=QD(),n=Object.keys(D.DEALS||{}).length;if(!n)return "";
+  return `<button type="button" class="lzban" data-lazy="1"><span class="lzb-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6M9 11h4"/></svg></span><span class="lzb-t"><small>${esc(HOME)}・今天</small><b>門市必買優惠懶人包</b><em>${n} 項優惠・最多省 $${lzMax().toLocaleString()}・先看再取號</em></span><span class="lzb-go">打開 ›</span></button>`}
+function bindLazyOpen(){document.querySelectorAll("[data-lazy]").forEach(b=>b.onclick=()=>openLazy())}
+function lzDeal(id,canPick,pk){const d=QD().DEALS[id];if(!d)return "";const on=pk.includes(id);
+  const val=d.free?d.free:d.sv?`省 $${d.sv.toLocaleString()}${d.per?"/月":""}`:"";
+  const act=d.walk?`<span class="lz-tag">到店才有</span>`:canPick?`<button type="button" class="lz-pk ${on?"on":""}" data-lzpk="${id}" aria-pressed="${on}">${on?"✓ 已預選":"＋ 預選"}</button>`:"";
+  return `<div class="lz-d"><span class="lz-ic" aria-hidden="true">${d.ic}</span><span class="lz-dt"><b>${esc(d.t)}</b><small>${esc(d.s)}</small><i>📍 ${esc(d.at||"櫃台")}</i></span><span class="lz-r">${val?`<span class="lz-v">${val}</span>`:""}${act}</span></div>`}
+function lazyHTML(){const D=QD(),C=D.COUPONS,st=meState(),has=st==="waiting"||st==="called",t=has?S.me:null,pk=(t&&t.pk)||[],cp=(t&&t.cp)||U.pendCp||[];
+  const cat=U.lzCat||(t&&t.cat)||U.picked||LZ_CATS[0];const ids=D.dealsFor(cat,false);
+  const sum=lzSave(ids.concat(LZ_ALL.filter(x=>!ids.includes(x))));
+  const ways=[["c100","取號後，第一次預選就送",null],["g100","玩「小小店長」或「防詐小偵探」過關","game"],["exp100","到體驗區試 iPhone Duo、掃立牌 QR","exp"]];
+  return `<div class="sheet lz" role="document">
+    <div class="lz-hero"><button type="button" class="lz-x" data-lzx aria-label="關閉">✕</button><small>${esc(HOME)}・今天</small><h3>📒 門市必買優惠懶人包</h3><p>30 秒看完，進店就知道怎麼下手</p>
+      <div class="lz-stats"><span><b>${Object.keys(D.DEALS).length}</b>項優惠</span><span><b>$${lzMax().toLocaleString()}</b>最多省</span><span><b>${cp.length}</b>張券在手</span></div></div>
+    <ol class="lz-steps"><li><b>看</b>挑你要的</li><li><b>選</b>${has?"按預選":"取號後預選"}</li><li><b>拿</b>櫃台先備好</li></ol>
+    <section><h4>① 依你要辦的事</h4><div class="lz-cats" role="tablist">${LZ_CATS.map(c=>`<button type="button" role="tab" data-lzc="${c}" aria-selected="${c===cat}">${c.split("/")[0]}${t&&t.cat===c?" ・我":""}</button>`).join("")}</div>
+      <div class="lz-list">${ids.map(id=>lzDeal(id,has,pk)).join("")}</div></section>
+    <section><h4>② 人人都能用</h4><div class="lz-list">${LZ_ALL.filter(x=>!ids.includes(x)).map(id=>lzDeal(id,has,pk)).join("")}${lzDeal("exp",false,pk)}</div></section>
+    <div class="lz-sum">💰 辦「${esc(cat.split("/")[0])}」照這樣買，今天約省 <b>$${sum.toLocaleString()}</b></div>
+    <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?"✅":"🎁"}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?`<button type="button" class="lz-pk" data-lzgo="${go}">去拿</button>`:""}</span></div>`}).join("")}</div>
+      <p class="lz-fine">每張號碼同一種券限領 1 次・券和預選都綁在號碼上，到櫃台自動帶入，不用出示</p></section>
+    <div class="acts">${has?`<button class="btn pk-go" type="button" data-lzx>${pk.length?`好了，已預選 ${pk.length} 項`:"看完了"}</button>`:`<button class="btn pk-go" type="button" data-lztake>去取號，開始預選</button>`}</div>
+    <p class="lz-fine">示意優惠內容・實際以門市公告為準</p></div>`}
+function openLazy(){const scrollY=($("#modal .sheet.lz")||{}).scrollTop||0;
+  modal(lazyHTML(),m=>{const sh=m.querySelector(".sheet.lz");if(sh)sh.scrollTop=scrollY;
+    m.querySelectorAll("[data-lzx]").forEach(b=>b.onclick=closeModal);
+    m.querySelector(".modal").onclick=e=>{if(e.target.classList.contains("modal"))closeModal()};
+    m.querySelectorAll("[data-lzc]").forEach(b=>b.onclick=()=>{U.lzCat=b.dataset.lzc;openLazy()});
+    m.querySelectorAll("[data-lzpk]").forEach(b=>b.onclick=()=>{const id=b.dataset.lzpk,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id));openLazy();setTimeout(openLazy,60)});
+    m.querySelectorAll("[data-lzgo]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.lzgo==="game")openGame("lm");else grantCpExp()});
+    const tk=m.querySelector("[data-lztake]");if(tk)tk.onclick=()=>{closeModal();if(U.lzCat&&!U.picked)U.picked=U.lzCat;go("queue");setTimeout(()=>{const e=$("#take");if(e)e.scrollIntoView({behavior:"smooth",block:"start"})},80)};
+  })}
+function grantCpExp(){modal(`<div class="sheet"><h3>體驗區任務</h3><p>到門市體驗區試用 iPhone Duo，掃旁邊立牌上的 QR Code，就能領 $100 配件券。</p><p class="muted">（Demo：直接按下面的按鈕模擬掃碼）</p><div class="acts"><button class="btn ghost" type="button" data-m="x">等一下</button><button class="btn pk-go" type="button" data-m="ok">我掃好了</button></div></div>`,m=>m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.m==="ok")grantCp("exp100","體驗任務完成")}))}
 /* ================= 新機開賣日：預約取機（開關打開才出現，預設關閉，不影響一般取號） ================= */
 const PK_SLOTS=["10:00","10:30","11:00","11:30","13:00","13:30"],PK_MODEL="iPhone Duo",PK_ORD="●●●●2048";
 const hsh=x=>[...String(x)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
@@ -2172,6 +2251,7 @@ function adoptViaSim(){if(!VIA||!VIA.bind||(typeof LIVE!=="undefined"&&LIVE.on))
 function openVia(o){if(!o)return;
   if(o==="learn"){go("learn");return}
   if(o.startsWith("game:")){openGame(o.slice(5));return}
+  if(o==="lazy"){openLazy();return}
   if(o.startsWith("v:")){const lbl=o.slice(2);for(const tab of ["mine","queue","learn"]){if(U.tab!==tab){if(tab==="mine")U.mineOK=true;go(tab)}
     const v=[...document.querySelectorAll("video")].find(x=>(x.getAttribute("aria-label")||"").includes(lbl));
     if(v){v.scrollIntoView({block:"center"});openPlayer(v);const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});return}}}}
