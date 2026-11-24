@@ -1838,6 +1838,7 @@ function mineEmptyHTML(){const cats=Object.keys(CATS),cat=CATS[U.picked]?U.picke
     <div class="me0-st"><span><b>${S.queue.length}</b>組正在等</span><span><b>${catWait(cat)}</b>分鐘<small>辦${esc(cat.split("/")[0])}</small></span></div>
     <button class="btn blue" id="goTake">去取號</button></div>
   ${todo3HTML(null,null,false)}
+  ${videosHTML()}
   <button type="button" class="t3-more" id="toLearn2">${QI("game")}<span><b>等候時看看</b><small>小遊戲・防詐影片・今天的免費課程</small></span><i>›</i></button>`}
 
 function lzGo(k){if(k==="game")goGames();else if(k==="video")goFraudVideo();else if(k==="quiz")goQuiz();else grantCpExp()}
