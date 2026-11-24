@@ -299,7 +299,7 @@ function dealsHTML(t,i){const D=Q.DEALS||{},C=Q.COUPONS||{},pk=t.pk||[],cp=t.cp|
   return `<div class="dls${soon?" soon":""}">${soon?'<b class="dsoon">⏰ 該備貨了</b>':""}${pk.map(id=>`<span class="dpk">${Q.icon?Q.icon(id):""}${esc((D[id]||{}).prep||(D[id]||{}).t||id)}</span>`).join("")}${cp.map(id=>`<span class="dcp">${Q.icon?Q.icon(id):""}${esc((C[id]||{}).t||id)}</span>`).join("")}</div>`}
 function pkBoxHTML(){const b=V.all.filter(t=>t.st==="b");if(!b.length)return "";
   return `<div class="box pkbox"><h2>今天預約取機・還沒報到<span class="tag pk">${b.length} 位</span></h2>${b.map(t=>`<div class="q"><div class="n">${t.no}<small>${esc(t.slot||"")} 取機</small></div><div class="row"><span class="tag pk">未報到</span></div>${pkLine(t)}</div>`).join("")}<p class="muted">顧客到店按「我到門市了」報到後，會自動排進等候名單（優先叫號）。</p></div>`}
-const extra=t=>`${t.k==="r"?`<span class="tag pk">取機預約${t.slot?"・"+esc(t.slot):""}</span>`:""}${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
+const extra=t=>`${t.k==="r"?`<span class="tag pk">取機預約${t.slot?"・"+esc(t.slot):""}</span>`:""}${t.src==="line"?'<span class="tag green">LINE</span>':""}${t.ap&&Date.now()-t.ap<25000?'<span class="tag white">App 開著</span>':""}${t.held?'<span class="tag white">延後過</span>':""}${t.p?'<span class="tag white">優先</span>':""}${t.lang&&LANGS[t.lang]?`<span class="tag lilac">${LANGS[t.lang]}</span>`:""}`;
 function render(){
   if(!sess)return;
   $("#storeName").textContent=(sess.store||"")+"・櫃台叫號台";

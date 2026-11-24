@@ -1131,7 +1131,7 @@ function fullRender(){
   const b=$("#appBody"),y=b.scrollTop;
   const pv=[...b.querySelectorAll("video")].find(v=>!v.paused),keep=pv?{src:pv.getAttribute("src"),t:pv.currentTime}:null;
   const vx=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
-  b.innerHTML=(U.viaLine&&meState()!=="none"&&meState()!=="done"?`<div class="box viabox"><span class="lb-ic" aria-hidden="true">LINE</span><p><b>通知會從 LINE 傳給你</b><br>可以放心關掉這頁；或留下來看影片、玩遊戲、上小教室。</p></div>`:"")+({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();   // 從 LINE 打開：每一頁最上面都提醒通知走 LINE
+  b.innerHTML=(U.viaLine&&meState()!=="none"&&meState()!=="done"?`<div class="box viabox"><span class="lb-ic" aria-hidden="true">LINE</span><p><b>通知會跟著你</b><br>停在這頁：叫號直接在這裡響（聲音＋震動＋全螢幕）。離開這頁：改由 LINE 通知你，不會漏掉。</p></div>`:"")+({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();   // 從 LINE 打開：每一頁最上面都提醒通知走 LINE
   ({queue:bindQueue,mine:bindMine,learn:bindLearn})[U.tab]();
   const reset=U.carReset;U.carReset=false;b.scrollTop=y;if(!reset)document.querySelectorAll(".vids").forEach((v,k)=>{if(vx[k])v.scrollLeft=vx[k]});else document.querySelectorAll(".vids").forEach(v=>{v.scrollLeft=0;v.dispatchEvent(new Event("scroll"))});
   if(keep){const v=b.querySelector(`video[src="${keep.src}"]`);if(v){v.preload="auto";v.currentTime=keep.t;v.play().catch(()=>{})}}
@@ -1587,7 +1587,7 @@ function doTake(){
 function afterTake(){
   U.draft="";U.chips=[];U.writeOpen=false;U.prio=false;U.bubble=S.me.no;U.docs=U.preDocs&&U.picked===S.me.cat?U.docs:new Set();U.preDocs=false;U.out=false;U.done=null;U.rating={};U.contact=null;U.note="";U.fresh=true;
   Q3.sync();go("mine");buzz(60);
-  if(U.viaLine)toast("info",`已帶入號碼 ${S.me.no}`,"這張號碼是在 LINE 取的，叫號會從 LINE 通知你。",4200);else toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
+  if(U.viaLine)toast("info",`已帶入號碼 ${S.me.no}`,"停在這頁時，叫號會直接在這裡響；離開這頁，就改由 LINE 通知你。",4200);else toast("sms",`已取號 ${S.me.no}`,`簡訊已傳到 ${maskPhone(U.phone)||"你的手機"}${S.me.family?`，也通知了${S.me.family.name}`:""}。點簡訊連結隨時回到號碼卡。`);
   setTimeout(()=>tip("took"),1200);
   if(U.pendCp&&U.pendCp.length&&S.me&&!LIVE.on){S.me.cp=[...new Set([...(S.me.cp||[]),...U.pendCp])];U.pendCp=[]}
 }
@@ -1637,6 +1637,11 @@ function calledInner(){const t=S.me;if(meState()!=="called")return"";const d=S.s
 /* ================= 門市優惠：必買懶人包＋優惠券（示意內容）。優惠與預選綁在號碼上 → 免登入也能用，櫃台叫到號碼就看得到 ================= */
 const QI=(k,o)=>(window.QTLive&&QTLive.icon?QTLive.icon(k,o):"");
 const QD=()=>window.QTLive||{DEALS:{},COUPONS:{},dealsFor:()=>[]};
+/* 通知跟著人走：App 開在前景時，每 5 秒記一下「我在 App 上」，LINE 叫號時就知道不用再響一次 */
+let apLast=0;function apBeat(force){const st=meState();if(!S.me||!(st==="waiting"||st==="called"))return;const vis=document.visibilityState==="visible",now=Date.now();
+  try{localStorage.setItem("qt-ap:"+S.me.no,vis?String(now):"0")}catch(e){}
+  if(LIVE.on&&LIVE.conn&&LIVE.myId&&(force||now-apLast>15000)){apLast=now;LIVE.conn.patch("/tickets/"+LIVE.myId,{ap:vis?now:0}).catch(()=>{})}}
+setInterval(apBeat,5000);document.addEventListener("visibilitychange",()=>apBeat(true));addEventListener("pagehide",()=>{try{S.me&&localStorage.setItem("qt-ap:"+S.me.no,"0")}catch(e){}});
 function isWalk(t){return !U.viaLine&&(t.src||"app")!=="line"}
 function savePk(arr){const t=S.me;if(!t)return;const first=arr.length>((t.pk||[]).length)&&!(t.cp||[]).includes("c100");t.pk=arr;if(first)setTimeout(()=>grantCp("c100","第一次預選"),0);if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
 function grantCp(id,why){const c=QD().COUPONS[id];if(!c)return;

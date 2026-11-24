@@ -625,6 +625,8 @@ function menu(k,said){
     bot(id?"這次的服務你已經評過分了，謝謝你 🙏":"辦完業務之後，這裡會請你幫櫃台的服務打個分數。");return}
   if(k==="more"){me("更多服務");bot(`<div class="card"><div class="hd">更多服務</div><div class="bd grid3">${[["mine","帳單查詢"],["point","會員點數"],["phone","維修進度"]].map(([i,l])=>`<span>${svg(i)}${l}</span>`).join("")}</div><div class="ft"><button data-card="take">要到門市辦？先線上取號</button></div></div>`);return}
 }
+/* 客人正開著叫號說 App（App 每 5 秒回報一次）→ LINE 不再重複響鈴，只留一份紀錄 */
+function appOn(t){const now=Date.now();if(t&&t.ap&&now-t.ap<25000)return true;try{const v=+localStorage.getItem("qt-ap:"+t.no)||0;return now-v<12000}catch(e){return false}}
 function calledCard(t,title){return `<div class="card or"><div class="hd">🔔 ${title}・${esc(state.tkStore||myStore())}</div><div class="bd"><div class="no">${t.no}</div><div class="desk">請到 ${t.desk||1} 號櫃台</div><p>櫃台已經看過你寫的需求，正在等你。</p>${preparedHTML(t)}</div><div class="ft"><button data-card="here">我到了</button><button data-card="hold" data-hold="${t.id}">我還要 5 分鐘（往後延 2 組）</button><a class="share" href="#" data-card="share" data-tid="${t.id}">↗ 分享號碼給家人</a></div></div>`}
 
 /* ---------- LIFF：選擇門市 ---------- */
@@ -904,7 +906,7 @@ function onData(){
   if(state.myId&&!t){if(!state.notified.gone){state.notified.gone=1;bot("門市的叫號已重新開始，之前的號碼失效了。需要的話請重新取號。");state.myId=null;save()}}
   else if(t){
     if(t.st==="w"){const w=waitOf(t);if(w.ahead<=2&&!state.notified.near){state.notified.near=1;save();bot(`還有 ${w.ahead} 組就到你囉，可以開始往門市走了 🚶 不用急，大約 ${w.mins} 分鐘。`);bot(ticketCard(t,"⏰ 快輪到你了"));if(state.shared.length)bot(`（已同步提醒：${state.shared.map(esc).join("、")}）`);try{navigator.vibrate&&navigator.vibrate([150,80,150])}catch(e){}}}
-    if(t.st==="c"){const sig=t.id+":"+(t.ct||0)+":"+(t.rc||0);if(sig!==state.calledSig){const re=!!state.calledSig&&state.calledSig.split(":")[0]===t.id;state.calledSig=sig;save();bot(re?"櫃台還在等你喔～到了跟櫃台說一聲就好 🙂":"到你了！🙌 慢慢走過來就好，櫃台已經看過你的需求、準備好了。");bot(calledCard(t,re?"再次提醒":"輪到你了"));if(!re&&state.shared.length)bot(`（已同步通知：${state.shared.map(esc).join("、")}）`);announce(t.no,t.desk||1)}}
+    if(t.st==="c"){const sig=t.id+":"+(t.ct||0)+":"+(t.rc||0);if(sig!==state.calledSig){const re=!!state.calledSig&&state.calledSig.split(":")[0]===t.id;state.calledSig=sig;save();const onApp=appOn(t);bot(onApp?`📱 你現在開著叫號說 App，已經在 App 上響鈴叫你了。這裡也留一份，方便你等一下查看：`:re?"櫃台還在等你喔～到了跟櫃台說一聲就好 🙂":"到你了！🙌 慢慢走過來就好，櫃台已經看過你的需求、準備好了。");bot(calledCard(t,re?"再次提醒":"輪到你了"));if(!re&&state.shared.length)bot(`（已同步通知：${state.shared.map(esc).join("、")}）`);if(!onApp)announce(t.no,t.desk||1)}}
     if(t.st==="d"&&!state.doneShown){state.doneShown=true;state.lastDone=t.id;save();bot("辛苦了！今天的事都辦好了 🎉 花 10 秒幫櫃台打個分數，讓我們做得更好。");bot(doneCard(t))}
     if(t.st==="s"&&!state.notified.skip){state.notified.skip=1;save();bot(`😢 ${t.no} 已過號。櫃台叫號時沒有等到你。\n可以重新取號，或直接洽櫃台人員。`)}
   }
