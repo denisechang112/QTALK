@@ -1647,7 +1647,7 @@ function dealsBoxHTML(t,st){const D=QD(),walk=isWalk(t),ids=D.dealsFor(t.cat,wal
   return PREF.big?`<details class="box dealbox"><summary><span class="hic">${QI("bag")}</span>今天的門市優惠（${ids.length} 項）</summary>${inner}</details>`:`<div class="box dealbox">${inner}</div>`}
 function couponsBoxHTML(t,st){const C=QD().COUPONS,cp=t.cp||[];const walk=isWalk(t);
   const cards=cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・今天・限本門市</small></span></div>`:""}).join("");
-  const hint=cp.length?"":`<p class="muted" style="margin:0">玩下面的小遊戲過關，就能拿 $100 配件券 🎮</p>`;
+  const hint=cp.length?"":`<p class="muted" style="margin:0">看完 1 分鐘防詐影片，或玩小遊戲過關，就能拿 $100 配件券</p>`;
   const toLine=walk&&cp.length&&!U.lineBound&&typeof lineBindUrl==="function"?`<a class="cpn-line" href="${lineBindUrl(t)}" target="_blank" rel="noopener"><span class="lb-ic">LINE</span><span><b>存到 LINE，優惠券才不會不見</b><small>網頁關掉就找不到了，加好友一鍵帶過去</small></span></a>`:"";
   return `<div class="box cpnbox"><h4><span class="hic">${QI("gift")}</span>我的優惠券 <small class="muted">${cp.length} 張</small></h4>${cards}${hint}${toLine}</div>`}
 function bindDeals(){bindLazyOpen();document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{const id=b.dataset.pick,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id))});
@@ -1668,7 +1668,7 @@ function lzDeal(id,canPick,pk){const d=QD().DEALS[id];if(!d)return "";const on=p
 function lazyHTML(){const D=QD(),C=D.COUPONS,st=meState(),has=st==="waiting"||st==="called",t=has?S.me:null,pk=(t&&t.pk)||[],cp=(t&&t.cp)||U.pendCp||[];
   const cat=U.lzCat||(t&&t.cat)||U.picked||LZ_CATS[0];const ids=D.dealsFor(cat,false);
   const sum=lzSave(ids.concat(LZ_ALL.filter(x=>!ids.includes(x))));
-  const ways=[["c100","取號後，第一次預選就送",null],["g100","玩「小小店長」或「防詐小偵探」過關","game"],["exp100","到體驗區試 iPhone Duo、掃立牌 QR","exp"]];
+  const ways=[["c100","取號後，第一次預選就送",null],["g100","二選一：看完 1 分鐘防詐影片，或玩小遊戲過關",[["video","看影片"],["game","玩遊戲"]]],["exp100","到體驗區試 iPhone Duo、掃立牌 QR",[["exp","去拿"]]]];
   return `<div class="sheet lz" role="document">
     <div class="lz-hero"><button type="button" class="lz-x" data-lzx aria-label="關閉">✕</button><small>${esc(HOME)}・今天</small><h3><span class="lz-hic">${QI("book",{c:"#2D2E67",a:"#E8893A"})}</span>門市必買優惠懶人包</h3><p>30 秒看完，進店就知道怎麼下手</p>
       <div class="lz-stats"><span><b>${Object.keys(D.DEALS).length}</b>項優惠</span><span><b>$${lzMax().toLocaleString()}</b>最多省</span><span><b>${cp.length}</b>張券在手</span></div></div>
@@ -1677,7 +1677,7 @@ function lazyHTML(){const D=QD(),C=D.COUPONS,st=meState(),has=st==="waiting"||st
       <div class="lz-list">${ids.map(id=>lzDeal(id,has,pk)).join("")}</div></section>
     <section><h4>② 人人都能用</h4><div class="lz-list">${LZ_ALL.filter(x=>!ids.includes(x)).map(id=>lzDeal(id,has,pk)).join("")}${lzDeal("exp",false,pk)}</div></section>
     <div class="lz-sum"><span class="lz-ic sm">${QI("coins")}</span><span>辦「${esc(cat.split("/")[0])}」照這樣買，今天約省 <b>$${sum.toLocaleString()}</b></span></div>
-    <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?QI("check",{a:"#4BA882"}):QI(QTLive.CP_ICON[id])}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?`<button type="button" class="lz-pk" data-lzgo="${go}">去拿</button>`:""}</span></div>`}).join("")}</div>
+    <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?QI("check",{a:"#4BA882"}):QI(QTLive.CP_ICON[id])}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?go.map(([k,l])=>`<button type="button" class="lz-pk" data-lzgo="${k}">${l}</button>`).join(""):""}</span></div>`}).join("")}</div>
       <p class="lz-fine">每張號碼同一種券限領 1 次・券和預選都綁在號碼上，到櫃台自動帶入，不用出示</p></section>
     <div class="acts">${has?`<button class="btn pk-go" type="button" data-lzx>${pk.length?`好了，已預選 ${pk.length} 項`:"看完了"}</button>`:`<button class="btn pk-go" type="button" data-lztake>去取號，開始預選</button>`}</div>
     <p class="lz-fine">示意優惠內容・實際以門市公告為準</p></div>`}
@@ -1687,10 +1687,15 @@ function openLazy(){const scrollY=($("#modal .sheet.lz")||{}).scrollTop||0;
     m.querySelector(".modal").onclick=e=>{if(e.target.classList.contains("modal"))closeModal()};
     m.querySelectorAll("[data-lzc]").forEach(b=>b.onclick=()=>{U.lzCat=b.dataset.lzc;openLazy()});
     m.querySelectorAll("[data-lzpk]").forEach(b=>b.onclick=()=>{const id=b.dataset.lzpk,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id));openLazy();setTimeout(openLazy,60)});
-    m.querySelectorAll("[data-lzgo]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.lzgo==="game")goGames();else grantCpExp()});
+    m.querySelectorAll("[data-lzgo]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.lzgo==="game")goGames();else if(b.dataset.lzgo==="video")goFraudVideo();else grantCpExp()});
     const tk=m.querySelector("[data-lztake]");if(tk)tk.onclick=()=>{closeModal();if(U.lzCat&&!U.picked)U.picked=U.lzCat;go("queue");setTimeout(()=>{const e=$("#take");if(e)e.scrollIntoView({behavior:"smooth",block:"start"})},80)};
   })}
 /* 懶人包「去拿」遊戲券：帶到小遊戲選擇區（小小店長／防詐偵探），讓客人自己挑 */
+/* 防詐任務的另一條路：看完〈1 分鐘看懂：12 種常見詐騙〉也能拿 $100 券（長輩不用玩遊戲） */
+function goFraudVideo(){go("learn");
+  const v=[...document.querySelectorAll(".vframe video")].find(x=>(x.getAttribute("src")||"")===FRAUD_EDU.src);
+  if(v){v.closest(".box")&&v.closest(".box").scrollIntoView({block:"center"});try{v.currentTime=0}catch(e){}openPlayer(v);const pr=v.play();if(pr&&pr.catch)pr.catch(()=>{});toast("info","看到最後就送 $100 配件券 🎁")}}
+document.addEventListener("ended",e=>{const v=e.target;if(v&&v.tagName==="VIDEO"&&(v.getAttribute("src")||"")===FRAUD_EDU.src)grantCp("g100","看完防詐影片")},true);
 function goGames(){const st=meState();go(st==="waiting"&&document.querySelector?"mine":"learn");
   setTimeout(()=>{let g=document.querySelector("#main .gamecard,.gamecard");if(!g&&U.tab==="mine"){go("learn");g=document.querySelector(".gamecard")}
     if(g){g.scrollIntoView({behavior:"smooth",block:"center"});g.classList.remove("flash");void g.offsetWidth;g.classList.add("flash")}},120)}
