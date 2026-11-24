@@ -1796,11 +1796,12 @@ function mineHTML(){
   ${called?"":`${notifyRowHTML(t,w)}
   ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，把證件拿出來。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
   ${todo3HTML(t,docs,near)}
+  ${near?"":videosHTML()}
   ${near?"":`<button type="button" class="t3-more" id="toLearn2">${QI("game")}<span><b>等候時看看</b><small>小遊戲・防詐影片・今天的免費課程</small></span><i>›</i></button>`}`}`;
 }
 function doneHTML(){
   const t=S.me;
-  if(!U.done)return `<div class="box" style="text-align:center" id="rateBox"><span class="tagc green" style="justify-self:center">${t.no} 已辦理完成</span><h4 style="font-size:20px">今天的問題解決了嗎？</h4><p class="muted" style="margin-top:-4px">點一下表情，接著 3 題快速評分，不用 10 秒。</p><div class="faces"><button data-f="good" aria-label="解決了">😀</button><button data-f="mid" aria-label="普通">😐</button><button data-f="bad" aria-label="沒解決">😞</button></div></div>${videosHTML()}`;
+  if(!U.done)return `<div class="box" style="text-align:center" id="rateBox"><span class="tagc green" style="justify-self:center">${t.no} 已辦理完成</span><h4 style="font-size:20px">今天的問題解決了嗎？</h4><p class="muted" style="margin-top:-4px">點一下表情，接著 3 題快速評分，不用 10 秒。</p><div class="faces"><button data-f="good" aria-label="解決了">😀</button><button data-f="mid" aria-label="普通">😐</button><button data-f="bad" aria-label="沒解決">😞</button></div></div>`;
   if(U.done!=="sent"){
     const qs=[["service","櫃台人員的服務"],["wait","等候時間"],["solved","問題處理的結果"]];
     const all=qs.every(([k])=>U.rating[k]);
@@ -1811,7 +1812,7 @@ function doneHTML(){
       <div class="q"><b>其他想說的 <small style="font-weight:700;color:var(--muted)">選填，可以不寫</small></b><textarea id="rateNote" maxlength="200" rows="3" placeholder="例如：櫃台人員很親切、希望假日多開一個櫃台……" style="width:100%;border:var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-size:16px;resize:vertical">${esc(U.note||"")}</textarea></div>
       <button class="cta" id="sendRate" ${all?"":"disabled"}>送出</button></div>`;
   }
-  return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>${videosHTML()}`;
+  return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>`;
 }
 /* 「我的號碼」只回答三件事：我幾號、還要等多久、輪到我要準備什麼。其他收成一張「3 件事」清單 */
 function notifyRowHTML(t,w){const hw=!t.held&&S.queue.indexOf(t)<S.queue.length-1;
