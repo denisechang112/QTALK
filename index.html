@@ -790,6 +790,24 @@ svg.qi{display:block}
 .me0-st b{font-family:var(--f-num);font-size:28px;line-height:1.1;color:var(--ink)}.me0-st small{font-size:11.5px;opacity:.75}
 .me0-h{font-weight:900;font-size:16px;margin:4px 2px -4px}
 .me0-go{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.me0-go .lz-pk{padding:8px 0;font-size:14px}
+
+/* 我的號碼：精簡版 */
+.mn-row{display:flex;gap:10px;align-items:center;background:#fff;border:1.5px solid #DEDEEA;border-radius:14px;padding:8px 12px;font-size:13.5px;font-weight:700;line-height:1.45}
+.mn-ic{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--yellow);font-size:16px}.mn-ic.ln{background:#06C755;color:#fff;font-size:10.5px;font-weight:900}
+.mn-t a{color:#06A04A;font-weight:900;white-space:nowrap}
+.mn-acts{display:flex;gap:8px;flex-wrap:wrap}.mn-acts:empty{display:none}
+.t3box{gap:8px!important}
+.t3{border:1.5px solid #DEDEEA;border-radius:14px;background:#fff;overflow:hidden}
+.t3.done{border-color:#bfe3cf;background:#F7FCF9}
+.t3-h{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:10px 12px;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.t3-ic{flex:none;width:42px;height:42px;border-radius:13px;border:1.5px solid #DEDEEA;background:#fff;display:grid;place-items:center}.t3-ic svg.qi{width:26px;height:26px}
+.t3-t{flex:1;display:grid;min-width:0}.t3-t b{font-size:15.5px}.t3-t small{font-size:12.5px;color:#6b6b90;font-weight:700}
+.t3-h i{font-style:normal;font-weight:900;font-size:20px;color:#9a9ab8;transition:transform .2s}.t3.open .t3-h i{transform:rotate(90deg)}
+.t3-b{padding:0 12px 12px;display:grid;gap:8px}
+.t3-p{margin:2px 0 0;font-size:13.5px;font-weight:700}
+.t3-exp{width:100%;padding:8px 10px!important;white-space:normal!important;text-align:center}
+.t3-more{display:flex;align-items:center;gap:10px;width:100%;border:var(--line);border-radius:16px;background:#fff;padding:10px 12px;font:inherit;color:var(--ink);text-align:left;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+.t3-more svg.qi{width:30px;height:30px;flex:none}.t3-more span{flex:1;display:grid}.t3-more small{font-size:12.5px;color:#6b6b90;font-weight:700}.t3-more i{font-style:normal;font-weight:900;font-size:20px}
 </style>
 
 <div class="outer">
@@ -1131,7 +1149,7 @@ function fullRender(){
   const b=$("#appBody"),y=b.scrollTop;
   const pv=[...b.querySelectorAll("video")].find(v=>!v.paused),keep=pv?{src:pv.getAttribute("src"),t:pv.currentTime}:null;
   const vx=[...document.querySelectorAll(".vids")].map(v=>v.scrollLeft);
-  b.innerHTML=(U.viaLine&&meState()!=="none"&&meState()!=="done"?`<div class="box viabox"><span class="lb-ic" aria-hidden="true">LINE</span><p><b>通知會跟著你</b><br>停在這頁：叫號直接在這裡響（聲音＋震動＋全螢幕）。離開這頁：改由 LINE 通知你，不會漏掉。</p></div>`:"")+({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();   // 從 LINE 打開：每一頁最上面都提醒通知走 LINE
+  b.innerHTML=(false&&U.viaLine&&meState()!=="none"&&meState()!=="done"?`<div class="box viabox"><span class="lb-ic" aria-hidden="true">LINE</span><p><b>通知會跟著你</b><br>停在這頁：叫號直接在這裡響（聲音＋震動＋全螢幕）。離開這頁：改由 LINE 通知你，不會漏掉。</p></div>`:"")+({queue:queueHTML,mine:mineHTML,learn:learnHTML})[U.tab]();   // 從 LINE 打開：每一頁最上面都提醒通知走 LINE
   ({queue:bindQueue,mine:bindMine,learn:bindLearn})[U.tab]();
   const reset=U.carReset;U.carReset=false;b.scrollTop=y;if(!reset)document.querySelectorAll(".vids").forEach((v,k)=>{if(vx[k])v.scrollLeft=vx[k]});else document.querySelectorAll(".vids").forEach(v=>{v.scrollLeft=0;v.dispatchEvent(new Event("scroll"))});
   if(keep){const v=b.querySelector(`video[src="${keep.src}"]`);if(v){v.preload="auto";v.currentTime=keep.t;v.play().catch(()=>{})}}
@@ -1772,20 +1790,13 @@ function mineHTML(){
   const t=S.me,docs=CATS[t.cat].docs,w=st==="waiting"?waitFor(t):null;
   const pop=U.fresh;U.fresh=false;
   const near=st==="waiting"&&w.ahead<=3;U.wasNear=near;
+  const called=st==="called";
   return `<div id="calledWrap">${calledInner()}</div>
   <div class="ticket ${pop?"pop":""}" id="ticketWrap">${ticketInner()}</div>
-  ${st==="waiting"?`<p class="note why" style="margin-top:-8px">⏱ 預估依據：${waitWhy(t)}</p>`:""}
-  ${st==="waiting"&&!t.held&&S.queue.indexOf(t)<S.queue.length-1?`<button class="btn wide" id="holdLater">我需要晚一點（往後延 2 組，只能用一次）</button>`:""}
-  ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，先把下面的證件準備好。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
-  ${st==="waiting"&&!near?`<button class="btn wide away ${U.out?"on":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>
-  <p class="note" style="margin-top:-8px">${U.out?"放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。":"不想乾等可以先去附近逛，快到了會叫你。"}</p>`:""}
-  ${st==="waiting"&&!U.lineBound&&!U.viaLine?lineBindHTML(t):""}
-  <div class="box ${near?"docsnear":""}"><h4>${near?"現在就把這些拿出來":"排到之前，先準備好"}</h4><div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
-    <p class="muted">${U.docs.size===docs.length?"全部準備好了，櫃台會更快幫你辦完。":"點一下勾選你帶了的東西。"}</p></div>
-  ${st==="waiting"||st==="called"?dealsBoxHTML(t,st)+couponsBoxHTML(t,st):""}
-  ${st==="waiting"&&!near?gameCardHTML(w.mins):""}
-  ${st==="waiting"&&!near?miniClassHTML(w.mins):""}
-  ${videosHTML()}`;
+  ${called?"":`${notifyRowHTML(t,w)}
+  ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，把證件拿出來。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
+  ${todo3HTML(t,docs,near)}
+  ${near?"":`<button type="button" class="t3-more" id="toLearn2">${QI("game")}<span><b>等候時看看</b><small>小遊戲・防詐影片・今天的免費課程</small></span><i>›</i></button>`}`}`;
 }
 function doneHTML(){
   const t=S.me;
@@ -1802,24 +1813,38 @@ function doneHTML(){
   }
   return `<div class="box" style="text-align:center"><h4 style="font-size:20px">謝謝你的回饋！</h4><p>${U.contact?"門市主管會在 3 天內打給你。":"我們會持續改進。"}</p><button class="btn blue" id="newTicket">重新取號</button></div>${videosHTML()}`;
 }
-/* 「我的號碼」還沒取號時：先看現況、先準備證件、先看懶人包、先拿券 → 取號前就有事可做 */
-function mineEmptyHTML(){const C=QD().COUPONS,pend=U.pendCp||[],cats=Object.keys(CATS),cat=CATS[U.picked]?U.picked:cats[0],docs=CATS[cat].docs||[];
+/* 「我的號碼」只回答三件事：我幾號、還要等多久、輪到我要準備什麼。其他收成一張「3 件事」清單 */
+function notifyRowHTML(t,w){const hw=!t.held&&S.queue.indexOf(t)<S.queue.length-1;
+  const msg=U.viaLine?"停在這頁會在這裡響；離開這頁改用 LINE 通知":U.lineBound?"LINE 和這頁都會通知你":"停在這頁會響鈴，也會傳簡訊給你";
+  return `<div class="mn-row"><span class="mn-ic ${U.viaLine||U.lineBound?"ln":""}" aria-hidden="true">${U.viaLine||U.lineBound?"LINE":"🔔"}</span><span class="mn-t">${msg}${!U.viaLine&&!U.lineBound?` <a href="${lineBindUrl(t)}" target="_blank" rel="noopener" id="lineBind">改用 LINE 通知</a>`:""}</span></div>
+  <div class="mn-acts">${hw?`<button type="button" class="btn sm" id="holdLater">晚一點再叫我</button>`:""}${w&&w.ahead>3?`<button type="button" class="btn sm ${U.out?"dark":""}" id="away">${U.out?"我回到門市了":"我先離開一下"}</button>`:""}</div>
+  ${U.out?`<p class="note" style="margin-top:-6px">放心去逛，前面剩 3 組時會傳簡訊並跳出提醒。</p>`:""}`}
+function todo3HTML(t,docs,near){const C=QD().COUPONS,D=QD().DEALS,has=!!t,pk=(t&&t.pk)||[],cp=has?(t.cp||[]):(U.pendCp||[]),cats=Object.keys(CATS),cat=has?t.cat:(CATS[U.picked]?U.picked:cats[0]);docs=docs||CATS[cat].docs||[];
+  const open=k=>(U.open3||(near?"docs":""))===k,nd=U.docs.size,nAll=docs.length;
+  const row=(k,ic,title,meta,done,body,lazy)=>`<div class="t3 ${open(k)?"open":""} ${done?"done":""}"><button type="button" class="t3-h" ${lazy?'data-lazy="1"':`data-t3="${k}" aria-expanded="${open(k)}"`}><span class="t3-ic">${done?QI("check",{a:"#4BA882"}):QI(ic)}</span><span class="t3-t"><b>${title}</b><small>${meta}</small></span><i>›</i></button>${open(k)&&body?`<div class="t3-b">${body}</div>`:""}</div>`;
+  const docBody=`${has?"":`<div class="lz-cats" role="tablist">${cats.map(c=>`<button type="button" role="tab" data-mcat="${c}" aria-selected="${c===cat}">${c.split("/")[0]}</button>`).join("")}</div>`}<div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>`;
+  const walkExp=has&&isWalk(t)&&!cp.includes("exp100");
+  const cpBody=`${cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・${has?"到櫃台自動帶入":"取號後自動加到號碼"}</small></span></div>`:""}).join("")}
+    ${cp.includes("g100")?"":`<p class="t3-p">防詐任務三選一，完成就送 $100 配件券：</p><div class="me0-go"><button type="button" class="lz-pk" data-lzgo="video">看影片</button><button type="button" class="lz-pk" data-lzgo="quiz">做測驗</button><button type="button" class="lz-pk" data-lzgo="game">玩遊戲</button></div>`}
+    ${walkExp?`<button type="button" class="lz-pk t3-exp" data-lzgo="exp">在門市？去體驗區試 iPhone Duo，再拿一張 $100 券</button>`:""}`;
+  return `<div class="box t3box"><h4>${near?"輪到你之前，先做好這些":has?"等候時做好 3 件事":"取號前，先做好 3 件事"}</h4>
+    ${row("docs","check","證件準備好了嗎",nd===nAll?"都帶齊了 👍":`${nd} / ${nAll}・點開勾選`,nd===nAll&&nAll>0,docBody)}
+    ${row("deals","book","今天必買優惠懶人包",pk.length?`已預選 ${pk.length} 項・櫃台會先備好`:`${Object.keys(D).length} 項優惠・最多省 $${lzMax().toLocaleString()}`,pk.length>0,"",true)}
+    ${row("cp","gift","$100 優惠券",cp.length?`已拿 ${cp.length} 張・點開看怎麼再拿`:"看影片、做測驗或玩遊戲就送",cp.includes("g100"),cpBody)}
+  </div>`}
+function mineEmptyHTML(){const cats=Object.keys(CATS),cat=CATS[U.picked]?U.picked:cats[0];
   return `<div class="box me0"><h4>還沒有號碼</h4>
     <div class="me0-st"><span><b>${S.queue.length}</b>組正在等</span><span><b>${catWait(cat)}</b>分鐘<small>辦${esc(cat.split("/")[0])}</small></span></div>
-    <p class="muted" style="margin:0">取號後，號碼、等候進度和叫號提醒都會在這裡。現在可以先把下面三件事做好，輪到你就能很快辦完。</p>
     <button class="btn blue" id="goTake">去取號</button></div>
-  <div class="box"><h4>① 先看要帶什麼</h4><div class="lz-cats" role="tablist">${cats.map(c=>`<button type="button" role="tab" data-mcat="${c}" aria-selected="${c===cat}">${c.split("/")[0]}</button>`).join("")}</div>
-    <div class="docs">${docs.map((d,i)=>`<button class="doc" data-doc="${i}" aria-pressed="${U.docs.has(i)}"><span class="bx">${U.docs.has(i)?"✓":""}</span>${d}</button>`).join("")}</div>
-    <p class="muted" style="margin:0">先勾好的，取號後還會記得。</p></div>
-  <div class="me0-h">② 先看今天買什麼最划算</div>${lazyBanHTML()}
-  <div class="box cpnbox"><h4><span class="hic">${QI("gift")}</span>③ 取號前就能先拿券 <small class="muted">已拿 ${pend.length} 張</small></h4>
-    ${pend.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・取號後自動加到號碼</small></span></div>`:""}).join("")}
-    ${pend.includes("g100")?"":`<p style="margin:0;font-weight:700">防詐任務三選一，完成就送 $100 配件券：</p><div class="me0-go"><button type="button" class="lz-pk" data-lzgo="video">看影片</button><button type="button" class="lz-pk" data-lzgo="quiz">做測驗</button><button type="button" class="lz-pk" data-lzgo="game">玩遊戲</button></div>`}</div>
-  ${videosHTML()}`}
+  ${todo3HTML(null,null,false)}
+  <button type="button" class="t3-more" id="toLearn2">${QI("game")}<span><b>等候時看看</b><small>小遊戲・防詐影片・今天的免費課程</small></span><i>›</i></button>`}
+
 function lzGo(k){if(k==="game")goGames();else if(k==="video")goFraudVideo();else if(k==="quiz")goQuiz();else grantCpExp()}
 function bindMine(){
   bindPickup();bindDeals();bindLazyOpen();
   document.querySelectorAll("#appBody [data-lzgo]").forEach(b=>b.onclick=()=>lzGo(b.dataset.lzgo));
+  document.querySelectorAll("[data-t3]").forEach(b=>b.onclick=()=>{const k=b.dataset.t3,cur=U.open3||(document.querySelector(".nearbox")?"docs":"");U.open3=cur===k?"none":k;fullRender()});
+  const tl2=$("#toLearn2");if(tl2)tl2.onclick=()=>go("learn");
   document.querySelectorAll("[data-mcat]").forEach(b=>b.onclick=()=>{if(U.picked!==b.dataset.mcat){U.picked=b.dataset.mcat;U.docs=new Set()}fullRender()});
   const g=$("#goTake");if(g)g.onclick=()=>go("queue");
   const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
@@ -1930,6 +1955,7 @@ function learnHTML(){
   ${S.courses.filter(c=>c.when==="weekend").map(c=>courseHTML(c,false)).join("")}
   <div class="h2"><span>玩</span><h3>等候小遊戲</h3></div>${gameCardHTML()}
   <div class="h2"><span>練習</span><h3>防詐小測驗</h3></div>${quizHTML()}${fraudVideoHTML()}
+  ${videosHTML()}
   <p class="note">題目為示意，正式版每週依最新手法更新。遇到可疑來電可撥 165 反詐騙專線。</p>`;
 }
 function bindClassroom(){
