@@ -1796,7 +1796,7 @@ function mineHTML(){
   ${called?"":`${notifyRowHTML(t,w)}
   ${near?`<div class="box nearbox"><h4>快輪到你了！前面剩 ${w.ahead} 組</h4><p>請回到櫃台附近，把證件拿出來。</p>${U.out?`<button class="btn dark sm" id="away" style="justify-self:start">我回到門市了</button>`:""}</div>`:""}
   ${todo3HTML(t,docs,near)}
-  ${near?"":videosHTML()}
+  ${videosHTML()}
   ${near?"":`<button type="button" class="t3-more" id="toLearn2">${QI("game")}<span><b>等候時看看</b><small>小遊戲・防詐影片・今天的免費課程</small></span><i>›</i></button>`}`}`;
 }
 function doneHTML(){
