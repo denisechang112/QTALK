@@ -780,6 +780,7 @@ svg.qi{display:block}
 .appTop .qtb.tmq img{height:1.5em}.appTop .qtw.tm{height:1.3em;width:calc(1.3em * 309 / 96)}
 /* 叫號說名牌：掛在首頁對話框左上角，像漫畫標出「誰在說話」 */
 .shout{position:relative;margin-top:20px!important;padding-top:26px!important}.qtag{position:absolute;top:-16px;left:18px;background:var(--ink);color:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:3px 14px 4px;font-weight:900;font-size:17px;line-height:1.3;letter-spacing:.08em;box-shadow:2px 2px 0 var(--yellow)}
+.gbtn .gpo{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:9px;border:2px solid var(--ink);margin-bottom:4px;display:block}
 </style>
 
 <div class="outer">
@@ -1802,11 +1803,11 @@ function bindMine(){
 // watch for my ticket finishing (someone else gets my counter)
 
 /* ================= 等候小遊戲（小小店長・防詐偵探） ================= */
-const GAMES={lm:{n:"小小店長",ic:"🏪",d:"打倒詐騙怪，帶顧客到櫃台",src:"games/little-manager.html"},fd:{n:"防詐偵探",ic:"🕵️",d:"12 位嫌疑人，抓出騙子",src:"games/fraud-detective.html"}};
+const GAMES={lm:{n:"小小店長",ic:"🏪",img:"media/poster-lm.jpg",d:"打倒詐騙怪，帶顧客到櫃台",src:"games/little-manager.html"},fd:{n:"防詐偵探",ic:"🕵️",img:"media/poster-fd.jpg",d:"12 位嫌疑人，抓出騙子",src:"games/fraud-detective.html"}};
 function gameCardHTML(mins){
   const head=mins?`約等 ${mins} 分，剛好玩 ${Math.max(1,Math.round(mins/5))} 局！`:"排隊時玩一局，邊玩邊學防詐";
   return `<div class="box gamecard"><span class="tagc" style="justify-self:start;background:var(--yellow)">🎮 等候小遊戲</span><h4>${head}</h4>
-  <div class="gbtns">${Object.entries(GAMES).map(([k,g])=>`<button type="button" class="gbtn" data-game="${k}"><span class="gi">${g.ic}</span><b>${g.n}</b><small>${g.d}</small></button>`).join("")}</div>
+  <div class="gbtns">${Object.entries(GAMES).map(([k,g])=>`<button type="button" class="gbtn" data-game="${k}"><img class="gpo" src="${g.img}" alt="" loading="lazy"><b>${g.n}</b><small>${g.d}</small></button>`).join("")}</div>
   <p class="muted" style="margin:0">輪到你時遊戲會自動暫停，不會漏叫號。</p></div>`;
 }
 let GAME_OPEN=null;
@@ -1814,7 +1815,7 @@ function openGame(k){const g=GAMES[k],v=$("#gameview");if(!g)return;closePlayer(
   let f=v.querySelector(`iframe[data-k="${k}"]`);
   if(!f){f=document.createElement("iframe");f.dataset.k=k;f.title=g.n;f.src=g.src;f.setAttribute("allow","autoplay");v.appendChild(f)}
   v.querySelectorAll("iframe").forEach(x=>x.classList.toggle("on",x===f));
-  $("#gname").textContent=`${g.ic} ${g.n}`;GAME_OPEN=k;v.hidden=false;gameStatus();buzz(15);
+  $("#gname").textContent=g.n;GAME_OPEN=k;v.hidden=false;gameStatus();buzz(15);
 }
 function closeGame(){const v=$("#gameview");if(!v||v.hidden)return;
   v.querySelectorAll("iframe").forEach(f=>{try{f.contentWindow.postMessage("qtalk:pause","*")}catch(e){}});
