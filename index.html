@@ -781,6 +781,7 @@ svg.qi{display:block}
 /* 叫號說名牌：掛在首頁對話框左上角，像漫畫標出「誰在說話」 */
 .shout{position:relative;margin-top:20px!important;padding-top:26px!important}.qtag{position:absolute;top:-16px;left:18px;background:var(--ink);color:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:3px 14px 4px;font-weight:900;font-size:17px;line-height:1.3;letter-spacing:.08em;box-shadow:2px 2px 0 var(--yellow)}
 .gbtn .gpo{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:9px;border:2px solid var(--ink);margin-bottom:4px;display:block}
+.gamecard.flash{animation:gflash 1.6s ease 2}@keyframes gflash{0%,100%{box-shadow:0 0 0 0 rgba(232,137,58,0)}50%{box-shadow:0 0 0 6px rgba(232,137,58,.55)}}
 </style>
 
 <div class="outer">
@@ -1688,9 +1689,13 @@ function openLazy(){const scrollY=($("#modal .sheet.lz")||{}).scrollTop||0;
     m.querySelector(".modal").onclick=e=>{if(e.target.classList.contains("modal"))closeModal()};
     m.querySelectorAll("[data-lzc]").forEach(b=>b.onclick=()=>{U.lzCat=b.dataset.lzc;openLazy()});
     m.querySelectorAll("[data-lzpk]").forEach(b=>b.onclick=()=>{const id=b.dataset.lzpk,pk=(S.me&&S.me.pk)||[];savePk(pk.includes(id)?pk.filter(x=>x!==id):pk.concat(id));openLazy();setTimeout(openLazy,60)});
-    m.querySelectorAll("[data-lzgo]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.lzgo==="game")openGame("lm");else grantCpExp()});
+    m.querySelectorAll("[data-lzgo]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.lzgo==="game")goGames();else grantCpExp()});
     const tk=m.querySelector("[data-lztake]");if(tk)tk.onclick=()=>{closeModal();if(U.lzCat&&!U.picked)U.picked=U.lzCat;go("queue");setTimeout(()=>{const e=$("#take");if(e)e.scrollIntoView({behavior:"smooth",block:"start"})},80)};
   })}
+/* 懶人包「去拿」遊戲券：帶到小遊戲選擇區（小小店長／防詐偵探），讓客人自己挑 */
+function goGames(){const st=meState();go(st==="waiting"&&document.querySelector?"mine":"learn");
+  setTimeout(()=>{let g=document.querySelector("#main .gamecard,.gamecard");if(!g&&U.tab==="mine"){go("learn");g=document.querySelector(".gamecard")}
+    if(g){g.scrollIntoView({behavior:"smooth",block:"center"});g.classList.remove("flash");void g.offsetWidth;g.classList.add("flash")}},120)}
 function grantCpExp(){modal(`<div class="sheet"><h3>體驗區任務</h3><p>到門市體驗區試用 iPhone Duo，掃旁邊立牌上的 QR Code，就能領 $100 配件券。</p><p class="muted">（Demo：直接按下面的按鈕模擬掃碼）</p><div class="acts"><button class="btn ghost" type="button" data-m="x">等一下</button><button class="btn pk-go" type="button" data-m="ok">我掃好了</button></div></div>`,m=>m.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{closeModal();if(b.dataset.m==="ok")grantCp("exp100","體驗任務完成")}))}
 /* ================= 新機開賣日：預約取機（開關打開才出現，預設關閉，不影響一般取號） ================= */
 const PK_SLOTS=["10:00","10:30","11:00","11:30","13:00","13:30"],PK_MODEL="iPhone Duo",PK_ORD="●●●●2048";
