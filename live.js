@@ -216,7 +216,12 @@
     c100: { v: "$100", u: "折價", t: "配件滿千折百", from: "到店小禮" },
     g100: { v: "$100", u: "折價", t: "配件滿千折百", from: "防詐任務" },
     exp100: { v: "$100", u: "折價", t: "配件滿千折百", from: "體驗區任務" },
-    a9: { v: "9 折", u: "加購", t: "辦完 30 分鐘內加購配件", from: "防詐小測驗" }
+    a9: { v: "9 折", u: "加購", t: "辦完 30 分鐘內加購配件", from: "防詐小測驗" },
+    /* 翻牌加碼（第 2、3 輪過關才有，隨機；金額小、以服務為主，櫃台不用特別備貨） */
+    b100: { v: "$100", u: "加碼", t: "配件再折 $100（可和其他券併用）", from: "翻牌加碼" },
+    bglass: { v: "免費", u: "代貼", t: "玻璃貼免費代貼一次", from: "翻牌加碼" },
+    b85: { v: "85 折", u: "配件", t: "配件單件 85 折", from: "翻牌加碼" },
+    bsim: { v: "免費", u: "服務", t: "免費幫你轉 eSIM／搬資料一次", from: "翻牌加碼" }
   };
 
   /* 優惠圖示：和 LINE「門市取號」6 格同一套線稿（深藍線＋橘色重點） */
@@ -240,7 +245,7 @@
     coins: '<ellipse cx="9.5" cy="6.5" rx="6" ry="2.5"/><path d="M3.5 6.5v4c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4"/><path class="ac" d="M8.5 15v2.5c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4c0-1.2-1.9-2.2-4.5-2.4"/>',
     pin: '<path d="M12 21s-6.5-5.5-6.5-11a6.5 6.5 0 0 1 13 0c0 5.5-6.5 11-6.5 11z"/><circle class="ac" cx="12" cy="10" r="2.3"/>'
   };
-  var CP_ICON = { c100: "gift", g100: "game", exp100: "exp", a9: "check" };
+  var CP_ICON = { c100: "gift", g100: "game", exp100: "exp", a9: "check", b100: "acc100", bglass: "glass", b85: "add9", bsim: "esim" };
   /* icon(名稱, {c:線條色, a:重點色}) → 一段 SVG 字串 */
   function icon(k, o) { o = o || {}; var p = ICON[k] || ICON[CP_ICON[k]] || ICON.gift; return '<svg class="qi" viewBox="0 0 24 24" fill="none" stroke="' + (o.c || "#2D2E67") + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p.replace(/class="ac"/g, 'stroke="' + (o.a || "#E8893A") + '"') + "</svg>"; }
   function dealsFor(cat, walkIn) { var a = (DEAL_BY_CAT[cat] || DEAL_BY_CAT["異動/諮詢/維修"]).slice(); if (cat === "繳費/儲值") return a; if (walkIn) { a = ["exp"].concat(a.slice(0, 1)).concat(["add9"]); } return a.slice(0, 3); }

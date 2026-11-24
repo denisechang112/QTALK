@@ -808,6 +808,15 @@ svg.qi{display:block}
 .t3-exp{width:100%;padding:8px 10px!important;white-space:normal!important;text-align:center}
 .t3-more{display:flex;align-items:center;gap:10px;width:100%;border:var(--line);border-radius:16px;background:#fff;padding:10px 12px;font:inherit;color:var(--ink);text-align:left;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
 .t3-more svg.qi{width:30px;height:30px;flex:none}.t3-more span{flex:1;display:grid}.t3-more small{font-size:12.5px;color:#6b6b90;font-weight:700}.t3-more i{font-style:normal;font-weight:900;font-size:20px}
+
+/* 已領取、翻牌加碼、官網出口 */
+.got-cp{font-weight:900;color:#2E8B57;font-size:17px}
+.flip{display:flex;gap:10px;justify-content:center;align-items:center}
+.flip-card{width:72px;height:96px;border-radius:12px;border:2.5px solid var(--ink);background:repeating-linear-gradient(45deg,#4A3F8F 0 8px,#2D2E67 8px 16px);color:#F5C543;font-size:32px;font-weight:900;cursor:pointer;box-shadow:3px 3px 0 var(--ink);transition:transform .15s}
+.flip-card:active{transform:scale(.95)}
+.flip-card.open{display:grid;place-items:center;align-content:center;background:#fff;color:#DD4F3C;cursor:default;font-size:20px;line-height:1.1}.flip-card.open small{font-size:11px;color:var(--ink);font-weight:700}
+.flip.done{justify-content:flex-start;text-align:left;gap:12px}
+.offcp{display:grid;gap:1px;text-align:center;font-size:13.5px;font-weight:900;color:#4A3F8F;text-decoration:underline;text-underline-offset:3px;padding:6px 0}.offcp small{text-decoration:none;font-weight:700;color:#6b6b90;font-size:11.5px}
 </style>
 
 <div class="outer">
@@ -1662,6 +1671,23 @@ let apLast=0;function apBeat(force){const st=meState();if(!S.me||!(st==="waiting
 setInterval(apBeat,5000);document.addEventListener("visibilitychange",()=>apBeat(true));addEventListener("pagehide",()=>{try{S.me&&localStorage.setItem("qt-ap:"+S.me.no,"0")}catch(e){}});
 function isWalk(t){return !U.viaLine&&(t.src||"app")!=="line"}
 function savePk(arr){const t=S.me;if(!t)return;const first=arr.length>((t.pk||[]).length)&&!(t.cp||[]).includes("c100");t.pk=arr;if(first)setTimeout(()=>grantCp("c100","第一次預選"),0);if(LIVE.on&&LIVE.conn&&LIVE.myId)LIVE.conn.patch("/tickets/"+LIVE.myId,{pk:arr}).catch(()=>toast("info","沒有送出","網路不太穩，請再按一次。",3500));fullRender()}
+/* 是否已拿到某張券（號碼上或取號前暫存） */
+const hasCp=id=>((S.me&&["waiting","called"].includes(meState())&&S.me.cp)||[]).includes(id)||(U.pendCp||[]).includes(id);
+/* 官網優惠券專區：要登入會員、網路上用，當成「更多優惠」的出口，不當任務獎勵 */
+const OFFICIAL_URL="https://www.taiwanmobile.com/cs/public/coupon/couponList.htm";
+const OFFICIAL_CP=`<a class="offcp" href="${OFFICIAL_URL}" target="_blank" rel="noopener">還想要更多？到台灣大哥大官網優惠券專區 ↗<small>會員登入・網路門市使用</small></a>`;
+/* 翻牌加碼：第 2、3 輪過關各翻一次。保底已在第 1 輪給了，這裡是驚喜；每天有總數上限，送完改成「再加碼 $100 已送完，謝謝參加」 */
+const FLIP=[["b100",40],["bglass",25],["b85",25],["bsim",10]],FLIP_CAP=50;
+function flipLeft(){try{const k="qt-flip-"+new Date().toDateString(),n=+localStorage.getItem(k)||0;return Math.max(0,FLIP_CAP-n)}catch(e){return FLIP_CAP}}
+function flipUse(){try{const k="qt-flip-"+new Date().toDateString();localStorage.setItem(k,String((+localStorage.getItem(k)||0)+1))}catch(e){}}
+function flipHTML(r){U.flips=U.flips||{};const got=U.flips[r],C=QD().COUPONS;
+  if(got){const c=C[got];return got==="none"?`<span class="muted" style="color:var(--ink)">今天的加碼已經送完了，謝謝你參加 🙏</span>`:`<div class="flip done"><span class="flip-card open"><b>${c.v}</b><small>${c.u}</small></span><span><b>翻到了：${esc(c.t)}</b><br><small class="muted" style="color:var(--ink)">${S.me&&["waiting","called"].includes(meState())?`已加到號碼 ${S.me.no}`:"取號後自動加到號碼"}</small></span></div>`}
+  return `<span><b>過關加碼！</b>翻一張牌，看看今天的驚喜（今天還剩 ${flipLeft()} 份）</span><div class="flip">${[0,1,2].map(i=>`<button type="button" class="flip-card" data-flip="${i}" aria-label="翻第 ${i+1} 張牌">?</button>`).join("")}</div>`}
+function doFlip(){const r=U.round;U.flips=U.flips||{};if(U.flips[r])return;
+  if(flipLeft()<=0){U.flips[r]="none";fullRender();return}
+  const tot=FLIP.reduce((a,x)=>a+x[1],0);let x=Math.random()*tot,id=FLIP[0][0];for(const [k,w] of FLIP){if((x-=w)<0){id=k;break}}
+  const already=hasCp(id);if(already){const alt=FLIP.map(f=>f[0]).find(k=>!hasCp(k));if(alt)id=alt}
+  U.flips[r]=id;flipUse();buzz([30,30,60]);grantCp(id,"翻牌加碼");fullRender()}
 function grantCp(id,why){const c=QD().COUPONS[id];if(!c)return;
   if(!S.me||!["waiting","called"].includes(meState())){U.pendCp=U.pendCp||[];if(!U.pendCp.includes(id)){U.pendCp.push(id);toast("promo",`獲得 ${c.v}${c.u}券`,`${c.t}。取號後會自動加到你的號碼上。`,4500)}return}
   const t=S.me,cur=t.cp||[];if(cur.includes(id)){toast("info","這張券已經領過了","每張號碼同一種券只能領一次。",3500);return}
@@ -1709,7 +1735,7 @@ function lazyHTML(){const D=QD(),C=D.COUPONS,st=meState(),has=st==="waiting"||st
     <section><h4>② 人人都能用</h4><div class="lz-list">${LZ_ALL.filter(x=>!ids.includes(x)).map(id=>lzDeal(id,has,pk)).join("")}${lzDeal("exp",false,pk)}</div></section>
     <div class="lz-sum"><span class="lz-ic sm">${QI("coins")}</span><span>辦「${esc(cat.split("/")[0])}」照這樣買，今天約省 <b>$${sum.toLocaleString()}</b></span></div>
     <section><h4>③ 怎麼拿 $100 優惠券</h4><div class="lz-list">${ways.map(([id,how,go])=>{const got=cp.includes(id);return `<div class="lz-d lz-w ${got?"got":""}"><span class="lz-ic" aria-hidden="true">${got?QI("check",{a:"#4BA882"}):QI(QTLive.CP_ICON[id])}</span><span class="lz-dt"><b>${esc(C[id].from)}</b><small>${esc(how)}</small></span><span class="lz-r">${got?`<span class="lz-v">已拿到</span>`:go?go.map(([k,l])=>`<button type="button" class="lz-pk" data-lzgo="${k}">${l}</button>`).join(""):""}</span></div>`}).join("")}</div>
-      <p class="lz-fine">每張號碼同一種券限領 1 次・券和預選都綁在號碼上，到櫃台自動帶入，不用出示</p></section>
+      <p class="lz-fine">每張號碼同一種券限領 1 次・券和預選都綁在號碼上，到櫃台自動帶入，不用出示</p>${OFFICIAL_CP}</section>
     <div class="acts">${has?`<button class="btn pk-go" type="button" data-lzx>${pk.length?`好了，已預選 ${pk.length} 項`:"看完了"}</button>`:`<button class="btn pk-go" type="button" data-lztake>去取號，開始預選</button>`}</div>
     <p class="lz-fine">示意優惠內容・實際以門市公告為準</p></div>`}
 function openLazy(){const scrollY=($("#modal .sheet.lz")||{}).scrollTop||0;
@@ -1827,7 +1853,8 @@ function todo3HTML(t,docs,near){const C=QD().COUPONS,D=QD().DEALS,has=!!t,pk=(t&
   const walkExp=has&&isWalk(t)&&!cp.includes("exp100");
   const cpBody=`${cp.map(id=>{const c=C[id];return c?`<div class="cpn"><span class="cpn-l">${c.v}<small>${c.u}</small></span><span class="cpn-r"><b>${esc(c.t)}</b><small>${esc(c.from)}・${has?"到櫃台自動帶入":"取號後自動加到號碼"}</small></span></div>`:""}).join("")}
     ${cp.includes("g100")?"":`<p class="t3-p">防詐任務三選一，完成就送 $100 配件券：</p><div class="me0-go"><button type="button" class="lz-pk" data-lzgo="video">看影片</button><button type="button" class="lz-pk" data-lzgo="quiz">做測驗</button><button type="button" class="lz-pk" data-lzgo="game">玩遊戲</button></div>`}
-    ${walkExp?`<button type="button" class="lz-pk t3-exp" data-lzgo="exp">在門市？去體驗區試 iPhone Duo，再拿一張 $100 券</button>`:""}`;
+    ${walkExp?`<button type="button" class="lz-pk t3-exp" data-lzgo="exp">在門市？去體驗區試 iPhone Duo，再拿一張 $100 券</button>`:""}
+    <p class="t3-p" style="font-weight:500">防詐測驗第 2、3 輪過關，還能翻牌抽加碼。</p>${OFFICIAL_CP}`;
   return `<div class="box t3box"><h4>${near?"輪到你之前，先做好這些":has?"等候時做好 3 件事":"取號前，先做好 3 件事"}</h4>
     ${row("docs","check","證件準備好了嗎",nd===nAll?"都帶齊了 👍":`${nd} / ${nAll}・點開勾選`,nd===nAll&&nAll>0,docBody)}
     ${row("deals","book","今天必買優惠懶人包",pk.length?`已預選 ${pk.length} 項・櫃台會先備好`:`${Object.keys(D).length} 項優惠・最多省 $${lzMax().toLocaleString()}`,pk.length>0,"",true)}
@@ -1909,7 +1936,8 @@ function quizHTML(){
   let body;
   if(U.roundEnd){
     body=`<div class="reward"><b>第 ${r+1} 輪全部識破！你是${TITLES[r]}</b>
-      ${r===0?`<span>恭喜！你可以領一張優惠券</span>${COUPON}<span class="muted" style="color:var(--ink)">券會自動加到你的號碼，到櫃台不用出示</span>`:""}
+      ${r===0?(hasCp("g100")?`<span class="got-cp">✓ 已領取 $100 配件券</span><span class="muted" style="color:var(--ink)">${S.me&&["waiting","called"].includes(meState())?`已加到號碼 ${S.me.no}，到櫃台自動帶入`:"取號後會自動加到你的號碼"}</span>`:`<span>恭喜！你可以領一張優惠券</span>${COUPON}<span class="muted" style="color:var(--ink)">券會自動加到你的號碼，到櫃台不用出示</span>`):flipHTML(r)}
+      ${OFFICIAL_CP}
       ${r<ROUNDS-1?`<button class="btn" id="nextRound" style="justify-self:center">挑戰第 ${r+2} 輪 →</button>`:`<span>12 題全部答對，下次遇到詐騙一定識破！</span>`}</div>`;
   }else{
     body=`<div class="quizq"><small>你收到這則${q.src}：</small>${esc(q.q)}</div>
@@ -1918,7 +1946,7 @@ function quizHTML(){
   }
   return `<div class="box cls"><div class="row" style="justify-content:space-between"><span class="tagc red">防詐小測驗・第 ${r+1} 輪${U.roundEnd?"":`・第 ${qi+1} / ${ROUND} 題`}</span>${U.streak>1?`<span class="tagc">連對 ${U.streak} 題</span>`:""}</div>
     ${rounds}${body}${stamps}
-    ${roundDone(0)&&!(U.roundEnd&&r===0)?`<div class="row" style="justify-content:space-between"><span class="muted">第 1 輪已完成，可以領優惠券</span>${COUPON.replace('btn dark','btn sm')}</div>`:U.roundEnd?"":`<p class="muted">答對蓋一個章，集滿第 1 輪 4 個章就能領優惠券，還有第 2、3 輪可以挑戰。</p>`}
+    ${roundDone(0)&&!(U.roundEnd&&r===0)&&!hasCp("g100")?`<div class="row" style="justify-content:space-between"><span class="muted">第 1 輪已完成，可以領優惠券</span>${COUPON.replace('btn dark','btn sm')}</div>`:U.roundEnd?"":`<p class="muted">答對蓋一個章，集滿第 1 輪 4 個章就能領優惠券，還有第 2、3 輪可以挑戰。</p>`}
   </div>`;
 }
 const FRAUD_EDU={src:"media/499def1b6b2f92bb3d00d3cfacc5225b.mp4",poster:"media/0c0821381fc2809b217432c912aa1058.jpg",label:"1 分鐘看懂：12 種常見詐騙",dur:"1:19"};
@@ -1966,7 +1994,8 @@ function bindClassroom(){
   const nq=$("#nextQ");if(nq)nq.onclick=()=>{U.quizAns=null;
     if(roundDone(U.round)){U.roundEnd=true;if(U.round===0)setTimeout(()=>grantCp("g100","防詐小測驗第 1 輪"),300)}else{let k=U.quizIdx;do{k=(k+1)%ROUND}while(U.stamps.has(U.round*ROUND+k));U.quizIdx=k}
     fullRender()};
-  document.querySelectorAll("[data-qcp]").forEach(b=>b.onclick=()=>grantCp("g100","防詐小測驗第 1 輪"));
+  document.querySelectorAll("[data-qcp]").forEach(b=>b.onclick=()=>{grantCp("g100","防詐小測驗第 1 輪");fullRender()});
+  document.querySelectorAll("[data-flip]").forEach(b=>b.onclick=doFlip);
   const nr=$("#nextRound");if(nr)nr.onclick=()=>{U.round++;U.quizIdx=0;U.roundEnd=false;U.quizAns=null;fullRender()};
   document.querySelectorAll("[data-enroll]").forEach(b=>b.onclick=()=>{const c=S.courses.find(x=>x.id===b.dataset.enroll);if(!c.left)return;c.left--;S.enrolled.add(c.id);buzz(40);toast("sms",`已報名〈${c.name}〉`,c.when==="weekend"?`${c.day} ${c.date} ${c.clock} 在台北文創門市上課，前一天傳簡訊提醒你。`:`今天 ${c.clock} 在門市等候區上課，開課前 5 分鐘傳簡訊提醒。`);fullRender()});
   document.querySelectorAll("[data-cancel]").forEach(b=>b.onclick=()=>{const c=S.courses.find(x=>x.id===b.dataset.cancel);c.left++;S.enrolled.delete(c.id);fullRender()});
