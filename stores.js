@@ -5,5 +5,5 @@ const KNOWN_PEAK={"台北文創門市":[3,5,6,4,5,7,9,10,8,6,7,5],"台北永吉�
 function hashN(t){let h=7;for(const c of t)h=(h*31+c.charCodeAt(0))%9973;return h}
 function peakOf(n){if(KNOWN_PEAK[n])return KNOWN_PEAK[n];const h=hashN(n),base=[3,4,5,4,4,6,7,8,7,5,5,4];return base.map((v,i)=>Math.max(1,Math.min(10,v+((h>>(i%5))%3)-1)))}
 function cityOf(n){return Object.keys(ALL_STORES).find(c=>ALL_STORES[c].includes(n))}
-function storeWait(n){return peakOf(n)[5]*3}
+function storeWait(n){if(n===HOME)return peakOf(n)[5]*3;const W=[4,6,7,9,12,15,18,22,26];return W[hashN(n+"w")%W.length]}   // 示意：各門市等候時間拉開，地圖上才看得出哪家人少
 window.QTStores={ALL_STORES,STORE_ADDR,peakOf,cityOf,storeWait};

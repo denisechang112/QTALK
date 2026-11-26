@@ -840,15 +840,35 @@ svg.qi{display:block}
 .smap{position:relative;height:420px;border:2px solid var(--ink);border-radius:16px;overflow:hidden;background:#F6F3EC;margin-top:4px}
 .smap-bg{position:absolute;inset:0;background:linear-gradient(#fff 0 0) 0 40%/100% 6px no-repeat,linear-gradient(#fff 0 0) 0 70%/100% 6px no-repeat,linear-gradient(#fff 0 0) 45% 0/6px 100% no-repeat,linear-gradient(#fff 0 0) 72% 0/6px 100% no-repeat}
 .rv{position:absolute;border:16px solid #CFE2F1;border-radius:50%}.r1{width:260px;height:520px;left:-210px;top:-60px}.r2{width:520px;height:200px;left:20%;top:-150px}
-.storepick .slist .mpin{position:absolute;transform:translate(-50%,-50%);display:flex;justify-content:center;align-items:baseline;gap:1px;border:2px solid var(--ink);border-radius:9px;padding:1px 6px;text-align:center;font:inherit;font-size:10.5px;font-weight:900;color:#fff;cursor:pointer;white-space:nowrap;box-shadow:2px 2px 0 var(--ink)}
+.storepick .slist .mpin{display:flex;justify-content:center;align-items:baseline;gap:1px;border:2px solid var(--ink);border-radius:9px;padding:1px 6px;text-align:center;font:inherit;font-size:10.5px;font-weight:900;color:#fff;cursor:pointer;white-space:nowrap;box-shadow:2px 2px 0 var(--ink)}
 .storepick .slist .mpin b{font-family:var(--f-num);font-size:12px}.mpin .mn{margin-left:3px;font-size:10.5px}
 .storepick .slist .mpin.g{background:#4BA882}.storepick .slist .mpin.y{background:#E8A93A}.storepick .slist .mpin.r{background:#DD4F3C}
 .storepick .slist .mpin.me{z-index:2;padding:2px 8px;background:var(--ink)}
-.smap-leg{display:flex;gap:12px;font-size:12px;font-weight:700;margin-top:6px}.smap-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px}.smap-leg .g{background:#4BA882}.smap-leg .y{background:#E8A93A}.smap-leg .r{background:#DD4F3C}
+.smap-leg{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:11.5px;font-weight:700;margin-top:6px}.smap-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px}.smap-leg .g{background:#4BA882}.smap-leg .y{background:#E8A93A}.smap-leg .r{background:#DD4F3C}
 .smap-best{display:grid;gap:6px;margin-top:8px}.smap-best>b{font-size:14px}
 .storepick .slist .smap-best button{display:flex;align-items:center;gap:8px;border:1.5px solid #DEDEEA;background:#fff;border-radius:12px;padding:8px 10px;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
 .smap-best button span{flex:1;display:grid;font-weight:900;font-size:14.5px}.smap-best em{font-style:normal;color:#fff;border-radius:8px;padding:3px 8px;font-weight:900;font-size:13px}
 .smap-best em.g{background:#4BA882}.smap-best em.y{background:#E8A93A}.smap-best em.r{background:#DD4F3C}
+
+/* 門市地圖：對焦框、資訊卡、路線、3D */
+.storepick .slist.asmap{max-height:none;overflow:visible}
+.smap.real{background:#E9EAF3}.smap.loading::after{content:"載入 3D 實景地圖…";position:absolute;inset:auto 0 45% 0;text-align:center;font-weight:900;color:#55558a}
+.smap .maplibregl-ctrl-attrib{font-size:10px}
+.mtag{position:absolute;right:8px;bottom:6px;font-size:10.5px;font-weight:700;color:#8a8aa8;background:rgba(255,255,255,.8);border-radius:6px;padding:1px 6px}
+.mroute{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mroute line{vector-effect:non-scaling-stroke;stroke-linecap:round}.mroute .glow{stroke:#F5C543;stroke-width:12;opacity:.5}.mroute .core{stroke:#2D2E67;stroke-width:3.5;stroke-dasharray:6 6}
+.smap:not(.real) .mpin{position:absolute;transform:translate(-50%,-50%)}
+.maplibregl-marker.mpin,.smap .maplibregl-marker{position:absolute;top:0;left:0}
+.mpin.sel{z-index:5!important}.smap:not(.real) .mpin.sel{transform:translate(-50%,-50%) scale(1.15)}
+.mpin.sel::after{content:"";position:absolute;inset:-9px;pointer-events:none;
+ background:linear-gradient(var(--ink),var(--ink)) 0 0/12px 3px,linear-gradient(var(--ink),var(--ink)) 0 0/3px 12px,linear-gradient(var(--ink),var(--ink)) 100% 0/12px 3px,linear-gradient(var(--ink),var(--ink)) 100% 0/3px 12px,linear-gradient(var(--ink),var(--ink)) 0 100%/12px 3px,linear-gradient(var(--ink),var(--ink)) 0 100%/3px 12px,linear-gradient(var(--ink),var(--ink)) 100% 100%/12px 3px,linear-gradient(var(--ink),var(--ink)) 100% 100%/3px 12px;background-repeat:no-repeat}
+.storepick .slist .m3t{margin-left:auto;flex:none;display:inline-block;box-shadow:none;border:1.5px solid var(--ink);background:#fff;border-radius:999px;padding:2px 10px;font:inherit;font-size:12px;font-weight:900;color:var(--ink);cursor:pointer}
+.mcard{margin-top:8px;border:2px solid var(--ink);border-radius:16px;background:#fff;padding:10px 12px;display:grid;gap:6px;box-shadow:3px 3px 0 var(--ink)}
+.mcard.hint{font-weight:700;color:#55558a;text-align:center;box-shadow:none;border-style:dashed}
+.mc-h{display:flex;gap:8px;align-items:flex-start}.mc-h span{flex:1;display:grid}.mc-h b{font-size:17px}.mc-h small{font-size:12px;color:#55558a;font-weight:700}
+.mc-h em{font-style:normal;color:#fff;border-radius:8px;padding:3px 9px;font-weight:900;font-size:14px;white-space:nowrap}.mc-h em.g{background:#4BA882}.mc-h em.y{background:#E8A93A}.mc-h em.r{background:#DD4F3C}
+.mc-t{margin:0;font-size:13.5px;font-weight:700}.mc-v{margin:0;font-size:14px;font-weight:900;border-radius:10px;padding:5px 9px}.mc-v.ok{background:#F2FBF5;color:#2E8B57}.mc-v.no{background:#FFF3E6;color:#9a4a0a}
+.mc-a{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}.mc-a .btn,.storepick .slist .mc-a button.btn{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;font-size:15px;padding:9px 8px;border:2px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);font-weight:900}.storepick .slist .mc-a button.btn.dark{background:var(--ink);color:#fff}
 </style>
 
 <div class="outer">
@@ -928,7 +948,7 @@ const NEAR={"台北文創門市":["約 1 公里","約 1.5 公里","約 2 公里"
 function hashN(t){let h=7;for(const c of t)h=(h*31+c.charCodeAt(0))%9973;return h}
 function peakOf(n){if(KNOWN_PEAK[n])return KNOWN_PEAK[n];const h=hashN(n),base=[3,4,5,4,4,6,7,8,7,5,5,4];return base.map((v,i)=>Math.max(1,Math.min(10,v+((h>>(i%5))%3)-1)))}
 function cityOf(n){return Object.keys(ALL_STORES).find(c=>ALL_STORES[c].includes(n))}
-function storeWait(n){return peakOf(n)[5]*3}
+function storeWait(n){if(n===HOME)return peakOf(n)[5]*3;const W=[4,6,7,9,12,15,18,22,26];return W[hashN(n+"w")%W.length]}   // 示意：各門市等候時間拉開，地圖上才看得出哪家人少
 let HOME="台北文創門市",STORES=[];
 function buildStores(){const others=ALL_STORES[cityOf(HOME)].filter(n=>n!==HOME).slice(0,3),D=NEAR[HOME]||["同縣市","同縣市","同縣市"];
   STORES=[HOME,...others].map((n,i)=>({name:n,dist:i?D[i-1]:"你在這裡",peak:peakOf(n)}))}
@@ -1276,14 +1296,65 @@ function setHome(n){HOME=n;buildStores();U.store=0;PEAK=STORES[0].peak;U.slot=nu
 /* 門市地圖（台北市示意座標；其他縣市先用清單） */
 const GEO={"台北文創門市":[25.044,121.560],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北大直門市":[25.080,121.547],"台北林森北門市":[25.055,121.525],"台北民權東門市":[25.062,121.535],"台北農安門市":[25.066,121.526],"台北西湖門市":[25.082,121.567],"台北內湖門市":[25.083,121.590],"內湖湖光門市":[25.068,121.600],"內湖光電門市":[25.078,121.574],"台北通化門市":[25.032,121.553],"台北東湖門市":[25.068,121.616],"文山景中門市":[25.000,121.543],"台北天母門市":[25.117,121.531],"北投中央北門市":[25.133,121.500]};
 const wcol=w=>w<10?"g":w<=20?"y":"r";
-function mapHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
-  const a0=25.022,a1=25.090,o0=121.500,o1=121.622;   // 先看市中心；天母、北投、景中在清單裡
-  const inMap=n=>GEO[n][0]>a0&&GEO[n][0]<a1&&GEO[n][1]>o0&&GEO[n][1]<o1;
-  const X=l=>Math.min(88,Math.max(12,(l-o0)/(o1-o0)*100)).toFixed(1),Y=a=>Math.min(95,Math.max(5,(a1-a)/(a1-a0)*100)).toFixed(1);
-  const best=names.slice().sort((p,q)=>storeWait(p)-storeWait(q)).slice(0,2);
-  return `<div class="smap"><div class="smap-bg"><i class="rv r1"></i><i class="rv r2"></i></div>${names.filter(inMap).map(n=>{const w=storeWait(n);return `<button type="button" class="mpin ${wcol(w)} ${n===HOME?"me":""}" data-home="${n}" style="left:${X(GEO[n][1])}%;top:${Y(GEO[n][0])}%" aria-label="${n}，現在約 ${w} 分">${n===HOME?"📍":""}<span class="mn" style="margin:0 3px 0 0">${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}</span><b>${w}</b>分</button>`}).join("")}</div>
-  <div class="smap-leg"><span><i class="g"></i>10 分內</span><span><i class="y"></i>10–20 分</span><span><i class="r"></i>20 分以上</span></div>
-  <div class="smap-best"><b>等最少的</b>${best.map(n=>`<button type="button" data-home="${n}"><span>${n}<small class="addr">${STORE_ADDR[n]||""}</small></span><em class="${wcol(storeWait(n))}">等 ${storeWait(n)} 分</em></button>`).join("")}</div>`}
+/* ===== 門市地圖：選中有對焦框＋資訊卡＋推薦路線；有網路時用真實 3D 地圖，沒有就用簡圖 ===== */
+const MAP_BOX={a0:25.022,a1:25.090,o0:121.500,o1:121.622};   // 先看市中心；天母、北投、景中在清單裡
+const geoIn=n=>GEO[n]&&GEO[n][0]>MAP_BOX.a0&&GEO[n][0]<MAP_BOX.a1&&GEO[n][1]>MAP_BOX.o0&&GEO[n][1]<MAP_BOX.o1;
+function kmBetween(a,b){const R=6371,r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function tripOf(n){const g=GEO[n],h=GEO[HOME];if(!g||!h||n===HOME)return null;const km=kmBetween(h,g)*1.3,walk=Math.round(km*1000/80);return{km,walk,ride:Math.max(5,Math.round(km*2.5+6)),save:storeWait(HOME)-storeWait(n)}}
+function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${wcol(w)} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分">${n===HOME?"📍":""}<span class="mn">${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}</span><b>${w}</b>分</button>`}
+function mcardHTML(n){if(!n)return `<div class="mcard hint">點地圖上的門市，看要等多久、怎麼過去</div>`;
+  const w=storeWait(n),t=tripOf(n),q=encodeURIComponent(n.includes("台灣大哥大")?n:"台灣大哥大 "+n+" "+(STORE_ADDR[n]||""));
+  return `<div class="mcard"><div class="mc-h"><span><b>${n}</b><small>${STORE_ADDR[n]||""}</small></span><em class="${wcol(w)}">等 ${w} 分</em></div>
+    ${t?(()=>{const go=t.walk<=30?t.walk:t.ride,hn=esc(HOME.replace(/門市$/,"")),net=t.save-go;
+      return `<p class="mc-t">${t.walk<=30?`走路約 ${t.walk} 分`:`搭車約 ${t.ride} 分`}・${t.save>0?`比${hn}少等 ${t.save} 分`:t.save<0?`比${hn}多等 ${-t.save} 分`:"等候時間差不多"}</p>
+      <p class="mc-v ${net>0?"ok":"no"}">${net>0?`算上路程，<b>總共快 ${net} 分</b> 👍`:`算上路程不划算，留在${hn}等比較快`}</p>`})():`<p class="mc-t">你現在選的就是這家</p>`}
+    <div class="mc-a"><button type="button" class="btn dark" data-home="${n}">${n===HOME?"就在這家取號":"選這家取號"}</button><a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${q}&travelmode=${t&&t.walk>30?"transit":"walking"}" target="_blank" rel="noopener">帶我去</a></div></div>`}
+function mapShellHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
+  const best=null;
+  return `<div class="smap" id="smap"></div>
+  <div class="smap-leg"><span><i class="g"></i>10 分內</span><span><i class="y"></i>10–20 分</span><span><i class="r"></i>20 分以上</span><button type="button" class="m3t" id="m3t" hidden></button></div>
+  <div id="mcard">${mcardHTML(best)}</div>`}
+/* 簡圖（不用網路） */
+function flatMap(box,city,sel){const names=(ALL_STORES[city]||[]).filter(geoIn),{a0,a1,o0,o1}=MAP_BOX;
+  const X=l=>Math.min(88,Math.max(12,(l-o0)/(o1-o0)*100)),Y=a=>Math.min(95,Math.max(5,(a1-a)/(a1-a0)*100));
+  const h=GEO[HOME],g=sel&&GEO[sel];
+  box.innerHTML=`<div class="smap-bg"><i class="rv r1"></i><i class="rv r2"></i></div>
+    ${h&&g&&sel!==HOME?`<svg class="mroute" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="${X(h[1])}" y1="${Y(h[0])}" x2="${X(g[1])}" y2="${Y(g[0])}" class="glow"/><line x1="${X(h[1])}" y1="${Y(h[0])}" x2="${X(g[1])}" y2="${Y(g[0])}" class="core"/></svg>`:""}
+    ${names.map(n=>mpinHTML(n,sel).replace('class="mpin',`style="left:${X(GEO[n][1]).toFixed(1)}%;top:${Y(GEO[n][0]).toFixed(1)}%" class="mpin`)).join("")}<span class="mtag">簡圖・位置示意</span>`}
+/* 真實 3D 地圖（MapLibre＋OpenFreeMap，免金鑰）；載不到就留在簡圖 */
+let ML=null;
+function loadML(){if(window.maplibregl)return Promise.resolve(window.maplibregl);if(ML)return ML;
+  ML=new Promise((res,rej)=>{const l=document.createElement("link");l.rel="stylesheet";l.href="vendor/maplibre-gl.css";document.head.appendChild(l);
+    const sc=document.createElement("script");sc.src="vendor/maplibre-gl.js";sc.onload=()=>window.maplibregl?res(window.maplibregl):rej();
+    sc.onerror=()=>{const s2=document.createElement("script");s2.src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";s2.onload=()=>window.maplibregl?res(window.maplibregl):rej();s2.onerror=rej;document.head.appendChild(s2)};document.head.appendChild(sc)});
+  ML.catch(()=>{ML=null});return ML}
+function realMap(box,city,sel,onSel){return loadML().then(ml=>new Promise((res,rej)=>{
+  const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]),c=GEO[HOME]||[25.045,121.55];box.innerHTML="";
+  const map=new ml.Map({container:box,style:"https://tiles.openfreemap.org/styles/liberty",center:[c[1],c[0]],zoom:13.3,pitch:55,bearing:-17,attributionControl:{compact:true},cooperativeGestures:false});
+  let ok=false;const to=setTimeout(()=>{if(!ok){try{map.remove()}catch(e){}rej(new Error("timeout"))}},8000);
+  map.on("error",e=>{if(!ok){clearTimeout(to);try{map.remove()}catch(_){}rej(e)}});
+  const mk={};
+  map.on("load",()=>{ok=true;clearTimeout(to);
+    try{const st=map.getStyle();st.layers.filter(L=>L.type==="fill-extrusion").forEach(L=>{map.setPaintProperty(L.id,"fill-extrusion-color","#D9DBEE");map.setPaintProperty(L.id,"fill-extrusion-opacity",.85)})}catch(e){}
+    map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+    map.addLayer({id:"route-glow",type:"line",source:"route",paint:{"line-color":"#F5C543","line-width":12,"line-opacity":.45,"line-blur":4},layout:{"line-cap":"round"}});
+    map.addLayer({id:"route-core",type:"line",source:"route",paint:{"line-color":"#2D2E67","line-width":3.5,"line-dasharray":[1.2,1.2]},layout:{"line-cap":"round"}});
+    names.forEach(n=>{const el=document.createElement("div");el.innerHTML=mpinHTML(n,sel);const b=el.firstChild;b.onclick=()=>onSel(n);mk[n]=new ml.Marker({element:b,anchor:"center"}).setLngLat([GEO[n][1],GEO[n][0]]).addTo(map)});
+    const api={map,select(n){names.forEach(x=>mk[x]&&mk[x].getElement().classList.toggle("sel",x===n));const h=GEO[HOME],g=GEO[n];
+      map.getSource("route").setData({type:"FeatureCollection",features:h&&g&&n!==HOME?[{type:"Feature",geometry:{type:"LineString",coordinates:[[h[1],h[0]],[g[1],g[0]]]}}]:[]});
+      if(g){const pts=h&&n!==HOME?[h,g]:[g],la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
+        map.fitBounds([[Math.min(...lo)-.004,Math.min(...la)-.004],[Math.max(...lo)+.004,Math.max(...la)+.004]],{padding:{top:50,bottom:40,left:50,right:50},pitch:50,bearing:-17,maxZoom:15.2,duration:800})}}};
+    api.select(sel);res(api)})}))}
+function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)return;
+  const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);const cost=n=>{const t=tripOf(n);return storeWait(n)+(t?(t.walk<=30?t.walk:t.ride):0)};let sel=names.filter(n=>n!==HOME&&GEO[HOME]?true:n!==HOME).sort((p,q)=>cost(p)-cost(q))[0],api=null,mode=U.map3d===false?"flat":"real";
+  const card=()=>{m.querySelector("#mcard").innerHTML=mcardHTML(sel);m.querySelectorAll("#mcard [data-home]").forEach(b=>b.onclick=()=>onPick(b.dataset.home))};
+  const pick=n=>{sel=n;card();if(api)api.select(n);else{flatMap(box,city,sel);bindFlat()}};
+  const bindFlat=()=>box.querySelectorAll("[data-sel]").forEach(b=>b.onclick=()=>pick(b.dataset.sel));
+  const tg=m.querySelector("#m3t");
+  const showFlat=()=>{api=null;box.classList.remove("real");flatMap(box,city,sel);bindFlat()};
+  const tryReal=()=>{box.classList.add("real","loading");realMap(box,city,sel,pick).then(a=>{api=a;box.classList.remove("loading");tg.hidden=false;tg.textContent="切換簡圖"}).catch(()=>{box.classList.remove("loading");showFlat();tg.hidden=false;tg.textContent="試試 3D 實景"})};
+  tg.onclick=()=>{if(api){try{api.map.remove()}catch(e){}U.map3d=false;showFlat();tg.textContent="試試 3D 實景"}else{U.map3d=true;tryReal()}};
+  card();showFlat();if(mode==="real")tryReal();else{tg.hidden=false;tg.textContent="試試 3D 實景"}}
 function openStorePick(asMap){
   if(S.me&&["waiting","called"].includes(meState())){toast("info",`你正在${HOME}排隊`,"辦完這次的號碼，才能換別的門市。");return}
   let city=cityOf(HOME),q="",view=asMap===true?"map":"list";
@@ -1293,15 +1364,16 @@ function openStorePick(asMap){
     <div class="cities" role="group" aria-label="縣市">${Object.keys(ALL_STORES).map(c=>`<button type="button" data-city="${c}" aria-pressed="${c===city}">${c}</button>`).join("")}</div>
     <input type="search" id="spq" placeholder="或搜尋門市或地址，例如：內湖、中壢" aria-label="搜尋門市" style="margin-top:8px">
     <div class="vtog" role="tablist"><button type="button" data-view="list" aria-selected="${view==="list"}">清單</button><button type="button" data-view="map" aria-selected="${view==="map"}">${QI("pin")}地圖・看哪家人少</button></div>
-    <div class="slist" id="slist">${view==="map"?mapHTML(city):list()}</div>
+    <div class="slist" id="slist">${view==="map"?mapShellHTML(city):list()}</div>
     <div class="acts"><button class="btn wide" type="button" id="spClose">取消</button></div>
     <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
-    const bind=()=>{m.querySelectorAll("[data-home]").forEach(b=>b.onclick=()=>{const n=b.dataset.home;closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}})};
-    const re=()=>{$("#slist").innerHTML=view==="map"&&!q?mapHTML(city):list();m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    const goStore=n=>{closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}};
+    const bind=()=>{m.querySelectorAll(".slist>[data-home]").forEach(b=>b.onclick=()=>goStore(b.dataset.home))};
+    const re=()=>{const mv=view==="map"&&!q;$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
     m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
-    $("#spClose").onclick=closeModal;bind();
+    $("#spClose").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");bindStoreMap(m,city,goStore)}
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
 }
