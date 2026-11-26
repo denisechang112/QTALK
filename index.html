@@ -90,7 +90,7 @@ button:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-vis
 .storepick .cities{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .storepick .cities button{flex:none;border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:12px;font-weight:900;padding:2px 10px}
 .storepick .cities button[aria-pressed="true"]{background:var(--yellow)}
-.storepick .slist{max-height:46vh;overflow:auto;display:grid;gap:6px;margin-top:8px}
+.storepick .slist{max-height:56vh;overflow:auto;display:grid;gap:6px;margin-top:8px}
 .storepick .slist button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:2px solid var(--ink);border-radius:12px;background:#fff;padding:8px 10px;font-weight:900;font-size:14px}
 .storepick .slist button[aria-pressed="true"]{background:var(--yellow)}
 .storepick .slist .addr{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-top:2px;white-space:normal}
@@ -817,6 +817,38 @@ svg.qi{display:block}
 .flip-card.open{display:grid;place-items:center;align-content:center;background:#fff;color:#DD4F3C;cursor:default;font-size:20px;line-height:1.1}.flip-card.open small{font-size:11px;color:var(--ink);font-weight:700}
 .flip.done{justify-content:flex-start;text-align:left;gap:12px}
 .offcp{display:grid;gap:1px;text-align:center;font-size:13.5px;font-weight:900;color:#4A3F8F;text-decoration:underline;text-underline-offset:3px;padding:6px 0}.offcp small{text-decoration:none;font-weight:700;color:#6b6b90;font-size:11.5px}
+
+/* 首頁即時數字＋主按鈕 */
+.shout .eyb{display:block;font-size:12px;font-weight:900;letter-spacing:.14em;color:#FFE6A8;margin-bottom:2px}
+.lpill{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--ink);border-radius:999px;padding:5px 12px;font-weight:900;font-size:14px}
+.lpill b{font-family:var(--f-num)}.ldot{width:9px;height:9px;border-radius:50%;background:#DD4F3C;box-shadow:0 0 0 4px rgba(221,79,60,.2);animation:ldot 1.6s infinite}
+@keyframes ldot{50%{box-shadow:0 0 0 7px rgba(221,79,60,.05)}}
+[data-stats]{display:grid;gap:10px}
+.kpi3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi3 div{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:8px 4px;text-align:center;box-shadow:3px 3px 0 var(--ink)}
+.kpi3 b{display:block;font-family:var(--f-num);font-size:24px;line-height:1.15}.kpi3 small{font-size:11.5px;font-weight:700;color:#55558a}.kpi3 .hl{background:var(--yellow)}
+.saved{display:flex;gap:12px;align-items:center;background:var(--ink);color:#fff;border-radius:16px;padding:10px 14px}
+.saved b{font-family:var(--f-num);font-size:26px;color:var(--yellow)}.saved small{display:block;font-size:12px;opacity:.85}
+.sv-ic{flex:none;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12);display:grid;place-items:center}.sv-ic svg{width:26px;height:26px}
+.qcta{width:100%;font-size:22px!important;padding:14px!important}
+.qsec{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qsec button{display:flex;align-items:center;justify-content:center;gap:5px;background:#fff;border:1.5px solid #D6D6E6;border-radius:12px;padding:9px 4px;font:inherit;font-size:13.5px;font-weight:700;color:#55558a;cursor:pointer}.qsec svg.qi{width:18px;height:18px}
+/* 選門市地圖 */
+.vtog{display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-top:8px}
+.vtog button{display:flex;align-items:center;justify-content:center;gap:4px;border:1.5px solid #DEDEEA;background:#fff;border-radius:10px;padding:7px;font:inherit;font-weight:900;font-size:13.5px;color:var(--ink);cursor:pointer}.vtog svg.qi{width:16px;height:16px}
+.vtog button[aria-selected=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.smap{position:relative;height:420px;border:2px solid var(--ink);border-radius:16px;overflow:hidden;background:#F6F3EC;margin-top:4px}
+.smap-bg{position:absolute;inset:0;background:linear-gradient(#fff 0 0) 0 40%/100% 6px no-repeat,linear-gradient(#fff 0 0) 0 70%/100% 6px no-repeat,linear-gradient(#fff 0 0) 45% 0/6px 100% no-repeat,linear-gradient(#fff 0 0) 72% 0/6px 100% no-repeat}
+.rv{position:absolute;border:16px solid #CFE2F1;border-radius:50%}.r1{width:260px;height:520px;left:-210px;top:-60px}.r2{width:520px;height:200px;left:20%;top:-150px}
+.storepick .slist .mpin{position:absolute;transform:translate(-50%,-50%);display:flex;justify-content:center;align-items:baseline;gap:1px;border:2px solid var(--ink);border-radius:9px;padding:1px 6px;text-align:center;font:inherit;font-size:10.5px;font-weight:900;color:#fff;cursor:pointer;white-space:nowrap;box-shadow:2px 2px 0 var(--ink)}
+.storepick .slist .mpin b{font-family:var(--f-num);font-size:12px}.mpin .mn{margin-left:3px;font-size:10.5px}
+.storepick .slist .mpin.g{background:#4BA882}.storepick .slist .mpin.y{background:#E8A93A}.storepick .slist .mpin.r{background:#DD4F3C}
+.storepick .slist .mpin.me{z-index:2;padding:2px 8px;background:var(--ink)}
+.smap-leg{display:flex;gap:12px;font-size:12px;font-weight:700;margin-top:6px}.smap-leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px}.smap-leg .g{background:#4BA882}.smap-leg .y{background:#E8A93A}.smap-leg .r{background:#DD4F3C}
+.smap-best{display:grid;gap:6px;margin-top:8px}.smap-best>b{font-size:14px}
+.storepick .slist .smap-best button{display:flex;align-items:center;gap:8px;border:1.5px solid #DEDEEA;background:#fff;border-radius:12px;padding:8px 10px;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.smap-best button span{flex:1;display:grid;font-weight:900;font-size:14.5px}.smap-best em{font-style:normal;color:#fff;border-radius:8px;padding:3px 8px;font-weight:900;font-size:13px}
+.smap-best em.g{background:#4BA882}.smap-best em.y{background:#E8A93A}.smap-best em.r{background:#DD4F3C}
 </style>
 
 <div class="outer">
@@ -1146,6 +1178,7 @@ function renderApp(fromTick){gameStatus();
   if(fromTick){ // light updates only, so typing and playing videos are never interrupted
     const live=b.querySelector("[data-live]");
     if(live){live.outerHTML=liveHTML();bindLive()}
+    const stx=b.querySelector("[data-stats]");if(stx)stx.innerHTML=statsHTML();
     updateBillboard();
     if(U.tab==="mine"&&meState()==="waiting"&&(waitFor(S.me).ahead<=3)!==!!U.wasNear){fullRender();return}
     if(U.tab==="mine"){const tk=b.querySelector("#ticketWrap");if(tk){tk.innerHTML=ticketInner();}const cw=b.querySelector("#calledWrap");if(cw)cw.innerHTML=calledInner();if(meState()==="done"&&!b.querySelector("#rateBox")){fullRender()}}
@@ -1240,21 +1273,34 @@ function openAdmin(){const a=$("#admin");a.hidden=false;if(!INS_REG)INS_REG=regi
 function setHome(n){HOME=n;buildStores();U.store=0;PEAK=STORES[0].peak;U.slot=null;
   $("#storeName").textContent=n;$("#storeBtn").setAttribute("aria-label","切換門市，目前："+n);
   if(!(S.me&&meState()!=="done"))$("#url").innerHTML=`qtalk.demo/<b>${n}</b>`}
-function openStorePick(){
+/* 門市地圖（台北市示意座標；其他縣市先用清單） */
+const GEO={"台北文創門市":[25.044,121.560],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北大直門市":[25.080,121.547],"台北林森北門市":[25.055,121.525],"台北民權東門市":[25.062,121.535],"台北農安門市":[25.066,121.526],"台北西湖門市":[25.082,121.567],"台北內湖門市":[25.083,121.590],"內湖湖光門市":[25.068,121.600],"內湖光電門市":[25.078,121.574],"台北通化門市":[25.032,121.553],"台北東湖門市":[25.068,121.616],"文山景中門市":[25.000,121.543],"台北天母門市":[25.117,121.531],"北投中央北門市":[25.133,121.500]};
+const wcol=w=>w<10?"g":w<=20?"y":"r";
+function mapHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
+  const a0=25.022,a1=25.090,o0=121.500,o1=121.622;   // 先看市中心；天母、北投、景中在清單裡
+  const inMap=n=>GEO[n][0]>a0&&GEO[n][0]<a1&&GEO[n][1]>o0&&GEO[n][1]<o1;
+  const X=l=>Math.min(88,Math.max(12,(l-o0)/(o1-o0)*100)).toFixed(1),Y=a=>Math.min(95,Math.max(5,(a1-a)/(a1-a0)*100)).toFixed(1);
+  const best=names.slice().sort((p,q)=>storeWait(p)-storeWait(q)).slice(0,2);
+  return `<div class="smap"><div class="smap-bg"><i class="rv r1"></i><i class="rv r2"></i></div>${names.filter(inMap).map(n=>{const w=storeWait(n);return `<button type="button" class="mpin ${wcol(w)} ${n===HOME?"me":""}" data-home="${n}" style="left:${X(GEO[n][1])}%;top:${Y(GEO[n][0])}%" aria-label="${n}，現在約 ${w} 分">${n===HOME?"📍":""}<span class="mn" style="margin:0 3px 0 0">${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}</span><b>${w}</b>分</button>`}).join("")}</div>
+  <div class="smap-leg"><span><i class="g"></i>10 分內</span><span><i class="y"></i>10–20 分</span><span><i class="r"></i>20 分以上</span></div>
+  <div class="smap-best"><b>等最少的</b>${best.map(n=>`<button type="button" data-home="${n}"><span>${n}<small class="addr">${STORE_ADDR[n]||""}</small></span><em class="${wcol(storeWait(n))}">等 ${storeWait(n)} 分</em></button>`).join("")}</div>`}
+function openStorePick(asMap){
   if(S.me&&["waiting","called"].includes(meState())){toast("info",`你正在${HOME}排隊`,"辦完這次的號碼，才能換別的門市。");return}
-  let city=cityOf(HOME),q="";
+  let city=cityOf(HOME),q="",view=asMap===true?"map":"list";
   const list=()=>{const names=q?Object.values(ALL_STORES).flat().filter(n=>n.includes(q)||(STORE_ADDR[n]||"").includes(q)):ALL_STORES[city];
     return names.length?names.map(n=>`<button type="button" data-home="${n}" aria-pressed="${n===HOME}"><span>${n}${n===HOME?"・目前":""}<small class="addr">${STORE_ADDR[n]||""}</small></span><small>${q?cityOf(n)+"・":""}現在約 ${storeWait(n)} 分</small></button>`).join(""):`<p class="muted">找不到「${esc(q)}」，換個關鍵字試試。</p>`};
   modal(`<div class="sheet storepick" aria-labelledby="sph"><h3 id="sph">選擇門市</h3>
     <div class="cities" role="group" aria-label="縣市">${Object.keys(ALL_STORES).map(c=>`<button type="button" data-city="${c}" aria-pressed="${c===city}">${c}</button>`).join("")}</div>
     <input type="search" id="spq" placeholder="或搜尋門市或地址，例如：內湖、中壢" aria-label="搜尋門市" style="margin-top:8px">
-    <div class="slist" id="slist">${list()}</div>
+    <div class="vtog" role="tablist"><button type="button" data-view="list" aria-selected="${view==="list"}">清單</button><button type="button" data-view="map" aria-selected="${view==="map"}">${QI("pin")}地圖・看哪家人少</button></div>
+    <div class="slist" id="slist">${view==="map"?mapHTML(city):list()}</div>
     <div class="acts"><button class="btn wide" type="button" id="spClose">取消</button></div>
     <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
     const bind=()=>{m.querySelectorAll("[data-home]").forEach(b=>b.onclick=()=>{const n=b.dataset.home;closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}})};
-    const re=()=>{$("#slist").innerHTML=list();m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    const re=()=>{$("#slist").innerHTML=view==="map"&&!q?mapHTML(city):list();m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
+    m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
     $("#spClose").onclick=closeModal;bind();
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
@@ -1505,20 +1551,30 @@ function bindLive(){const m=$("#toMine");if(m)m.onclick=()=>{U.mineOK=true;go("m
 function queueHTML(){
   const st=meState(),has=st==="waiting"||st==="called";
   const now=nowCalled();lastNow=now?now.no:null;
-  return `${has?liveHTML():`<div data-live hidden></div><div class="shout"><span class="qtag">叫號說</span><h3>門市，先聽我說！！</h3><p>說你來辦什麼，排到之前櫃台就準備好了。</p></div>`}
+  return `${has?liveHTML():`<div data-live hidden></div><div class="shout"><span class="qtag">叫號說</span><small class="eyb">${esc(HOME)}・現在</small><h3>門市，先聽我說！！</h3><p>說你來辦什麼，排到之前櫃台就準備好了。</p></div><div data-stats>${statsHTML()}</div>
+  <button type="button" class="cta qcta" id="qCta">取號</button>
+  <div class="qsec"><button type="button" data-lazy="1">${QI("book")}今天必買懶人包</button><button type="button" id="qMap">${QI("pin")}附近哪家人少？</button></div>`}
   <div class="scene" id="scene" aria-label="排隊中的顧客，點角色看他的排隊狀態">
     <div class="billboard"><div><small>現在叫號</small><div class="now" id="bbNow">${now?now.no:"—"}</div></div><div class="to"><span>請到</span><b id="bbDesk">${now?now.desk+1:"—"}</b><span>號<br>櫃台</span></div></div>
     <div id="bubbleWrap"></div>
     <span class="hint">◀ 拖曳・點角色看排隊狀態 ▶</span>
   </div>
   ${pickupTopHTML()}
-  ${lazyBanHTML()}
+  ${has?lazyBanHTML():""}
   ${has?"":takeHTML()}
   ${has||LIVE.on?"":resvHTML()}
   ${videosHTML(KNOW_VIDEOS,"取號前，先看懂")}`;
 }
+/* 即時數字：現在幾組在等、幾個櫃台、今天服務幾人、大家少站在門口幾小時（示意：已服務人數 × 平均等候） */
+function liveStats(){const wait=S.queue.length,desks=Math.max(1,S.serving.filter(Boolean).length||effDesks()),served=Math.max(0,S.total-S.queue.length-S.serving.filter(Boolean).length),avg=4.5,hrs=served*avg/60;return{wait,desks,served,hrs,avg,mins:Math.round(baseWait())}}
+function statsHTML(){const x=liveStats();
+  return `<span class="lpill"><i class="ldot"></i>現在有 <b>${x.wait}</b> 組在等，約 <b>${x.mins}</b> 分</span>
+  <div class="kpi3"><div><b>${x.wait}</b><small>組正在等</small></div><div><b>${x.desks}</b><small>個櫃台服務中</small></div><div class="hl"><b>${x.served}</b><small>今天已服務</small></div></div>
+  <div class="saved"><span class="sv-ic">${QI("check",{c:"#fff",a:"#F5C543"})}</span><span><small>今天大家少站在門口</small><b>${x.hrs.toFixed(1)}</b> 小時<small>排隊時都在逛、玩遊戲、先備好證件</small></span></div>`}
 function bindQueue(){
   bindLive();bindLazyOpen();bindPickup();Q3.mount($("#scene"));
+  const qc=$("#qCta");if(qc)qc.onclick=()=>{const e=$("#take");if(e)e.scrollIntoView({behavior:"smooth",block:"start"})};
+  const qm=$("#qMap");if(qm)qm.onclick=()=>openStorePick(true);
   if(!(meState()==="waiting"||meState()==="called")){bindTake();bindResv()}
   bindVideos();
 }
