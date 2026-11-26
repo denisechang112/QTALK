@@ -917,6 +917,10 @@ svg.qi{display:block}
 .gm-off a{justify-self:center;border:2px solid var(--ink);border-radius:999px;padding:5px 14px;font-weight:900;color:var(--ink);text-decoration:none;background:#fff}
 .mlwrap{position:absolute;inset:0;opacity:0;transition:opacity .4s}.mlwrap.on{opacity:1}.mlwrap .maplibregl-canvas-container,.mlwrap canvas{outline:0}
 .smap.loading::after{content:"正在載入 3D 實景…"!important;inset:auto 0 8px 0!important;font-size:11.5px;z-index:4}
+
+.kpi3 b em{font-style:normal;font-family:var(--f);font-size:13px;font-weight:900;margin-left:2px}
+.saved.imp{position:relative;min-height:92px}
+.imp-dots{position:absolute;right:12px;top:10px;display:flex;gap:4px}.imp-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3)}.imp-dots i.on{background:var(--yellow)}
 </style>
 
 <div class="outer">
@@ -1349,7 +1353,7 @@ const MAP_BOX={a0:25.022,a1:25.090,o0:121.500,o1:121.622};   // 先看市中心�
 const geoIn=n=>GEO[n]&&GEO[n][0]>MAP_BOX.a0&&GEO[n][0]<MAP_BOX.a1&&GEO[n][1]>MAP_BOX.o0&&GEO[n][1]<MAP_BOX.o1;
 function kmBetween(a,b){const R=6371,r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function tripOf(n){const g=GEO[n],h=GEO[HOME];if(!g||!h||n===HOME)return null;const km=kmBetween(h,g)*1.3,walk=Math.round(km*1000/80);return{km,walk,ride:Math.max(5,Math.round(km*2.5+6)),save:storeWait(HOME)-storeWait(n)}}
-function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${w<10?"low":""} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分"><i class="md"></i><span class="ml">${n===HOME?"你在這・":""}${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")} <b>${w}</b></span></button>`}
+function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${w<10?"low":""} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分"><i class="md"></i><span class="ml">${n===HOME?"你在這・":""}${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")} <b>${w}</b> 分鐘</span></button>`}
 function mcardHTML(n){if(!n)return `<div class="mcard hint">點地圖上的門市，看要等多久、怎麼過去</div>`;
   const w=storeWait(n),t=tripOf(n),q=encodeURIComponent(n.includes("台灣大哥大")?n:"台灣大哥大 "+n+" "+(STORE_ADDR[n]||""));
   return `<div class="mcard"><div class="mc-h"><span><b>${n}</b><small>${STORE_ADDR[n]||""}</small></span><em class="${wcol(w)}">等 ${w} 分</em></div>
@@ -1370,7 +1374,7 @@ function openGmap(n,onPick){const w=storeWait(n),t=tripOf(n);
 function mapShellHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
   const best=null;
   return `<div class="smap" id="smap"></div>
-  <div class="smap-leg"><span>數字＝現在要等幾分</span><span><i class="lo"></i>10 分內</span><button type="button" class="m3t" id="m3t" hidden></button></div>
+  <div class="smap-leg"><span>每家現在要等幾分鐘</span><span><i class="lo"></i>10 分內</span><button type="button" class="m3t" id="m3t" hidden></button></div>
   <div id="mcard">${mcardHTML(best)}</div>`}
 /* 簡圖（不用網路） */
 function flatMap(box,city,sel){const names=(ALL_STORES[city]||[]).filter(geoIn),{a0,a1,o0,o1}=MAP_BOX;
@@ -1715,8 +1719,17 @@ function queueHTML(){
 function liveStats(){const wait=S.queue.length,desks=Math.max(1,S.serving.filter(Boolean).length||effDesks()),served=Math.max(0,S.total-S.queue.length-S.serving.filter(Boolean).length),avg=4.5,hrs=served*avg/60;return{wait,desks,served,hrs,avg,mins:Math.round(baseWait())}}
 function statsHTML(){const x=liveStats();
   return `<span class="lpill"><i class="ldot"></i>現在有 <b>${x.wait}</b> 組在等，約 <b>${x.mins}</b> 分</span>
-  <div class="kpi3"><div><b>${x.wait}</b><small>組正在等</small></div><div><b>${x.desks}</b><small>個櫃台服務中</small></div><div class="hl"><b>${x.served}</b><small>今天已服務</small></div></div>
-  <div class="saved"><span class="sv-ic">${QI("check",{c:"#fff",a:"#F5C543"})}</span><span><small>今天大家少站在門口</small><b>${x.hrs.toFixed(1)}</b> 小時<small>排隊時都在逛、玩遊戲、先備好證件</small></span></div>`}
+  <div class="kpi3"><div><b>${x.wait}<em>組</em></b><small>正在等</small></div><div><b>${x.desks}<em>個</em></b><small>櫃台服務中</small></div><div class="hl"><b>${x.served}<em>人</em></b><small>今天已服務</small></div></div>
+  ${impactHTML(x)}`}
+/* 可量化的效益：輪播 4 個數字（每 6 秒換一個）。練習模式用示意比例；開場次時用真的取號資料 */
+function impactData(x){let said=Math.round(x.served*.64),docs=Math.round(x.served*.41),prep=Math.round(x.served*.15);
+  try{if(LIVE.on&&LIVE.conn){const T=Object.values((LIVE.conn.data||{}).tickets||{}).filter(t=>t&&t.st==="d");said=T.filter(t=>t.say||t.ai).length;prep=T.reduce((a,t)=>a+((t.pk||[]).length),0);docs=T.filter(t=>t.dk).length||Math.round(T.length*.41)}}catch(e){}
+  return [["clock",`${x.hrs.toFixed(1)}`,"小時","今天還給大家的等候時間","排隊時不用站在店裡乾等，可以去逛、玩遊戲、先備好證件"],
+    ["chat",`${said}`,"人","取號時就先說了要辦什麼","櫃台叫號前就準備好，不用從頭問一遍"],
+    ["check",`${docs}`,"人","證件在家就先備齊","到櫃台不用回家拿、不用跑第二趟"],
+    ["bag",`${prep}`,"件","預選的優惠，櫃台先備好","叫到號就能結帳，不用等店員去倉庫拿"]]}
+function impactHTML(x){const D=impactData(x),i=Math.floor(Date.now()/6000)%D.length,[ic,v,u,t,sub]=D[i];
+  return `<div class="saved imp"><span class="sv-ic">${QI(ic==="clock"?"check":ic==="chat"?"book":ic,{c:"#fff",a:"#F5C543"})}</span><span><small>${t}</small><b>${v}</b> ${u}<small>${sub}</small></span><i class="imp-dots">${D.map((_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</i></div>`}
 function bindQueue(){
   bindLive();bindLazyOpen();bindPickup();Q3.mount($("#scene"));
   const qc=$("#qCta");if(qc)qc.onclick=()=>{const e=$("#take");if(e)e.scrollIntoView({behavior:"smooth",block:"start"})};
@@ -2081,7 +2094,7 @@ function bindMine(){
   const h=$("#hold");if(h)h.onclick=()=>{holdMe();fullRender()};
   const hl=$("#holdLater");if(hl)hl.onclick=()=>{holdMe();fullRender()};
   const a=$("#away");if(a)a.onclick=()=>{U.out=!U.out;if(U.out)toast("info","放心去逛","前面剩 3 組時會傳簡訊並跳出提醒。");fullRender()};
-  document.querySelectorAll("[data-doc]").forEach(b=>b.onclick=()=>{const i=+b.dataset.doc;if(meState()==="none")U.preDocs=true;U.docs.has(i)?U.docs.delete(i):U.docs.add(i);buzz(20);fullRender()});
+  document.querySelectorAll("[data-doc]").forEach(b=>b.onclick=()=>{const i=+b.dataset.doc;if(meState()==="none")U.preDocs=true;setTimeout(()=>{try{if(LIVE.on&&LIVE.conn&&LIVE.myId&&S.me&&CATS[S.me.cat])LIVE.conn.patch("/tickets/"+LIVE.myId,{dk:U.docs.size>=CATS[S.me.cat].docs.length}).catch(()=>{})}catch(e){}},0);U.docs.has(i)?U.docs.delete(i):U.docs.add(i);buzz(20);fullRender()});
   document.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{U.done=b.dataset.f;fullRender()});
   document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{U.rating[b.dataset.r]=+b.dataset.v;fullRender()});
   document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{U.contact=b.dataset.c==="1";fullRender()});
