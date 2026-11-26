@@ -393,6 +393,15 @@ button.watch svg.qi,.pkd svg.qi{display:inline-block;width:18px;height:18px;vert
 .m3pin.low i{background:#4BA882}.m3pin.sel i{background:#E8893A;width:14px;height:14px}
 .m3pin span{order:1;background:rgba(244,243,250,.94);border:1px solid rgba(45,46,103,.25);border-radius:7px;padding:1px 6px;font-size:11.5px;font-weight:700;color:#2D2E67;white-space:nowrap}
 .m3pin.low span{color:#2E8B57}.m3pin.sel span{background:#fff;border:1.5px solid #E8893A;font-weight:900;font-size:12.5px;color:#2D2E67}
+
+/* 門市會發亮：人少（10 分內）的綠點呼吸發光、選中的橘點擴散光圈；淺色底用彩色光暈才看得到 */
+@keyframes qGlowG{0%,100%{box-shadow:0 0 0 0 rgba(75,168,130,.55),0 0 6px 1px rgba(75,168,130,.6)}50%{box-shadow:0 0 0 7px rgba(75,168,130,0),0 0 14px 4px rgba(75,168,130,.85)}}
+@keyframes qGlowO{0%{box-shadow:0 0 0 0 rgba(232,137,58,.7),0 0 10px 3px rgba(232,137,58,.8)}100%{box-shadow:0 0 0 14px rgba(232,137,58,0),0 0 10px 3px rgba(232,137,58,.8)}}
+@keyframes qGlowY{0%,100%{box-shadow:0 0 0 0 rgba(245,197,67,.6),0 0 8px 2px rgba(245,197,67,.7)}50%{box-shadow:0 0 0 6px rgba(245,197,67,0),0 0 14px 4px rgba(245,197,67,.9)}}
+@media (prefers-reduced-motion:no-preference){
+.m3pin.low i{animation:qGlowG 2.2s ease-in-out infinite}
+.m3pin.me i{animation:qGlowY 2.6s ease-in-out infinite}
+.m3pin.sel i{animation:qGlowO 1.4s ease-out infinite}}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
