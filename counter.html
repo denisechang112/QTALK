@@ -402,8 +402,8 @@ function openSheet(){
       <label class="f">模型<input type="text" id="aiModel" autocomplete="off" value="${esc(AI.model)}"></label>
       <div class="row"><button class="btn sm dark" data-s="aiSave">儲存並測試</button>${AI.key?`<button class="btn sm" data-s="aiClear">移除金鑰</button>`:""}<span id="aiMsg" class="muted"></span></div></div>
     <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">排練用</h3>
-      <div class="row"><button class="btn sm" data-s="fake">＋ 加一位測試顧客</button><button class="btn sm warn" data-s="wipe">清空所有號碼，從 A101 重新開始</button></div>
-      <p class="muted">正式上台前按一次「清空」，評審取到的就會是 A101。</p></div>
+      <div class="row"><button class="btn sm" data-s="fake">＋ 加一位測試顧客</button><button class="btn sm warn" data-s="wipe">🔄 一鍵重置 Demo</button></div>
+      <p class="muted">一次清乾淨：所有號碼清空（下一位是 A101）、連在這個場次的 App、LINE 自動回到「第一次打開」、大螢幕歸零。正式上台前按一次。</p></div>
     <div class="sec"><h3 style="margin:0;font-size:16px;font-weight:900">備案</h3>
       <div class="row"><a class="btn sm" href="./" target="_blank" rel="noopener">開啟模擬版（網路不穩時用）</a><button class="btn sm warn" data-s="new">結束這個場次，建立新的</button></div></div>
   </div>`;
@@ -422,7 +422,7 @@ function openSheet(){
     try{
       if(k==="fake"){const s=SAMPLE[Math.floor(Math.random()*SAMPLE.length)];const sealed=s[1]?await Q.crypto.seal(sess.pub,s[1]):null;
         const t={cat:s[0],st:"w",t:Q.TS,lang:"zh"};if(sealed)t.say=sealed;await conn.post("/tickets",t);flash("已加入一位測試顧客")}
-      if(k==="wipe"&&confirm("確定清空所有號碼嗎？顧客手機上的號碼也會一起失效。")){await conn.del("/tickets");plain.clear();flash("已清空，下一位會是 A101")}
+      if(k==="wipe"&&confirm("確定一鍵重置嗎？所有號碼會清空，連線中的手機（App、LINE）也會回到第一次打開的樣子。")){await conn.del("/tickets");plain.clear();flash("已重置：號碼清空、所有手機回到第一次打開，下一位是 A101")}
     }catch(err){flash("沒有送出，請檢查網路後再試一次",4200)}
     if(k==="new"&&confirm("確定結束這個場次嗎？目前的 QR Code 會全部失效。")){if(conn)conn.close();conn=null;sess=null;Q.sess.clear();try{history.replaceState(null,"",location.pathname)}catch(e2){}sh.hidden=true;renderSetup()}
   };

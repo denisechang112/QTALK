@@ -915,7 +915,7 @@ svg.qi{display:block}
 .mprev{position:absolute;left:8px;bottom:6px;z-index:3;font-size:11.5px;font-weight:900;color:var(--ink);background:#fff;border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;text-decoration:none}
 .gm-off{height:100%;display:grid;place-content:center;gap:8px;text-align:center;padding:18px;color:var(--ink)}.gm-off b{font-size:16px}.gm-off span{font-size:13px;font-weight:700;color:#55558a}
 .gm-off a{justify-self:center;border:2px solid var(--ink);border-radius:999px;padding:5px 14px;font-weight:900;color:var(--ink);text-decoration:none;background:#fff}
-.mlwrap{position:absolute;inset:0;opacity:0;transition:opacity .4s}.mlwrap.on{opacity:1}.mlwrap .maplibregl-canvas-container,.mlwrap canvas{outline:0}
+.mlwrap{position:absolute!important;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s}.mlwrap.on{opacity:1}.mlwrap .maplibregl-canvas-container,.mlwrap canvas{outline:0}
 .smap.loading::after{content:"正在載入 3D 實景…"!important;inset:auto 0 8px 0!important;font-size:11.5px;z-index:4}
 
 .kpi3 b em{font-style:normal;font-family:var(--f);font-size:13px;font-weight:900;margin-left:2px}
@@ -2560,7 +2560,7 @@ function liveSync(room){
   if(LIVE.first){LIVE.first=false;   // 剛打開頁面：舊號碼已辦完、過號或被清空 → 直接當成第一次來，不跳通知
     if(LIVE.myId){const m0=V.all.find(t=>t.id===LIVE.myId);if(!m0||m0.st==="d"||m0.st==="s"||m0.st==="x")liveForget()}}
   if(LIVE.myId){const mine=V.all.find(t=>t.id===LIVE.myId);
-    if(!mine){if(Date.now()-LIVE.tookAt>8000){liveForget();S.me=null;if(prevMe)toast("info","場次已重新開始","之前的號碼已失效，請重新取號。",5200)}}
+    if(!mine){if(Date.now()-LIVE.tookAt>4000){liveForget();S.me=null;wipeLocal();location.replace(location.pathname+"?fresh"+location.hash);return}}   // 櫃台按了「一鍵重置」：號碼被清空 → 這支手機回到第一次打開
     else if(mine.st==="s"||mine.st==="x"){liveForget();S.me=null;closeModal();toast("info",`${mine.no} 已過號`,"櫃台叫號時沒有等到你。請重新取號，或直接洽櫃台人員。",7000);buzz([120,60,120])}
     else{const o=obj(mine);o.me=true;o.text=LIVE.myText||"";S.me=o;
       if(mine.st==="c"&&S.serving.includes(o)){const sig=mine.id+":"+(mine.ct||0)+":"+(mine.rc||0);if(sig!==LIVE.calledSig){LIVE.calledSig=sig;called=true}}
