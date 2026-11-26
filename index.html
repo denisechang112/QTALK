@@ -948,7 +948,7 @@ const NEAR={"台北文創門市":["約 1 公里","約 1.5 公里","約 2 公里"
 function hashN(t){let h=7;for(const c of t)h=(h*31+c.charCodeAt(0))%9973;return h}
 function peakOf(n){if(KNOWN_PEAK[n])return KNOWN_PEAK[n];const h=hashN(n),base=[3,4,5,4,4,6,7,8,7,5,5,4];return base.map((v,i)=>Math.max(1,Math.min(10,v+((h>>(i%5))%3)-1)))}
 function cityOf(n){return Object.keys(ALL_STORES).find(c=>ALL_STORES[c].includes(n))}
-function storeWait(n){if(n===HOME)return peakOf(n)[5]*3;const W=[4,6,7,9,12,15,18,22,26];return W[hashN(n+"w")%W.length]}   // 示意：各門市等候時間拉開，地圖上才看得出哪家人少
+function storeWait(n){if(typeof HOME!=="undefined"&&n===HOME)return peakOf(n)[5]*3;const W=[4,6,7,9,12,15,18,22,26];return W[hashN(n+"w")%W.length]}   // 示意：各門市等候時間拉開，地圖上才看得出哪家人少
 let HOME="台北文創門市",STORES=[];
 function buildStores(){const others=ALL_STORES[cityOf(HOME)].filter(n=>n!==HOME).slice(0,3),D=NEAR[HOME]||["同縣市","同縣市","同縣市"];
   STORES=[HOME,...others].map((n,i)=>({name:n,dist:i?D[i-1]:"你在這裡",peak:peakOf(n)}))}
