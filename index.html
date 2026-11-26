@@ -934,6 +934,15 @@ svg.qi{display:block}
 .mpin .ml{font-size:12px!important;font-weight:900;gap:0}
 .mpin .ml b{font-size:12px!important;font-weight:700!important;margin:0 0 0 5px!important;color:#55558a!important}
 .mpin.low .ml b{color:#2E8B57!important}
+
+/* 首頁精簡：取號往上，效益只留一行 */
+.trust{margin:-2px 0 0;text-align:center;font-size:12.5px;font-weight:700;color:#55558a}.trust b{color:var(--ink)}
+/* 地圖精簡：只顯示數字，你的門市和選中的才顯示店名；切到地圖時藏縣市和搜尋 */
+.mpin .mnm{display:none}.mpin.me .mnm,.mpin.sel .mnm{display:inline;margin-right:5px}
+.mpin .ml b{margin-left:0!important}.mpin.me .ml b,.mpin.sel .ml b{margin-left:0!important}
+.sheet.mapmode .cities,.sheet.mapmode #spq{display:none}
+.sheet.mapmode .smap{height:min(52vh,460px)}
+.sheet.mapmode h3{margin-bottom:0}
 </style>
 
 <div class="outer">
@@ -1263,7 +1272,7 @@ function renderApp(fromTick){gameStatus();
   if(fromTick){ // light updates only, so typing and playing videos are never interrupted
     const live=b.querySelector("[data-live]");
     if(live){live.outerHTML=liveHTML();bindLive()}
-    const stx=b.querySelector("[data-stats]");if(stx)stx.innerHTML=statsHTML();
+    const stx=b.querySelector("[data-stats]");if(stx)stx.innerHTML=statsHTML();const tr=b.querySelector("[data-trust]");if(tr)tr.innerHTML=trustHTML();
     updateBillboard();
     if(U.tab==="mine"&&meState()==="waiting"&&(waitFor(S.me).ahead<=3)!==!!U.wasNear){fullRender();return}
     if(U.tab==="mine"){const tk=b.querySelector("#ticketWrap");if(tk){tk.innerHTML=ticketInner();}const cw=b.querySelector("#calledWrap");if(cw)cw.innerHTML=calledInner();if(meState()==="done"&&!b.querySelector("#rateBox")){fullRender()}}
@@ -1362,11 +1371,11 @@ function setHome(n){HOME=n;buildStores();U.store=0;PEAK=STORES[0].peak;U.slot=nu
 const GEO={"台北文創門市":[25.044,121.560],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北大直門市":[25.080,121.547],"台北林森北門市":[25.055,121.525],"台北民權東門市":[25.062,121.535],"台北農安門市":[25.066,121.526],"台北西湖門市":[25.082,121.567],"台北內湖門市":[25.083,121.590],"內湖湖光門市":[25.068,121.600],"內湖光電門市":[25.078,121.574],"台北通化門市":[25.032,121.553],"台北東湖門市":[25.068,121.616],"文山景中門市":[25.000,121.543],"台北天母門市":[25.117,121.531],"北投中央北門市":[25.133,121.500]};
 const wcol=w=>w<10?"g":w<=20?"y":"r";
 /* ===== 門市地圖：選中有對焦框＋資訊卡＋推薦路線；有網路時用真實 3D 地圖，沒有就用簡圖 ===== */
-const MAP_BOX={a0:25.022,a1:25.090,o0:121.500,o1:121.622};   // 先看市中心；天母、北投、景中在清單裡
+const MAP_BOX={a0:25.026,a1:25.090,o0:121.500,o1:121.622};   // 先看市中心；天母、北投、景中在清單裡
 const geoIn=n=>GEO[n]&&GEO[n][0]>MAP_BOX.a0&&GEO[n][0]<MAP_BOX.a1&&GEO[n][1]>MAP_BOX.o0&&GEO[n][1]<MAP_BOX.o1;
 function kmBetween(a,b){const R=6371,r=x=>x*Math.PI/180,dl=r(b[0]-a[0]),dn=r(b[1]-a[1]),h=Math.sin(dl/2)**2+Math.cos(r(a[0]))*Math.cos(r(b[0]))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function tripOf(n){const g=GEO[n],h=GEO[HOME];if(!g||!h||n===HOME)return null;const km=kmBetween(h,g)*1.3,walk=Math.round(km*1000/80);return{km,walk,ride:Math.max(5,Math.round(km*2.5+6)),save:storeWait(HOME)-storeWait(n)}}
-function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${w<10?"low":""} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分"><i class="md"></i><span class="ml">${n===HOME?"你在這・":""}${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}<b>約 ${w} 分</b></span></button>`}
+function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${w<10?"low":""} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分"><i class="md"></i><span class="ml"><span class="mnm">${n===HOME?"你在這・":""}${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}</span><b>約 ${w} 分</b></span></button>`}
 function mcardHTML(n){if(!n)return `<div class="mcard hint">點地圖上的門市，看要等多久、怎麼過去</div>`;
   const w=storeWait(n),t=tripOf(n),q=encodeURIComponent(n.includes("台灣大哥大")?n:"台灣大哥大 "+n+" "+(STORE_ADDR[n]||""));
   return `<div class="mcard"><div class="mc-h"><span><b>${n}</b><small>${STORE_ADDR[n]||""}</small></span><em class="${wcol(w)}">等 ${w} 分</em></div>
@@ -1387,7 +1396,7 @@ function openGmap(n,onPick){const w=storeWait(n),t=tripOf(n);
 function mapShellHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
   const best=null;
   return `<div class="smap" id="smap"></div>
-  <div class="smap-leg"><span>每家現在約要等幾分</span><span><i class="lo"></i>10 分內</span><button type="button" class="m3t" id="m3t" hidden></button></div>
+  <div class="smap-leg"><span>數字＝約等幾分・點一下看店名</span><span><i class="lo"></i>10 分內</span><button type="button" class="m3t" id="m3t" hidden></button></div>
   <div id="mcard">${mcardHTML(best)}</div>`}
 /* 簡圖（不用網路） */
 function flatMap(box,city,sel){const names=(ALL_STORES[city]||[]).filter(geoIn),{a0,a1,o0,o1}=MAP_BOX;
@@ -1460,11 +1469,11 @@ function openStorePick(asMap){
     <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
     const goStore=n=>{closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}};
     const bind=()=>{m.querySelectorAll(".slist>[data-home]").forEach(b=>b.onclick=()=>goStore(b.dataset.home))};
-    const re=()=>{const mv=view==="map"&&!q;$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    const re=()=>{const mv=view==="map"&&!q;m.querySelector(".sheet").classList.toggle("mapmode",mv);$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
     m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
-    $("#spClose").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");bindStoreMap(m,city,goStore)}
+    $("#spClose").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");bindStoreMap(m,city,goStore)}
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
 }
@@ -1716,7 +1725,8 @@ function queueHTML(){
   const now=nowCalled();lastNow=now?now.no:null;
   return `${has?liveHTML():`<div data-live hidden></div><div class="shout"><span class="qtag">叫號說</span><small class="eyb">${esc(HOME)}・現在</small><h3>門市，先聽我說！！</h3><p>說你來辦什麼，排到之前櫃台就準備好了。</p></div><div data-stats>${statsHTML()}</div>
   <button type="button" class="cta qcta" id="qCta">取號</button>
-  <div class="qsec"><button type="button" data-lazy="1">${QI("book")}今天必買懶人包</button><button type="button" id="qMap">${QI("pin")}附近哪家人少？</button></div>`}
+  <div class="qsec"><button type="button" data-lazy="1">${QI("book")}今天必買懶人包</button><button type="button" id="qMap">${QI("pin")}附近哪家人少？</button></div>
+  <p class="trust" data-trust>${trustHTML()}</p>`}
   <div class="scene" id="scene" aria-label="排隊中的顧客，點角色看他的排隊狀態">
     <div class="billboard"><div><small>現在叫號</small><div class="now" id="bbNow">${now?now.no:"—"}</div></div><div class="to"><span>請到</span><b id="bbDesk">${now?now.desk+1:"—"}</b><span>號<br>櫃台</span></div></div>
     <div id="bubbleWrap"></div>
@@ -1732,9 +1742,9 @@ function queueHTML(){
 function liveStats(){const wait=S.queue.length,desks=Math.max(1,S.serving.filter(Boolean).length||effDesks()),served=Math.max(0,S.total-S.queue.length-S.serving.filter(Boolean).length),avg=4.5,hrs=served*avg/60;return{wait,desks,served,hrs,avg,mins:Math.round(baseWait())}}
 function statsHTML(){const x=liveStats();
   return `<span class="lpill"><i class="ldot"></i>現在有 <b>${x.wait}</b> 組在等，約 <b>${x.mins}</b> 分</span>
-  <div class="kpi3"><div><b>${x.wait}<em>組</em></b><small>正在等</small></div><div><b>${x.desks}<em>個</em></b><small>櫃台服務中</small></div><div class="hl"><b>${x.served}<em>人</em></b><small>今天已服務</small></div></div>
-  ${impactHTML(x)}`}
+  `}
 /* 可量化的效益：輪播 4 個數字（每 6 秒換一個）。練習模式用示意比例；開場次時用真的取號資料 */
+function trustHTML(){const x=liveStats();return x.served?`今天已幫 <b>${x.served}</b> 人省下 <b>${Math.round(x.hrs)}</b> 小時的等候`:"今天剛開門，第一位就是你"}
 function impactData(x){let said=Math.round(x.served*.64),docs=Math.round(x.served*.41),prep=Math.round(x.served*.15);
   try{if(LIVE.on&&LIVE.conn){const T=Object.values((LIVE.conn.data||{}).tickets||{}).filter(t=>t&&t.st==="d");said=T.filter(t=>t.say||t.ai).length;prep=T.reduce((a,t)=>a+((t.pk||[]).length),0);docs=T.filter(t=>t.dk).length||Math.round(T.length*.41)}}catch(e){}
   return [["clock",`${x.hrs.toFixed(1)}`,"小時","今天還給大家的等候時間","排隊時不用站在店裡乾等，可以去逛、玩遊戲、先備好證件"],

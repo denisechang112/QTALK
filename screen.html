@@ -102,7 +102,7 @@ html,body{background:#23245a!important}
 .c1{top:calc(var(--u)*-.9);left:calc(var(--u)*-.9);border-width:3px 0 0 3px}.c2{top:calc(var(--u)*-.9);right:calc(var(--u)*-.9);border-width:3px 3px 0 0}.c3{bottom:calc(var(--u)*-.9);left:calc(var(--u)*-.9);border-width:0 0 3px 3px}.c4{bottom:calc(var(--u)*-.9);right:calc(var(--u)*-.9);border-width:0 3px 3px 0}
 .wait{grid-template-columns:auto minmax(0,1fr)!important;row-gap:calc(var(--u)*.6)!important;align-content:center}.right{grid-template-rows:minmax(0,1.55fr) minmax(0,1.25fr)!important}
 .wait .sv{grid-column:1/-1;display:grid;grid-template-columns:auto auto 1fr;align-items:baseline;column-gap:calc(var(--u)*1);padding-top:calc(var(--u)*.6);border-top:2px solid rgba(255,255,255,.18);text-align:left}
-.wait .sv small{font-weight:900;font-size:calc(var(--u)*1.3);color:var(--lilac)}.wait .sv b{font-family:var(--fn);font-size:calc(var(--u)*2.4);color:var(--yellow);line-height:1.1;white-space:nowrap}.wait .sv span{font-size:calc(var(--u)*1.15);color:#C9CAF0}
+.wait .sv small{font-weight:900;font-size:calc(var(--u)*1.3);color:var(--lilac)}.wait .sv b{font-family:var(--fn);font-size:calc(var(--u)*2.4);color:var(--yellow);line-height:1.1;white-space:nowrap}.wait .sv span{font-size:calc(var(--u)*1.15);color:#C9CAF0}.wait .sv{position:relative}.sdots{position:absolute;right:0;top:calc(var(--u)*.7);display:flex;gap:4px}.sdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3)}.sdots i.on{background:var(--yellow)}
 .tkr{flex:1 1 0;width:0;min-width:0;overflow:hidden;white-space:nowrap;position:relative;contain:inline-size}
 .tkr span{display:inline-block;padding-left:100%;animation:tkr 26s linear infinite}
 @keyframes tkr{to{transform:translateX(-100%)}}
@@ -172,10 +172,11 @@ function tickClock(){const d=new Date(),p=n=>String(n).padStart(2,"0");$("#clock
 /* 儀表板細節：門市座標（台北市示意）、今天少站在門口的時間、跑馬燈 */
 const GEO={"台北文創門市":[25.0441,121.5602],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北通化門市":[25.032,121.553]};
 function renderHud(){const st=(V&&V.meta&&V.meta.store)||(sess&&sess.store)||"",g=GEO[st];$("#geo").textContent=g?`${g[0].toFixed(4)}°N ${g[1].toFixed(4)}°E`:"";
-  const done=V?V.done:0,hrs=done*4.5/60;$("#saved").innerHTML=done?`<small>今天大家少站在門口</small><b>${hrs.toFixed(1)} 小時</b><span>已服務 ${done} 人</span>`:`<small>今天大家少站在門口</small><b>剛開始</b><span>辦完一位就開始累計</span>`;
+  const IM=Q.impact?Q.impact(window.__room||{}):[],i=Math.floor(Date.now()/6000)%Math.max(1,IM.length),it=IM[i];
+  $("#saved").innerHTML=it&&V&&V.done?`<small>${it[0]}</small><b>${it[1]} ${it[2]}</b><span>${it[3]}</span><i class="sdots">${IM.map((_,k)=>`<i class="${k===i?"on":""}"></i>`).join("")}</i>`:`<small>今天還給大家的等候時間</small><b>剛開始</b><span>辦完一位就開始累計</span>`;
   const nx=V&&V.waiting.length?`下一位 ${V.waiting.slice(0,2).map(t=>t.no).join("・")}`:"現在不用排隊，掃碼就輪到你";
   $("#tkr").textContent=`★ ${nx}　　★ 今天必買：配件滿千折百　　★ 手機掃碼取號，不用抽號碼牌　　★ 15:00 防詐小教室，排隊時就能聽`}
-setInterval(tickClock,1000);tickClock();
+setInterval(tickClock,1000);tickClock();setInterval(()=>{try{renderHud()}catch(e){}},6000);
 function render(){
   try{renderHud()}catch(e){}
   $("#store").textContent=(V.meta&&V.meta.store)||(sess&&sess.store)||"";
@@ -239,7 +240,7 @@ if(!sess){
   gate(`<h2>門市大螢幕準備好了</h2><p>按下面的按鈕開始。叫號時，這台電腦會發出「叮咚」並唸出號碼，請把喇叭打開。</p><button id="go">開始，並開啟叫號聲</button><button id="goMute" style="background:#fff;font-size:calc(var(--u)*1.8)">先不要聲音</button>`,g=>{
     g.querySelector("#go").onclick=()=>{setSound(true);chime();g.hidden=true};
     g.querySelector("#goMute").onclick=()=>{g.hidden=true}});
-  conn=Q.connect(sess.host,sess.room,room=>{V=Q.view(room);
+  conn=Q.connect(sess.host,sess.room,room=>{V=Q.view(room);window.__room=room;
     const L=V.last,sig=L?L.id+":"+(L.ct||0)+":"+(L.desk||1):null;
     render();
     if(!first&&sig&&sig!==lastSig)announce(L);

@@ -249,5 +249,16 @@
   /* icon(名稱, {c:線條色, a:重點色}) → 一段 SVG 字串 */
   function icon(k, o) { o = o || {}; var p = ICON[k] || ICON[CP_ICON[k]] || ICON.gift; return '<svg class="qi" viewBox="0 0 24 24" fill="none" stroke="' + (o.c || "#2D2E67") + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p.replace(/class="ac"/g, 'stroke="' + (o.a || "#E8893A") + '"') + "</svg>"; }
   function dealsFor(cat, walkIn) { var a = (DEAL_BY_CAT[cat] || DEAL_BY_CAT["異動/諮詢/維修"]).slice(); if (cat === "繳費/儲值") return a; if (walkIn) { a = ["exp"].concat(a.slice(0, 1)).concat(["add9"]); } return a.slice(0, 3); }
-  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH, DEALS: DEALS, COUPONS: COUPONS, dealsFor: dealsFor, icon: icon, CP_ICON: CP_ICON };
+  /* 可量化的效益（App、櫃台、大螢幕共用）：從當天已辦完的號碼算 */
+  function impact(room) {
+    var T = Object.keys((room && room.tickets) || {}).map(function (k) { return room.tickets[k]; }).filter(function (t) { return t && t.st === "d"; });
+    var n = T.length, said = T.filter(function (t) { return t.say || t.ai; }).length, docs = T.filter(function (t) { return t.dk; }).length;
+    var prep = T.reduce(function (a, t) { var p = t.pk; return a + (Array.isArray(p) ? p.length : p && typeof p === "object" ? Object.keys(p).length : 0); }, 0);
+    return [
+      ["今天還給大家的等候時間", (n * 4.5 / 60).toFixed(1), "小時", "排隊時不用站在店裡乾等，可以去逛、玩遊戲、先備好證件"],
+      ["取號時就先說了要辦什麼", String(said), "人", "櫃台叫號前就準備好，不用從頭問一遍"],
+      ["證件在家就先備齊", String(docs), "人", "到櫃台不用回家拿、不用跑第二趟"],
+      ["預選的優惠，櫃台先備好", String(prep), "件", "叫到號就能結帳，不用等店員去倉庫拿"]];
+  }
+  window.QTLive = { cleanHost: cleanHost, parseLink: parseLink, linkOf: linkOf, pageUrl: pageUrl, sess: sess, crypto: cryptoApi, order: order, view: view, connect: connect, rand: rand, qrSvg: qrSvg, holdPatch: holdPatch, ruleGuess: ruleGuess, TS: TS, STATUS_ZH: STATUS_ZH, DEALS: DEALS, COUPONS: COUPONS, dealsFor: dealsFor, impact: impact, icon: icon, CP_ICON: CP_ICON };
 })();
