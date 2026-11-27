@@ -1099,6 +1099,30 @@ svg.qi{display:block}
 .mstage .mpin.sel .ml{background:#fff!important;color:#17181D!important;box-shadow:0 6px 16px rgba(0,0,0,.5)}.mstage .mpin.sel .ml b{color:#1E8C55!important}.mstage .mpin.sel .ml .mnm{color:#17181D}
 .mstage .mpin.sel .md{background:#F0A14A}
 .mstage .mpin.me .ml{color:#17181D!important}
+
+/* ===== 淺色地圖模式（淺色地圖＋深藍面板） ===== */
+.modal.mapfull.lt{background:#F4F3FA}
+.mstage.lt .smap,.sheet.mapmode .mstage.lt{background:#F4F3FA!important}
+.mstage.lt .smap:not(.real) .smap-bg{background:linear-gradient(#2D2E67 0 0) 0 40%/100% 1.5px no-repeat,linear-gradient(#2D2E67 0 0) 0 70%/100% 1.5px no-repeat,linear-gradient(#2D2E67 0 0) 45% 0/1.5px 100% no-repeat,linear-gradient(#2D2E67 0 0) 72% 0/1.5px 100% no-repeat,repeating-linear-gradient(0deg,rgba(45,46,103,.08) 0 1px,transparent 1px 22px),repeating-linear-gradient(90deg,rgba(45,46,103,.08) 0 1px,transparent 1px 22px)!important}
+.mstage.lt .smap .rv{border-color:#DCE3F7!important}
+.mstage.lt .mtag{background:rgba(244,243,250,.9)!important;color:#8D90C2!important}
+.storepick .slist .mstage.lt .mglass{background:rgba(255,255,255,.86);border:1px solid rgba(45,46,103,.13);box-shadow:0 6px 18px rgba(20,23,56,.13);color:var(--ink)}
+.mstage.lt .mhud .mh1{color:#55558a}.mstage.lt .mhud .mh1 b{color:var(--ink)}
+.mstage.lt .mhud .mh2{color:#55558a}.mstage.lt .mhud .mh2 em{color:#2E8B57}.mstage.lt .mhud .mh2 .lo{background:#4BA882;box-shadow:0 0 0 3px rgba(75,168,130,.25)}
+.mstage.lt .mhud .mprev{color:#6A4FA0}
+.mstage.lt .mpanel{background:rgba(31,32,82,.96);border-top:0;box-shadow:0 -14px 34px rgba(20,23,56,.32)}
+.mstage.lt .mp-eye{color:#7FE3B0}.mstage.lt .mp-eye.far{color:rgba(255,255,255,.55)}
+.mstage.lt .mp-pg{color:#A9A8D6}
+.mstage.lt .mp-w em{color:#fff}.mstage.lt .mp-w.low em,.mstage.lt .mp-meta b.ok{color:#7FE3B0}
+.mstage.lt .mp-meta{color:#D9D8F0}.mstage.lt .mp-addr{color:#8E8DBF}
+.storepick .slist .mstage.lt .mpanel .mp-go{background:#F0A14A;color:#1F2052}
+.mstage.lt .mpin .ml{color:var(--ink)!important}
+.mstage.lt .mpin:not(.me):not(.sel) .ml{text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff,0 0 6px rgba(255,255,255,.95)!important}
+.mstage.lt .mpin:not(.me):not(.sel) .ml b{color:var(--ink)!important}
+.mstage.lt .mpin.low:not(.sel) .ml b{color:#2E8B57!important}
+.mstage.lt .mpin .md{background:#fff;border-color:var(--ink)!important}.mstage.lt .mpin.low .md{background:#4BA882}
+.mstage.lt .mpin.sel .ml{background:var(--ink)!important;color:#fff!important;box-shadow:0 4px 12px rgba(20,23,56,.25)}.mstage.lt .mpin.sel .ml b{color:#7FE3B0!important}.mstage.lt .mpin.sel .ml .mnm{color:#fff}
+.mstage.lt .mpin.sel .md{background:#F0A14A}
 </style>
 
 <div class="outer">
@@ -1553,11 +1577,12 @@ function openGmap(n,onPick){const w=storeWait(n),t=tripOf(n);
     m.querySelector("[data-gx]").onclick=closeModal;m.querySelector("[data-gtake]").onclick=()=>{closeModal();onPick(n)}})}
 function mapShellHTML(city){const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);if(!names.length)return `<p class="muted" style="padding:24px 4px">這個縣市的地圖還在準備中，先用上面的清單選門市。</p>`;
   const near=nearestTo(HOME,8),lowN=near.filter(n=>storeWait(n)<10).length;
-  return `<div class="mstage"><div class="smap" id="smap"></div>
+  const th=mapTheme();
+  return `<div class="mstage${th==="light"?" lt":""}"><div class="smap" id="smap"></div>
   <div class="mtop"><button type="button" class="mglass mback" id="mBack">‹ 清單</button>
     <div class="mglass mhud" aria-live="off"><div class="mh1"><b id="mclock">TPE ${mClock()}</b><i class="live"></i>即時</div><div class="mh2"><i class="lo"></i><em>${lowN} 家</em> 10 分內・附近 ${near.length} 家</div></div>
     <button type="button" class="mglass mclose" id="mX" aria-label="關閉">✕</button></div>
-  <div class="mtools"><button type="button" class="mglass mtool" id="m3t" hidden></button><button type="button" class="mglass mtool" id="mLoc" aria-label="回到我這"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div>
+  <div class="mtools"><button type="button" class="mglass mtool" id="mTheme" aria-label="${th==="dark"?"切換淺色地圖":"切換深色地圖"}">${THEME_ICON(th)}</button><button type="button" class="mglass mtool" id="m3t" hidden></button><button type="button" class="mglass mtool" id="mLoc" aria-label="回到我這"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div>
   <div id="mcard"></div></div>`}
 const mClock=()=>new Date().toLocaleTimeString("en-GB",{hour12:false,timeZone:"Asia/Taipei"});
 /* 底部資訊面板：一打開就選好「最推薦」，左右滑換下一家 */
@@ -1598,6 +1623,27 @@ const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontsta
     {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#A3A7B4","text-halo-color":"#17181D","text-halo-width":1.6}},
     {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#F0A14A","text-halo-color":"#17181D","text-halo-width":1.8}},
     {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],12],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","town_hall","theatre","library","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
+const LINE_STYLE_LIGHT={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+  sources:{omt:{type:"vector",url:"https://tiles.openfreemap.org/planet"}},
+  layers:[{id:"bg",type:"background",paint:{"background-color":"#F4F3FA"}},
+    {id:"water",type:"fill",source:"omt","source-layer":"water",paint:{"fill-color":"#DCE3F7"}},
+    {id:"park",type:"fill",source:"omt","source-layer":"park",paint:{"fill-color":"#EAF2EC"}},
+    {id:"road-minor",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["minor","service","street","path","track"]]],paint:{"line-color":"#B9BBDA","line-width":["interpolate",["linear"],["zoom"],12,.3,16,1]}},
+    {id:"road-mid",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["secondary","tertiary"]]],paint:{"line-color":"#8D90C2","line-width":["interpolate",["linear"],["zoom"],12,.6,16,1.6]}},
+    {id:"road-main",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["motorway","trunk","primary"]]],paint:{"line-color":"#2D2E67","line-width":["interpolate",["linear"],["zoom"],12,.9,16,2.4]}},
+    {id:"rail",type:"line",source:"omt","source-layer":"transportation",filter:["==",["get","class"],"rail"],paint:{"line-color":"#8D90C2","line-width":1,"line-dasharray":[3,2]}},
+    {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#E6E5F2",80,"#C9C8E6",200,"#A9A8D6"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.9}},
+    {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#8D90C2","text-halo-color":"#F4F3FA","text-halo-width":1.2}},
+    {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#55588F","text-halo-color":"#F4F3FA","text-halo-width":1.6}},
+    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#C9671E","text-halo-color":"#FFFFFF","text-halo-width":1.8}},
+    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],12],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","town_hall","theatre","library","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#6A4FA0","text-halo-color":"#FFFFFF","text-halo-width":1.6}}]};
+/* 地圖深淺色：手動切換後會記住；沒選過就自動（台北時間 6–18 點淺色，其他深色） */
+const MAP_TKEY="qtmap-theme";
+function mapTheme(){try{const v=localStorage.getItem(MAP_TKEY);if(v==="light"||v==="dark")return v}catch(e){}const h=+new Date().toLocaleString("en-US",{hour:"numeric",hourCycle:"h23",timeZone:"Asia/Taipei"});return h>=6&&h<18?"light":"dark"}
+function setMapTheme(t){try{localStorage.setItem(MAP_TKEY,t)}catch(e){}}
+const mapStyle=t=>t==="light"?LINE_STYLE_LIGHT:LINE_STYLE;
+const THEME_ICON=t=>t==="dark"?'<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>':'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+
 /* 在 Claude 預覽視窗裡，外部地圖（3D 圖磚、Google 嵌入）會被擋；網站版（github.io）才看得到 */
 const IN_PREVIEW=!/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 const SITE_URL="https://denisechang112.github.io/QTALK/";
@@ -1607,31 +1653,46 @@ function loadML(){if(window.maplibregl)return Promise.resolve(window.maplibregl)
     const sc=document.createElement("script");sc.src="vendor/maplibre-gl.js";sc.onload=()=>window.maplibregl?res(window.maplibregl):rej();
     sc.onerror=()=>{const s2=document.createElement("script");s2.src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";s2.onload=()=>window.maplibregl?res(window.maplibregl):rej();s2.onerror=rej;document.head.appendChild(s2)};document.head.appendChild(sc)});
   ML.catch(()=>{ML=null});return ML}
+
+/* 找出能讓所有點都落在可視區（扣掉面板和按鈕）的最大縮放；先偷偷試，再正式飛過去 */
+function fitCam(map,pts,pad,brg,minZ,maxZ,pitch){const mid=[(Math.min(...pts.map(p=>p[1]))+Math.max(...pts.map(p=>p[1])))/2,(Math.min(...pts.map(p=>p[0]))+Math.max(...pts.map(p=>p[0])))/2];
+  const c=map.getContainer(),W=c.clientWidth,H=c.clientHeight,save={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),padding:map.getPadding()};let z=maxZ;
+  try{for(;z>minZ;z-=.1){map.jumpTo({center:mid,zoom:z,pitch,bearing:brg,padding:pad});if(pts.every(p=>{const q=map.project([p[1],p[0]]);return q.x>pad.left-8&&q.x<W-pad.right+8&&q.y>pad.top-8&&q.y<H-pad.bottom+8}))break}}catch(e){}
+  map.jumpTo(save);return {center:mid,zoom:Math.max(minZ,z)}}
 function realMap(box,city,sel,onSel){return loadML().then(ml=>new Promise((res,rej)=>{
   const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]),c=GEO[HOME]||[25.045,121.55];
   const holder=document.createElement("div");holder.className="mlwrap";box.appendChild(holder);   // 簡圖先留著，3D 載好才蓋上去
-  const map=new ml.Map({container:holder,style:LINE_STYLE,center:[c[1],c[0]],zoom:11.3,pitch:0,bearing:0,attributionControl:{compact:true},cooperativeGestures:false});
+  const map=new ml.Map({container:holder,style:mapStyle(mapTheme()),center:[c[1],c[0]],zoom:11.3,pitch:0,bearing:0,attributionControl:{compact:true},cooperativeGestures:false});
   let ok=false;const to=setTimeout(()=>{if(!ok){try{map.remove()}catch(e){}holder.remove();rej(new Error("timeout"))}},12000);
   map.on("error",e=>{const st=e&&e.error&&e.error.status;if(!ok&&!e.sourceId&&!e.tile&&st!==404&&/style/i.test(String((e.error&&(e.error.message||e.error.url))||""))){clearTimeout(to);try{map.remove()}catch(_){}holder.remove();rej(e)}});   // 個別圖磚失敗不影響，樣式載不到才退回簡圖
   const mk={};
   map.on("load",()=>{ok=true;clearTimeout(to);[...box.children].forEach(ch=>{if(ch!==holder)ch.remove()});holder.classList.add("on");
-    map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
-    map.addLayer({id:"route-glow",type:"line",source:"route",paint:{"line-color":"#E8893A","line-width":10,"line-opacity":.25,"line-blur":2},layout:{"line-cap":"round"}});
-    map.addLayer({id:"route-core",type:"line",source:"route",paint:{"line-color":"#E8893A","line-width":3,"line-dasharray":[1.4,1]},layout:{"line-cap":"round"}});
+    let routeData={type:"FeatureCollection",features:[]};
+    const addRoute=()=>{if(map.getSource("route"))return;map.addSource("route",{type:"geojson",data:routeData});
+      map.addLayer({id:"route-glow",type:"line",source:"route",paint:{"line-color":"#E8893A","line-width":10,"line-opacity":.25,"line-blur":2},layout:{"line-cap":"round"}});
+      map.addLayer({id:"route-core",type:"line",source:"route",paint:{"line-color":"#E8893A","line-width":3,"line-dasharray":[1.4,1]},layout:{"line-cap":"round"}})};
+    addRoute();map.on("style.load",addRoute);   // 切換深淺色會換樣式，路線要補回來
+    const setRoute=d=>{routeData=d;const sr=map.getSource("route");if(sr)sr.setData(d)};
     names.forEach(n=>{const el=document.createElement("div");el.innerHTML=mpinHTML(n,sel);const b=el.firstChild;b.onclick=()=>onSel(n);mk[n]=new ml.Marker({element:b,anchor:"center"}).setLngLat([GEO[n][1],GEO[n][0]]).addTo(map)});
     const overview=()=>{const pts=[HOME].concat(nearestTo(HOME,8)).filter(x=>GEO[x]).map(x=>GEO[x]),la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
       map.fitBounds([[Math.min(...lo),Math.min(...la)],[Math.max(...lo),Math.max(...la)]],{padding:{top:50,bottom:70,left:30,right:30},pitch:50,bearing:-17,maxZoom:14.6,duration:700})};
     const api={map,cur:sel,select(n){api.cur=n;names.forEach(x=>mk[x]&&mk[x].getElement().classList.toggle("sel",x===n));const h=GEO[HOME],g=n&&GEO[n];
-      if(!n){map.getSource("route").setData({type:"FeatureCollection",features:[]});overview();return}
-      map.getSource("route").setData({type:"FeatureCollection",features:h&&g&&n!==HOME?[{type:"Feature",geometry:{type:"LineString",coordinates:[[h[1],h[0]],[g[1],g[0]]]}}]:[]});
+      if(!n){setRoute({type:"FeatureCollection",features:[]});overview();return}
+      setRoute({type:"FeatureCollection",features:h&&g&&n!==HOME?[{type:"Feature",geometry:{type:"LineString",coordinates:[[h[1],h[0]],[g[1],g[0]]]}}]:[]});
       if(g){const pts=h&&n!==HOME&&kmBetween(h,g)<6?[h,g]:[g],la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);   // 鏡頭飛過去；卡片蓋住下半部，所以下方多留空間
         const H=holder.clientHeight,cb=((box.parentNode.querySelector("#mcard .mpanel")||{}).offsetHeight||220)+30,top=Math.min(96,H*.18),bot=Math.max(60,Math.min(cb,H-top-120)),dur=first?2400:1100;first=false;
         const B=[[Math.min(...lo)-.003,Math.min(...la)-.003],[Math.max(...lo)+.003,Math.max(...la)+.003]],opt={padding:{top,bottom:bot,left:48,right:84},pitch:55,bearing:-17,maxZoom:15.6};
-        try{map.resize();map.fitBounds(B,{...opt,duration:dur,curve:1.5})}catch(e){map.flyTo({center:[g[1],g[0]],zoom:15,pitch:55,bearing:-17,duration:dur})}
+        // 先用不傾斜的方式算出能框住兩家的位置，再傾斜成 3D；最遠只拉到 13.3，建築才立得起來
+        // 鏡頭朝向：從「你在這」看向選到的店（兩家拉成一前一後，用 3D 的縱深裝下）
+        const brg=pts.length>1?Math.atan2((pts[1][1]-pts[0][1])*Math.cos(pts[0][0]*Math.PI/180),pts[1][0]-pts[0][0])*180/Math.PI:-17;
+        const frame=d=>{try{map.resize()}catch(e){}const f=fitCam(map,pts,opt.padding,brg,13.1,15.6,58);
+          map.flyTo({center:f.center,zoom:f.zoom,pitch:58,bearing:brg,padding:opt.padding,duration:d,curve:1.5})};   // 以兩家中點為中心，放在扣掉面板和按鈕的可視區正中間
+        frame(dur);
         // 保險：鏡頭停下後，選到的店若不在畫面裡（例如飛行中被手指打斷），就再框一次
         const want=n,isIntro=dur>2000,settle=cb=>map.once("moveend",()=>setTimeout(()=>map.isMoving()?settle(cb):cb(),200));
         if(isIntro)settle(()=>{if(api.cur!==want)return;const W=holder.clientWidth,Hh=holder.clientHeight,inView=p=>{const q=map.project([p[1],p[0]]);return q.x>20&&q.x<W-20&&q.y>top-10&&q.y<Hh-bot+10};
-          if(!pts.every(inView)){try{map.fitBounds(B,{...opt,duration:900})}catch(e){map.jumpTo({center:[g[1],g[0]],zoom:14,pitch:55,bearing:-17})}}})}}};
+          if(!pts.every(inView))frame(900)})}},
+      setTheme(t){try{map.setStyle(mapStyle(t),{diff:false})}catch(e){}}};
     let first=true;setTimeout(()=>api.select(sel),250);res(api)})}))}
 function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)return;
   const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);const cost=n=>{const t=tripOf(n);return storeWait(n)+(t?(t.walk<=30?t.walk:t.ride):0)};
@@ -1646,7 +1707,9 @@ function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)
   let sx=null;mc.addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});mc.addEventListener("touchend",e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50)step(dx<0?1:-1)});
   const pick=n=>{sel=n;card();if(api)api.select(n);else{flatMap(box,city,sel);bindFlat()}};
   const bindFlat=()=>box.querySelectorAll("[data-sel]").forEach(b=>b.onclick=()=>pick(b.dataset.sel));
-  m.querySelector("#mX").onclick=closeModal;m.querySelector("#mLoc").onclick=()=>pick(HOME);
+  m.querySelector("#mX").onclick=closeModal;
+  const thb=m.querySelector("#mTheme");thb.onclick=()=>{const t=mapTheme()==="dark"?"light":"dark";setMapTheme(t);m.querySelector(".mstage").classList.toggle("lt",t==="light");m.querySelector(".modal").classList.toggle("lt",t==="light");
+    setThemeColor(t==="dark"?"#17181D":null);thb.innerHTML=THEME_ICON(t);thb.setAttribute("aria-label",t==="dark"?"切換淺色地圖":"切換深色地圖");if(api)api.setTheme(t);toast("info",t==="dark"?"已切換深色地圖":"已切換淺色地圖","",1400)};m.querySelector("#mLoc").onclick=()=>pick(HOME);
   m.querySelector("#mBack").onclick=()=>{const b=m.querySelector('.vtog [data-view="list"]');if(b)b.click()};
   const ck=setInterval(()=>{const c=document.getElementById("mclock");if(!c)return clearInterval(ck);c.textContent="TPE "+mClock()},1000);
   const tg=m.querySelector("#m3t");
@@ -1669,11 +1732,11 @@ function openStorePick(asMap){
     <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
     const goStore=n=>{closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}};
     const bind=()=>{m.querySelectorAll(".slist>[data-home]").forEach(b=>b.onclick=()=>goStore(b.dataset.home))};
-    const re=()=>{const mv=view==="map"&&!q;m.querySelector(".sheet").classList.toggle("mapmode",mv);m.querySelector(".modal").classList.toggle("mapfull",mv);setThemeColor(mv?"#17181D":null);$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    const re=()=>{const mv=view==="map"&&!q;m.querySelector(".sheet").classList.toggle("mapmode",mv);m.querySelector(".modal").classList.toggle("mapfull",mv);m.querySelector(".modal").classList.toggle("lt",mapTheme()==="light");setThemeColor(mv&&mapTheme()==="dark"?"#17181D":null);$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
     m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
-    $("#spClose").onclick=closeModal;$("#spX").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");m.querySelector(".modal").classList.add("mapfull");setThemeColor("#17181D");bindStoreMap(m,city,goStore)}
+    $("#spClose").onclick=closeModal;$("#spX").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");m.querySelector(".modal").classList.add("mapfull");m.querySelector(".modal").classList.toggle("lt",mapTheme()==="light");setThemeColor(mapTheme()==="dark"?"#17181D":null);bindStoreMap(m,city,goStore)}
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
 }
