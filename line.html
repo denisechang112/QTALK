@@ -402,6 +402,45 @@ button.watch svg.qi,.pkd svg.qi{display:inline-block;width:18px;height:18px;vert
 .m3pin.low i{animation:qGlowG 2.2s ease-in-out infinite}
 .m3pin.me i{animation:qGlowY 2.6s ease-in-out infinite}
 .m3pin.sel i{animation:qGlowO 1.4s ease-out infinite}}
+
+/* ===== 地圖 v3（和 App 同一套）：滿版地圖＋玻璃控制鈕＋即時 HUD＋底部資訊面板 ===== */
+#liff .sheet.mapfs{height:100%;border:0;border-radius:0;background:#F4F3FA}
+.mapfs .mstage{position:relative;flex:1;min-height:0}
+.mapfs .mapbox{position:absolute;inset:0;height:auto;border:0!important;border-radius:0;box-shadow:none!important}
+.mapfs .mglass{display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);border:1px solid rgba(45,46,103,.13);box-shadow:0 6px 18px rgba(20,23,56,.13);color:#2D2E67;border-radius:999px;font:inherit;font-weight:800}
+.mapfs .mtop{position:absolute;z-index:8;top:calc(10px + env(safe-area-inset-top));left:10px;right:10px;display:flex;align-items:flex-start;gap:8px;pointer-events:none}.mapfs .mtop>*{pointer-events:auto}
+.mapfs .mback{height:38px;padding:0 13px;font-size:14px;flex:none}.mapfs .msp{width:62px;flex:none}
+.mapfs .mhud{flex-direction:column;align-items:flex-start;border-radius:14px;padding:5px 11px;gap:1px;margin:0 auto;min-width:0}
+.mapfs .mh1{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;letter-spacing:.06em;color:#55558a;display:flex;align-items:center;gap:6px;white-space:nowrap}.mapfs .mh1 b{color:#2D2E67;font-weight:700}
+.mapfs .live{width:7px;height:7px;border-radius:50%;background:#2EBD6B;box-shadow:0 0 0 3px rgba(46,189,107,.2);animation:qLive 1.6s ease-in-out infinite}@keyframes qLive{50%{opacity:.35}}
+.mapfs .mh2{font-size:12px;font-weight:700;color:#55558a;white-space:nowrap;display:flex;align-items:center;gap:5px}.mapfs .mh2 em{font-style:normal;color:#2E8B57;font-weight:900}
+.mapfs .mh2 .lo{width:8px;height:8px;border-radius:50%;background:#4BA882;box-shadow:0 0 0 3px rgba(75,168,130,.25)}
+.mapfs .mtools{position:absolute;z-index:8;right:10px;top:34%;display:grid;gap:10px}
+.mapfs .mtool{width:50px;height:50px;padding:0;border-radius:50%;font-size:12px;font-weight:900}
+.mapfs #mpanel{position:absolute;left:0;right:0;bottom:0;z-index:9}
+.mapfs .mpanel{background:rgba(255,255,255,.97);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid rgba(45,46,103,.1);border-radius:22px 22px 0 0;box-shadow:0 -12px 32px rgba(20,23,56,.16);padding:8px 18px calc(16px + env(safe-area-inset-bottom));display:grid;gap:5px}
+.mapfs .mp-grab{justify-self:center;width:38px;height:4px;border-radius:2px;background:#D9D9E8;margin-bottom:2px}
+.mapfs .mp-top{display:flex;justify-content:space-between;align-items:center;min-height:30px}
+.mapfs .mp-eye{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:900;letter-spacing:.1em;color:#2E8B57}
+.mapfs .mp-eye::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent)}
+.mapfs .mp-eye.me{color:#B07A00}.mapfs .mp-eye.far{color:#8A8AA8}
+.mapfs .mp-pg{display:flex;align-items:center;gap:7px;font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:12px;color:#8A8AA8}
+.mapfs .mp-pg button{width:30px;height:30px;padding:0 0 2px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid #E3E3EE;background:#fff;color:#2D2E67;font-size:16px;font-weight:700}
+.mapfs .mp-name{display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0}
+.mapfs .mp-name b{font-size:23px;font-weight:900;letter-spacing:.02em;color:#2D2E67;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mapfs .mp-w{flex:none;font-size:13px;font-weight:700;color:#55558a;white-space:nowrap}.mapfs .mp-w em{font-style:normal;font-size:28px;font-weight:900;color:#2D2E67;margin:0 3px;font-variant-numeric:tabular-nums}.mapfs .mp-w.low em{color:#2E8B57}
+.mapfs .mp-meta{margin:0;font-size:13.5px;font-weight:700;color:#55558a}
+.mapfs .mp-addr{margin:0;font-size:12px;color:#9A9AB5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mapfs .mp-a{display:grid;grid-template-columns:1.5fr 1fr;gap:8px;margin-top:6px}
+.mapfs .mp-a>*{height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;font:inherit;font-weight:900;font-size:15.5px;text-decoration:none}
+.mapfs .mp-go{background:#2D2E67;color:#fff;border:0}.mapfs .mp-nav{background:#fff;color:#2D2E67;border:1.5px solid rgba(45,46,103,.35)}
+.mapfs .m3pin u{text-decoration:none;display:none}.mapfs .m3pin.sel u{display:inline}
+.mapfs .m3pin:not(.low):not(.sel) span{display:none}.mapfs .m3pin:not(.low):not(.sel) i{width:8px;height:8px;border-width:2px;opacity:.7}
+.mapfs .m3pin:not(.sel) span{background:none;border:0;padding:0 2px;text-shadow:0 0 2px #fff,0 0 2px #fff,0 0 3px #fff,0 0 6px rgba(255,255,255,.95)}
+.mapfs .m3pin.sel span{background:#2D2E67;color:#fff;border:0;box-shadow:0 4px 12px rgba(20,23,56,.25)}
+.mapfs .m3load{position:absolute;inset:0;display:grid;place-items:center;color:#8A8AA8;font-size:13px}
+@media (max-width:380px){.mapfs .mh1{font-size:10.5px}.mapfs .mh2{font-size:11px}.mapfs .msp{display:none}.mapfs .mp-name b{font-size:20px}.mapfs .mp-w em{font-size:24px}}
+.mapfs .m3pin.me:not(.sel) span{display:inline;background:#F5C543;color:#2D2E67;text-shadow:none;border-radius:7px;padding:1px 6px;box-shadow:0 4px 12px rgba(176,122,0,.25)}.mapfs .m3pin.me:not(.sel) u{display:inline}.mapfs .m3pin.me:not(.sel) i{width:11px;height:11px;opacity:1;background:#F5C543}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -703,17 +742,36 @@ function openLiff(){
 }
 /* 門市地圖：在 LINE 裡直接看（像 LINE 的位置訊息），要導航時才交給 Google 地圖 App */
 function openMap(n){const L=$("#liff");L.hidden=false;
-  L.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-label="門市位置"><div class="sh"><div style="flex:1"><b>${esc(n)}</b><small>📍 ${esc(addrOf(n)||"")}</small></div><button id="lx" aria-label="關閉">✕</button></div>
-    <div class="sb mapsb"><div class="mapbox" id="mapbox"></div><div class="mtog"><button type="button" data-mv="3d" aria-pressed="true">3D 線稿地圖</button><button type="button" data-mv="g" aria-pressed="false">Google 地圖</button></div>
-      <div class="row2m"><div>預估等候<b>${storeMins(n)} 分</b></div><div>現在等候<b>${isLive(n)?VL.waiting.length+" 組":"約 "+Math.max(1,Math.round(storeMins(n)/4))+" 組"}</b></div></div>
-      <a class="go" id="nav" href="${navUrl(n)}" target="_blank" rel="noopener">開始導航（開啟 Google 地圖）</a>
-      <button class="go alt" id="mtake">在這間線上取號</button>
-      <p class="muted">地圖在 LINE 裡直接顯示；按「開始導航」才會打開 Google 地圖 App（手機有裝的話）。</p></div></div>`;
-  $("#lx").onclick=()=>{mapKill();closeLiff()};$("#mtake").onclick=()=>{mapKill();closeLiff();if(state.store!==n&&!active(mine())){state.store=n;save()}menu("take")};
-  const box=$("#mapbox"),g=()=>{mapKill();box.innerHTML=`<iframe title="${esc(n)} 地圖" src="${mapEmbed(n)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;setMv("g")};
-  const setMv=v=>L.querySelectorAll("[data-mv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mv===v));
-  L.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>b.dataset.mv==="g"?g():(setMv("3d"),map3d(box,n).catch(g)));
-  map3d(box,n).catch(g)}
+  const c0=GEO[n],near=c0?Object.keys(GEO).filter(k=>k!==n).sort((a,b)=>dd(GEO[a],c0)-dd(GEO[b],c0)).slice(0,8):[];
+  const deck=[n].concat(near.filter(k=>storeMins(k)<10).sort((a,b)=>storeMins(a)-storeMins(b)).slice(0,4));let cur=n,mode="3d";
+  const lowN=near.filter(k=>storeMins(k)<10).length;
+  L.innerHTML=`<div class="sheet mapfs" role="dialog" aria-modal="true" aria-label="門市位置"><div class="mstage"><div class="mapbox" id="mapbox"></div>
+    <div class="mtop"><button type="button" class="mglass mback" id="lx">‹ 返回</button>
+      <div class="mglass mhud"><div class="mh1"><b id="mclock">TPE ${clk()}</b><i class="live"></i>即時</div><div class="mh2"><i class="lo"></i><em>${lowN} 家</em> 10 分內・附近 ${near.length} 家</div></div><span class="msp"></span></div>
+    <div class="mtools"><button type="button" class="mglass mtool" id="mv">Google</button><button type="button" class="mglass mtool" id="mloc" aria-label="回到這家"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button></div>
+    <div id="mpanel"></div></div></div>`;
+  const panel=()=>{const w=storeMins(cur),i=deck.indexOf(cur),mineS=cur===(state.store||""),eye=mineS?["me","你選的門市"]:w<10?["low","人少・10 分內"]:["far","要等比較久"];
+    const grp=isLive(cur)?VL.waiting.length:Math.max(1,Math.round(w/4));
+    $("#mpanel").innerHTML=`<div class="mpanel"><i class="mp-grab"></i>
+      <div class="mp-top"><span class="mp-eye ${eye[0]}">${eye[1]}</span>${deck.length>1?`<span class="mp-pg"><button type="button" data-step="-1" aria-label="上一家">‹</button><span>${i<0?"–":i+1} / ${deck.length}</span><button type="button" data-step="1" aria-label="下一家">›</button></span>`:""}</div>
+      <div class="mp-name"><b>${esc(cur.replace(/^台北(?=.{3,})/,""))}</b><span class="mp-w ${w<10?"low":""}">約<em>${w}</em>分</span></div>
+      <p class="mp-meta">現在等候 ${grp} 組${i>0?`・比 ${esc(n.replace(/^台北|門市$/g,""))} 少等 ${Math.max(0,storeMins(n)-w)} 分`:""}</p>
+      <p class="mp-addr">${esc(addrOf(cur)||"")}</p>
+      <div class="mp-a"><button type="button" class="mp-go" id="mtake">在這間線上取號</button><a class="mp-nav" id="nav" href="${navUrl(cur)}" target="_blank" rel="noopener">帶我去</a></div></div>`;
+    L.querySelectorAll("[data-step]").forEach(b=>b.onclick=()=>{const k=deck.indexOf(cur);sel(deck[k<0?0:(k+ +b.dataset.step+deck.length)%deck.length])});
+    $("#mtake").onclick=()=>{mapKill();closeLiff();if(state.store!==cur&&!active(mine())){state.store=cur;save()}menu("take")}};
+  const sel=k=>{cur=k;panel();if(mode==="g")return g();if(MAP){document.querySelectorAll(".m3pin").forEach(e=>e.classList.toggle("sel",e.dataset.k===k));const c=GEO[k],o=GEO[n];fitPts(k===n?deck.slice(0,3):[n,k],1200)}};
+  const fitPts=(ks,dur)=>{const P=ks.map(x=>GEO[x]).filter(Boolean),la=P.map(p=>p[0]),lo=P.map(p=>p[1]);
+    try{MAP.fitBounds([[Math.min(...lo)-.002,Math.min(...la)-.002],[Math.max(...lo)+.002,Math.max(...la)+.002]],{padding:pad(),pitch:55,bearing:-17,maxZoom:15,duration:dur,curve:1.5})}catch(e){MAP.flyTo({center:[P[0][1],P[0][0]],zoom:13.5,pitch:55,duration:dur})}};
+  const pad=()=>({top:100,bottom:(($("#mpanel .mpanel")||{}).offsetHeight||220)+20,left:30,right:76});
+  const box=$("#mapbox"),g=()=>{mapKill();mode="g";box.innerHTML=`<iframe title="${esc(cur)} 地圖" src="${mapEmbed(cur)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;$("#mv").textContent="3D"};
+  const d3=()=>{mode="3d";$("#mv").textContent="Google";map3d(box,cur,sel,intro=>intro===true?fitPts(cur===n?deck.slice(0,3):[n,cur],2400):pad()).catch(g)};
+  $("#lx").onclick=()=>{mapKill();closeLiff()};$("#mv").onclick=()=>mode==="g"?d3():g();$("#mloc").onclick=()=>sel(n);
+  let sx=null;const mp=$("#mpanel");mp.addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});mp.addEventListener("touchend",e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50&&deck.length>1){const k=deck.indexOf(cur);sel(deck[k<0?0:(k+(dx<0?1:-1)+deck.length)%deck.length])}});
+  const ck=setInterval(()=>{const c=document.getElementById("mclock");if(!c)return clearInterval(ck);c.textContent="TPE "+clk()},1000);
+  panel();d3()}
+const dd=(a,b)=>Math.hypot(a[0]-b[0],(a[1]-b[1])*.9);
+const clk=()=>new Date().toLocaleTimeString("en-GB",{hour12:false,timeZone:"Asia/Taipei"});
 /* ===== 3D 線稿地圖（和叫號說 App 同一套）：載不到就自動改用 Google 地圖 ===== */
 const GEO={"台北文創門市":[25.044,121.560],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北大直門市":[25.080,121.547],"台北林森北門市":[25.055,121.525],"台北民權東門市":[25.062,121.535],"台北農安門市":[25.066,121.526],"台北西湖門市":[25.082,121.567],"台北內湖門市":[25.083,121.590],"內湖湖光門市":[25.068,121.600],"內湖光電門市":[25.078,121.574],"台北通化門市":[25.032,121.553],"台北東湖門市":[25.068,121.616],"文山景中門市":[25.000,121.543],"台北天母門市":[25.117,121.531],"北投中央北門市":[25.133,121.500]};
 const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
@@ -736,16 +794,17 @@ function loadML(){if(window.maplibregl)return Promise.resolve(window.maplibregl)
   ML=new Promise((res,rej)=>{const l=document.createElement("link");l.rel="stylesheet";l.href="vendor/maplibre-gl.css";document.head.appendChild(l);
     const sc=document.createElement("script");sc.src="vendor/maplibre-gl.js";sc.onload=()=>window.maplibregl?res(window.maplibregl):rej();sc.onerror=rej;document.head.appendChild(sc)});
   ML.catch(()=>{ML=null});return ML}
-function map3d(box,n){const c=GEO[n];if(!c)return Promise.reject(new Error("no geo"));
+function map3d(box,n,onSel,pad){const c=GEO[n];if(!c)return Promise.reject(new Error("no geo"));
   box.innerHTML=`<div class="m3load">正在載入 3D 地圖…</div>`;
   return loadML().then(ml=>new Promise((res,rej)=>{mapKill();const holder=document.createElement("div");holder.className="m3wrap";box.appendChild(holder);
-    const map=new ml.Map({container:holder,style:LINE_STYLE,center:[c[1],c[0]],zoom:13.9,pitch:55,bearing:-17,attributionControl:{compact:true}});MAP=map;
+    const map=new ml.Map({container:holder,style:LINE_STYLE,center:[c[1],c[0]],zoom:11.3,pitch:0,bearing:0,attributionControl:{compact:true}});MAP=map;
     let ok=false;const to=setTimeout(()=>{if(!ok){mapKill();rej(new Error("timeout"))}},12000);
     map.on("error",e=>{const st=e&&e.error&&e.error.status;if(!ok&&!e.sourceId&&!e.tile&&st!==404&&/style/i.test(String((e.error&&(e.error.message||e.error.url))||""))){clearTimeout(to);mapKill();rej(e)}});
     map.on("load",()=>{ok=true;clearTimeout(to);const ld=box.querySelector(".m3load");if(ld)ld.remove();holder.classList.add("on");
-      Object.keys(GEO).forEach(k=>{const g=GEO[k];if(Math.abs(g[0]-c[0])>.03||Math.abs(g[1]-c[1])>.03)return;const el=document.createElement("div");const w=storeMins(k);
-        el.className="m3pin"+(k===n?" sel":"")+(w<10?" low":"");el.innerHTML=`<i></i><span>${k===n?esc(k.replace(/^台北/,""))+" ":""}約 ${w} 分</span>`;
-        if(k!==n)el.onclick=()=>{mapKill();openMap(k)};new ml.Marker({element:el,anchor:"bottom"}).setLngLat([g[1],g[0]]).addTo(map)});
+      Object.keys(GEO).forEach(k=>{const g=GEO[k];if(Math.abs(g[0]-c[0])>.04||Math.abs(g[1]-c[1])>.04)return;const el=document.createElement("div");const w=storeMins(k);el.dataset.k=k;
+        el.className="m3pin"+(k===n?" sel me":"")+(w<10?" low":"");el.innerHTML=`<i></i><span><u>${esc(k.replace(/^台北|門市$/g,""))}</u> 約 ${w} 分</span>`;
+        el.onclick=()=>onSel?onSel(k):(mapKill(),openMap(k));new ml.Marker({element:el,anchor:"bottom"}).setLngLat([g[1],g[0]]).addTo(map)});
+      setTimeout(()=>{try{pad?pad(true):map.flyTo({center:[c[1],c[0]],zoom:14.3,pitch:55,bearing:-17,duration:2400})}catch(e){}},250);
       res(map)})}))}
 
 const pick=a=>a[Math.floor(Math.random()*a.length)];
