@@ -982,10 +982,11 @@ svg.qi{display:block}
 .storepick .slist #mcard .mc-deal{justify-content:flex-start;border:1.5px dashed #E8A93A;background:#FFF8EC;border-radius:10px;padding:5px 9px;font-size:12px;font-weight:700;color:#9a4a0a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .storepick .slist #mcard .mc-rec{justify-content:center;border:2px solid var(--ink);background:var(--yellow);border-radius:999px;padding:4px 14px;font-size:13.5px}
 .storepick .slist #mcard .mc-a .btn{justify-content:center;padding:9px 6px;font-size:15px;border-radius:12px}
-.storepick .slist .m3t{display:inline-block!important;padding:2px 10px!important;border-radius:999px!important;font-size:11.5px!important;margin-left:auto}
+.storepick .slist .m3t:not([hidden]){display:inline-block!important;padding:2px 10px!important;border-radius:999px!important;font-size:11.5px!important;margin-left:auto}
 #mcard .mcard.hint{font-size:13px;padding:8px 10px}
 #mcard .mcard{grid-template-columns:minmax(0,1fr)}#mcard .mcard>*{min-width:0;max-width:100%}#mcard .mc-h span{min-width:0}#mcard .mc-h small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#mcard .mc-t{font-size:13px}
 @media (max-height:720px){#mcard .mc-deal,#mcard .mc-v{display:none}#mcard .mc-h b{font-size:15.5px}#mcard .mc-h em{font-size:18px!important}.sheet.storepick.mapmode h3{font-size:20px;margin:0}}
+.smap-leg .mprev{position:static!important;margin-left:auto;white-space:nowrap;font-size:11px!important;padding:2px 8px!important}
 </style>
 
 <div class="outer">
@@ -1465,7 +1466,7 @@ const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontsta
     {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#E6E5F2",80,"#C9C8E6",200,"#A9A8D6"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.9}},
     {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#8D90C2","text-halo-color":"#F4F3FA","text-halo-width":1.2}},
     {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#55588F","text-halo-color":"#F4F3FA","text-halo-width":1.6}},
-    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Bold"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#C9671E","text-halo-color":"#FFFFFF","text-halo-width":1.8}},
+    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#C9671E","text-halo-color":"#FFFFFF","text-halo-width":1.8}},
     {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#6A4FA0","text-halo-color":"#FFFFFF","text-halo-width":1.6}}]};
 /* 在 Claude 預覽視窗裡，外部地圖（3D 圖磚、Google 嵌入）會被擋；網站版（github.io）才看得到 */
 const IN_PREVIEW=!/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
@@ -1481,7 +1482,7 @@ function realMap(box,city,sel,onSel){return loadML().then(ml=>new Promise((res,r
   const holder=document.createElement("div");holder.className="mlwrap";box.appendChild(holder);   // 簡圖先留著，3D 載好才蓋上去
   const map=new ml.Map({container:holder,style:LINE_STYLE,center:[c[1],c[0]],zoom:13.3,pitch:55,bearing:-17,attributionControl:{compact:true},cooperativeGestures:false});
   let ok=false;const to=setTimeout(()=>{if(!ok){try{map.remove()}catch(e){}holder.remove();rej(new Error("timeout"))}},12000);
-  map.on("error",e=>{const st=e&&e.error&&e.error.status;if(!ok&&!e.sourceId&&!e.tile&&st!==404){clearTimeout(to);try{map.remove()}catch(_){}holder.remove();rej(e)}});   // 個別圖磚失敗不影響，樣式載不到才退回簡圖
+  map.on("error",e=>{const st=e&&e.error&&e.error.status;if(!ok&&!e.sourceId&&!e.tile&&st!==404&&/style/i.test(String((e.error&&(e.error.message||e.error.url))||""))){clearTimeout(to);try{map.remove()}catch(_){}holder.remove();rej(e)}});   // 個別圖磚失敗不影響，樣式載不到才退回簡圖
   const mk={};
   map.on("load",()=>{ok=true;clearTimeout(to);[...box.children].forEach(ch=>{if(ch!==holder)ch.remove()});holder.classList.add("on");
     map.addSource("route",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
@@ -1507,7 +1508,7 @@ function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)
   const showFlat=()=>{api=null;box.classList.remove("real");flatMap(box,city,sel);bindFlat()};
   const tryReal=()=>{box.classList.add("loading");tg.hidden=true;realMap(box,city,sel,pick).then(a=>{api=a;box.classList.remove("loading");box.classList.add("real");tg.hidden=false;tg.textContent="切換簡圖"}).catch(()=>{box.classList.remove("loading");showFlat();tg.hidden=false;tg.textContent="再試一次 3D";toast("info","3D 實景地圖載不到","網路不穩或在預覽視窗裡會這樣，先用簡圖；用網站版開啟就看得到。",4500)})};
   tg.onclick=()=>{if(api){try{api.map.remove()}catch(e){}U.map3d=false;showFlat();tg.textContent="試試 3D 實景"}else{U.map3d=true;tryReal()}};
-  card();showFlat();if(IN_PREVIEW){tg.hidden=true;box.insertAdjacentHTML("beforeend",`<a class="mprev" href="${SITE_URL}" target="_blank" rel="noopener">3D 實景地圖請用網站版開啟 ↗</a>`);return}
+  card();showFlat();if(IN_PREVIEW){tg.hidden=true;const lg=m.querySelector(".smap-leg");if(lg)lg.insertAdjacentHTML("beforeend",`<a class="mprev" href="${SITE_URL}" target="_blank" rel="noopener">3D 地圖請用網站版 ↗</a>`);return}
   if(mode==="real")tryReal();else{tg.hidden=false;tg.textContent="試試 3D 實景"}}
 function openStorePick(asMap){
   if(S.me&&["waiting","called"].includes(meState())){toast("info",`你正在${HOME}排隊`,"辦完這次的號碼，才能換別的門市。");return}
