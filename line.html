@@ -441,6 +441,27 @@ button.watch svg.qi,.pkd svg.qi{display:inline-block;width:18px;height:18px;vert
 .mapfs .m3load{position:absolute;inset:0;display:grid;place-items:center;color:#8A8AA8;font-size:13px}
 @media (max-width:380px){.mapfs .mh1{font-size:10.5px}.mapfs .mh2{font-size:11px}.mapfs .msp{display:none}.mapfs .mp-name b{font-size:20px}.mapfs .mp-w em{font-size:24px}}
 .mapfs .m3pin.me:not(.sel) span{display:inline;background:#F5C543;color:#2D2E67;text-shadow:none;border-radius:7px;padding:1px 6px;box-shadow:0 4px 12px rgba(176,122,0,.25)}.mapfs .m3pin.me:not(.sel) u{display:inline}.mapfs .m3pin.me:not(.sel) i{width:11px;height:11px;opacity:1;background:#F5C543}
+
+/* ===== 石墨黑（和 App 同一套） ===== */
+#liff .sheet.mapfs{background:#17181D}
+.mapfs .mapbox{background:#17181D}
+.mapfs .mglass{background:rgba(30,31,38,.8);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 22px rgba(0,0,0,.45);color:#F2F3F7}
+.mapfs .mh1{color:rgba(255,255,255,.55)}.mapfs .mh1 b{color:#fff}
+.mapfs .mh2{color:rgba(255,255,255,.78)}.mapfs .mh2 em{color:#6EE0A4}.mapfs .mh2 .lo{background:#6EE0A4;box-shadow:0 0 0 3px rgba(110,224,164,.25),0 0 10px rgba(110,224,164,.6)}
+.mapfs .mpanel{background:rgba(30,31,38,.92);border-top:1px solid rgba(255,255,255,.08);box-shadow:0 -14px 34px rgba(0,0,0,.45)}
+.mapfs .mp-grab{background:rgba(255,255,255,.22)}
+.mapfs .mp-eye{color:#6EE0A4}.mapfs .mp-eye.me{color:#FFC94A}.mapfs .mp-eye.far{color:rgba(255,255,255,.5)}
+.mapfs .mp-pg{color:rgba(255,255,255,.5)}.mapfs .mp-pg button{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff}
+.mapfs .mp-name b{color:#fff}.mapfs .mp-w{color:rgba(255,255,255,.7)}.mapfs .mp-w em{color:#fff}.mapfs .mp-w.low em{color:#6EE0A4}
+.mapfs .mp-meta{color:rgba(255,255,255,.78)}.mapfs .mp-addr{color:rgba(255,255,255,.45)}
+.mapfs .mp-go{background:#F0A14A;color:#17181D}.mapfs .mp-nav{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.mapfs .m3pin span{color:#E6E8EE}
+.mapfs .m3pin:not(.sel) span{text-shadow:0 0 2px #17181D,0 0 3px #17181D,0 0 6px #17181D,0 0 10px rgba(23,24,29,.9)}
+.mapfs .m3pin.low:not(.sel) span{color:#6EE0A4}
+.mapfs .m3pin i{background:#C9CCD6;border-color:#17181D}.mapfs .m3pin.low i{background:#6EE0A4}
+.mapfs .m3pin.sel span{background:#fff;color:#17181D;box-shadow:0 6px 16px rgba(0,0,0,.5)}.mapfs .m3pin.sel i{background:#F0A14A}
+.mapfs .m3pin.me:not(.sel) span{color:#17181D}
+.mapfs .m3load{color:rgba(255,255,255,.5)}
 </style>
 <script>/* ===== SVG 線稿圖示（2px、圓角、深藏青＋橘色重點） ===== */
 (function(){
@@ -776,18 +797,18 @@ const clk=()=>new Date().toLocaleTimeString("en-GB",{hour12:false,timeZone:"Asia
 const GEO={"台北文創門市":[25.044,121.560],"台北永吉門市":[25.045,121.578],"台北西門町門市":[25.042,121.507],"台北莊敬門市":[25.029,121.566],"台北忠孝東門市":[25.041,121.548],"台北後山埤門市":[25.044,121.583],"台北新站前門市":[25.047,121.516],"台北三創門市":[25.045,121.531],"台北南京東門市":[25.052,121.544],"台北大直門市":[25.080,121.547],"台北林森北門市":[25.055,121.525],"台北民權東門市":[25.062,121.535],"台北農安門市":[25.066,121.526],"台北西湖門市":[25.082,121.567],"台北內湖門市":[25.083,121.590],"內湖湖光門市":[25.068,121.600],"內湖光電門市":[25.078,121.574],"台北通化門市":[25.032,121.553],"台北東湖門市":[25.068,121.616],"文山景中門市":[25.000,121.543],"台北天母門市":[25.117,121.531],"北投中央北門市":[25.133,121.500]};
 const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
   sources:{omt:{type:"vector",url:"https://tiles.openfreemap.org/planet"}},
-  layers:[{id:"bg",type:"background",paint:{"background-color":"#F4F3FA"}},
-    {id:"water",type:"fill",source:"omt","source-layer":"water",paint:{"fill-color":"#DCE3F7"}},
-    {id:"park",type:"fill",source:"omt","source-layer":"park",paint:{"fill-color":"#EAF2EC"}},
-    {id:"road-minor",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["minor","service","street","path","track"]]],paint:{"line-color":"#B9BBDA","line-width":["interpolate",["linear"],["zoom"],12,.3,16,1]}},
-    {id:"road-mid",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["secondary","tertiary"]]],paint:{"line-color":"#8D90C2","line-width":["interpolate",["linear"],["zoom"],12,.6,16,1.6]}},
-    {id:"road-main",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["motorway","trunk","primary"]]],paint:{"line-color":"#2D2E67","line-width":["interpolate",["linear"],["zoom"],12,.9,16,2.4]}},
-    {id:"rail",type:"line",source:"omt","source-layer":"transportation",filter:["==",["get","class"],"rail"],paint:{"line-color":"#8D90C2","line-width":1,"line-dasharray":[3,2]}},
-    {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#E6E5F2",80,"#C9C8E6",200,"#A9A8D6"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.9}},
-    {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#8D90C2","text-halo-color":"#F4F3FA","text-halo-width":1.2}},
-    {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#55588F","text-halo-color":"#F4F3FA","text-halo-width":1.6}},
-    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#C9671E","text-halo-color":"#FFFFFF","text-halo-width":1.8}},
-    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#6A4FA0","text-halo-color":"#FFFFFF","text-halo-width":1.6}}]};
+  layers:[{id:"bg",type:"background",paint:{"background-color":"#17181D"}},
+    {id:"water",type:"fill",source:"omt","source-layer":"water",paint:{"fill-color":"#1E2531"}},
+    {id:"park",type:"fill",source:"omt","source-layer":"park",paint:{"fill-color":"#1B241F"}},
+    {id:"road-minor",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["minor","service","street","path","track"]]],paint:{"line-color":"#2C2E36","line-width":["interpolate",["linear"],["zoom"],12,.3,16,1]}},
+    {id:"road-mid",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["secondary","tertiary"]]],paint:{"line-color":"#454955","line-width":["interpolate",["linear"],["zoom"],12,.6,16,1.6]}},
+    {id:"road-main",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["motorway","trunk","primary"]]],paint:{"line-color":"#6E7382","line-width":["interpolate",["linear"],["zoom"],12,.9,16,2.4]}},
+    {id:"rail",type:"line",source:"omt","source-layer":"transportation",filter:["==",["get","class"],"rail"],paint:{"line-color":"#3E414B","line-width":1,"line-dasharray":[3,2]}},
+    {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#26282F",80,"#353842",200,"#474B57"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.95}},
+    {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#7A7E8B","text-halo-color":"#17181D","text-halo-width":1.2}},
+    {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#A3A7B4","text-halo-color":"#17181D","text-halo-width":1.6}},
+    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#F0A14A","text-halo-color":"#17181D","text-halo-width":1.8}},
+    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
 let ML=null,MAP=null;
 function mapKill(){if(MAP){try{MAP.remove()}catch(e){}MAP=null}}
 function loadML(){if(window.maplibregl)return Promise.resolve(window.maplibregl);if(ML)return ML;

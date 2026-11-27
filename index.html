@@ -1068,6 +1068,37 @@ svg.qi{display:block}
 .mstage .mpin.me .ml{border:0!important;box-shadow:0 4px 12px rgba(176,122,0,.25)}
 .mstage .mpin .md{border-width:2px!important}
 @media (max-width:380px){.mhud .mh1{font-size:10.5px}.mhud .mh2{font-size:11px}.storepick .slist .mback{padding:0 10px;font-size:13px}.mp-name b{font-size:20px}.mp-w em{font-size:24px}.storepick .slist .mpanel .mp-a button{height:44px;font-size:14.5px}}
+
+/* ===== 石墨黑：深色地圖＋深色玻璃控制鈕＋深色面板 ===== */
+.modal.mapfull{background:#17181D}
+.mstage .smap,.sheet.mapmode .mstage{background:#17181D!important}
+.mstage .smap:not(.real) .smap-bg{background:linear-gradient(#5A5E6B 0 0) 0 40%/100% 1.5px no-repeat,linear-gradient(#5A5E6B 0 0) 0 70%/100% 1.5px no-repeat,linear-gradient(#5A5E6B 0 0) 45% 0/1.5px 100% no-repeat,linear-gradient(#5A5E6B 0 0) 72% 0/1.5px 100% no-repeat,repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 1px,transparent 1px 22px),repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px,transparent 1px 22px)!important}
+.mstage .smap .rv{border-color:#1E2531!important}
+.mstage .mtag{background:rgba(30,31,38,.85)!important;color:#7A7E8B!important}
+.storepick .slist .mglass{background:rgba(30,31,38,.8);border:1px solid rgba(255,255,255,.1);box-shadow:0 8px 22px rgba(0,0,0,.45);color:#F2F3F7}
+.mhud .mh1{color:rgba(255,255,255,.55)}.mhud .mh1 b{color:#fff}
+.mhud .mh2{color:rgba(255,255,255,.78)}.mhud .mh2 em{color:#6EE0A4}.mhud .mh2 .lo{background:#6EE0A4;box-shadow:0 0 0 3px rgba(110,224,164,.25),0 0 10px rgba(110,224,164,.6)}
+.mhud .mprev{color:#C9B8EE}
+.mpanel{background:rgba(30,31,38,.92);border-top:1px solid rgba(255,255,255,.08);box-shadow:0 -14px 34px rgba(0,0,0,.45)}
+.mp-grab{background:rgba(255,255,255,.22)}
+.mp-eye{color:#6EE0A4}.mp-eye.me{color:#FFC94A}.mp-eye.far{color:rgba(255,255,255,.5)}
+.mp-pg{color:rgba(255,255,255,.5)}
+.storepick .slist .mpanel .mp-pg button{background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff}
+.mp-name b{color:#fff}.mp-w{color:rgba(255,255,255,.7)}.mp-w em{color:#fff}.mp-w.low em{color:#6EE0A4}
+.mp-meta{color:rgba(255,255,255,.78)}.mp-meta b.ok{color:#6EE0A4}.mp-meta b.no{color:#F0A14A}
+.mp-addr{color:rgba(255,255,255,.45)}
+.storepick .slist .mpanel .mp-go{background:#F0A14A;color:#17181D}
+.storepick .slist .mpanel .mp-nav{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+/* 標記：白字＋深色光暈；發亮門市綠色；選到的店白色膠囊 */
+.mstage .mpin .ml{color:#E6E8EE!important}
+.mstage .mpin:not(.me):not(.sel) .ml{text-shadow:0 0 2px #17181D,0 0 3px #17181D,0 0 6px #17181D,0 0 10px rgba(23,24,29,.9)!important}
+.mstage .mpin:not(.me):not(.sel) .ml b{color:#E6E8EE!important}
+.mstage .mpin.low:not(.sel) .ml b{color:#6EE0A4!important}
+.mstage .mpin .md{background:#C9CCD6;border-color:#17181D!important}
+.mstage .mpin.low .md{background:#6EE0A4}
+.mstage .mpin.sel .ml{background:#fff!important;color:#17181D!important;box-shadow:0 6px 16px rgba(0,0,0,.5)}.mstage .mpin.sel .ml b{color:#1E8C55!important}.mstage .mpin.sel .ml .mnm{color:#17181D}
+.mstage .mpin.sel .md{background:#F0A14A}
+.mstage .mpin.me .ml{color:#17181D!important}
 </style>
 
 <div class="outer">
@@ -1554,18 +1585,18 @@ function flatMap(box,city,sel){const names=(ALL_STORES[city]||[]).filter(geoIn),
 /* 深藍線條風（參考夜景地圖）：街道是細亮線、建築是立體深藍塊，不用彩色 */
 const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
   sources:{omt:{type:"vector",url:"https://tiles.openfreemap.org/planet"}},
-  layers:[{id:"bg",type:"background",paint:{"background-color":"#F4F3FA"}},
-    {id:"water",type:"fill",source:"omt","source-layer":"water",paint:{"fill-color":"#DCE3F7"}},
-    {id:"park",type:"fill",source:"omt","source-layer":"park",paint:{"fill-color":"#EAF2EC"}},
-    {id:"road-minor",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["minor","service","street","path","track"]]],paint:{"line-color":"#B9BBDA","line-width":["interpolate",["linear"],["zoom"],12,.3,16,1]}},
-    {id:"road-mid",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["secondary","tertiary"]]],paint:{"line-color":"#8D90C2","line-width":["interpolate",["linear"],["zoom"],12,.6,16,1.6]}},
-    {id:"road-main",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["motorway","trunk","primary"]]],paint:{"line-color":"#2D2E67","line-width":["interpolate",["linear"],["zoom"],12,.9,16,2.4]}},
-    {id:"rail",type:"line",source:"omt","source-layer":"transportation",filter:["==",["get","class"],"rail"],paint:{"line-color":"#8D90C2","line-width":1,"line-dasharray":[3,2]}},
-    {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#E6E5F2",80,"#C9C8E6",200,"#A9A8D6"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.9}},
-    {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#8D90C2","text-halo-color":"#F4F3FA","text-halo-width":1.2}},
-    {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#55588F","text-halo-color":"#F4F3FA","text-halo-width":1.6}},
-    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#C9671E","text-halo-color":"#FFFFFF","text-halo-width":1.8}},
-    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#6A4FA0","text-halo-color":"#FFFFFF","text-halo-width":1.6}}]};
+  layers:[{id:"bg",type:"background",paint:{"background-color":"#17181D"}},
+    {id:"water",type:"fill",source:"omt","source-layer":"water",paint:{"fill-color":"#1E2531"}},
+    {id:"park",type:"fill",source:"omt","source-layer":"park",paint:{"fill-color":"#1B241F"}},
+    {id:"road-minor",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["minor","service","street","path","track"]]],paint:{"line-color":"#2C2E36","line-width":["interpolate",["linear"],["zoom"],12,.3,16,1]}},
+    {id:"road-mid",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["secondary","tertiary"]]],paint:{"line-color":"#454955","line-width":["interpolate",["linear"],["zoom"],12,.6,16,1.6]}},
+    {id:"road-main",type:"line",source:"omt","source-layer":"transportation",filter:["in",["get","class"],["literal",["motorway","trunk","primary"]]],paint:{"line-color":"#6E7382","line-width":["interpolate",["linear"],["zoom"],12,.9,16,2.4]}},
+    {id:"rail",type:"line",source:"omt","source-layer":"transportation",filter:["==",["get","class"],"rail"],paint:{"line-color":"#3E414B","line-width":1,"line-dasharray":[3,2]}},
+    {id:"bld",type:"fill-extrusion",source:"omt","source-layer":"building",minzoom:13,paint:{"fill-extrusion-color":["interpolate",["linear"],["coalesce",["get","render_height"],8],0,"#26282F",80,"#353842",200,"#474B57"],"fill-extrusion-height":["coalesce",["get","render_height"],8],"fill-extrusion-base":["coalesce",["get","render_min_height"],0],"fill-extrusion-opacity":.95}},
+    {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#7A7E8B","text-halo-color":"#17181D","text-halo-width":1.2}},
+    {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#A3A7B4","text-halo-color":"#17181D","text-halo-width":1.6}},
+    {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#F0A14A","text-halo-color":"#17181D","text-halo-width":1.8}},
+    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
 /* 在 Claude 預覽視窗裡，外部地圖（3D 圖磚、Google 嵌入）會被擋；網站版（github.io）才看得到 */
 const IN_PREVIEW=!/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 const SITE_URL="https://denisechang112.github.io/QTALK/";
