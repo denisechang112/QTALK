@@ -1246,7 +1246,8 @@ function toast(kind,title,body,ms){
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").innerHTML="",ms||5200);
   $("#toast").firstChild.onclick=()=>{clearTimeout(toastTimer);$("#toast").innerHTML=""};
 }
-function closeModal(){$("#modal").innerHTML=""}
+function setThemeColor(c){let m=document.querySelector('meta[name="theme-color"]');if(!c){if(m)m.remove();return}if(!m){m=document.createElement("meta");m.name="theme-color";document.head.appendChild(m)}m.content=c}
+function closeModal(){$("#modal").innerHTML="";setThemeColor(null)}
 function modal(html,bind){$("#modal").innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`;bind&&bind($("#modal"));const f=$("#modal").querySelector("input,button");f&&f.focus()}
 function tip(key,force){
   if(!force&&U.tipsSeen.has(key))return;
@@ -1596,7 +1597,7 @@ const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontsta
     {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#7A7E8B","text-halo-color":"#17181D","text-halo-width":1.2}},
     {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#A3A7B4","text-halo-color":"#17181D","text-halo-width":1.6}},
     {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#F0A14A","text-halo-color":"#17181D","text-halo-width":1.8}},
-    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
+    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],12],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","town_hall","theatre","library","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
 /* 在 Claude 預覽視窗裡，外部地圖（3D 圖磚、Google 嵌入）會被擋；網站版（github.io）才看得到 */
 const IN_PREVIEW=!/(^|\.)github\.io$|^localhost$|^127\.0\.0\.1$/.test(location.hostname);
 const SITE_URL="https://denisechang112.github.io/QTALK/";
@@ -1620,13 +1621,17 @@ function realMap(box,city,sel,onSel){return loadML().then(ml=>new Promise((res,r
     names.forEach(n=>{const el=document.createElement("div");el.innerHTML=mpinHTML(n,sel);const b=el.firstChild;b.onclick=()=>onSel(n);mk[n]=new ml.Marker({element:b,anchor:"center"}).setLngLat([GEO[n][1],GEO[n][0]]).addTo(map)});
     const overview=()=>{const pts=[HOME].concat(nearestTo(HOME,8)).filter(x=>GEO[x]).map(x=>GEO[x]),la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
       map.fitBounds([[Math.min(...lo),Math.min(...la)],[Math.max(...lo),Math.max(...la)]],{padding:{top:50,bottom:70,left:30,right:30},pitch:50,bearing:-17,maxZoom:14.6,duration:700})};
-    const api={map,select(n){names.forEach(x=>mk[x]&&mk[x].getElement().classList.toggle("sel",x===n));const h=GEO[HOME],g=n&&GEO[n];
+    const api={map,cur:sel,select(n){api.cur=n;names.forEach(x=>mk[x]&&mk[x].getElement().classList.toggle("sel",x===n));const h=GEO[HOME],g=n&&GEO[n];
       if(!n){map.getSource("route").setData({type:"FeatureCollection",features:[]});overview();return}
       map.getSource("route").setData({type:"FeatureCollection",features:h&&g&&n!==HOME?[{type:"Feature",geometry:{type:"LineString",coordinates:[[h[1],h[0]],[g[1],g[0]]]}}]:[]});
       if(g){const pts=h&&n!==HOME&&kmBetween(h,g)<6?[h,g]:[g],la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);   // 鏡頭飛過去；卡片蓋住下半部，所以下方多留空間
         const H=holder.clientHeight,cb=((box.parentNode.querySelector("#mcard .mpanel")||{}).offsetHeight||220)+30,top=Math.min(96,H*.18),bot=Math.max(60,Math.min(cb,H-top-120)),dur=first?2400:1100;first=false;
-        try{map.fitBounds([[Math.min(...lo)-.003,Math.min(...la)-.003],[Math.max(...lo)+.003,Math.max(...la)+.003]],{padding:{top,bottom:bot,left:48,right:84},pitch:55,bearing:-17,maxZoom:15.6,duration:dur,curve:1.5})}
-        catch(e){map.flyTo({center:[g[1],g[0]],zoom:15,pitch:55,bearing:-17,duration:dur})}}}};
+        const B=[[Math.min(...lo)-.003,Math.min(...la)-.003],[Math.max(...lo)+.003,Math.max(...la)+.003]],opt={padding:{top,bottom:bot,left:48,right:84},pitch:55,bearing:-17,maxZoom:15.6};
+        try{map.resize();map.fitBounds(B,{...opt,duration:dur,curve:1.5})}catch(e){map.flyTo({center:[g[1],g[0]],zoom:15,pitch:55,bearing:-17,duration:dur})}
+        // 保險：鏡頭停下後，選到的店若不在畫面裡（例如飛行中被手指打斷），就再框一次
+        const want=n,isIntro=dur>2000,settle=cb=>map.once("moveend",()=>setTimeout(()=>map.isMoving()?settle(cb):cb(),200));
+        if(isIntro)settle(()=>{if(api.cur!==want)return;const W=holder.clientWidth,Hh=holder.clientHeight,inView=p=>{const q=map.project([p[1],p[0]]);return q.x>20&&q.x<W-20&&q.y>top-10&&q.y<Hh-bot+10};
+          if(!pts.every(inView)){try{map.fitBounds(B,{...opt,duration:900})}catch(e){map.jumpTo({center:[g[1],g[0]],zoom:14,pitch:55,bearing:-17})}}})}}};
     let first=true;setTimeout(()=>api.select(sel),250);res(api)})}))}
 function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)return;
   const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);const cost=n=>{const t=tripOf(n);return storeWait(n)+(t?(t.walk<=30?t.walk:t.ride):0)};
@@ -1664,11 +1669,11 @@ function openStorePick(asMap){
     <p class="fine">門市名單整理自台灣大哥大官網等公開資訊，實際營業資訊以官網為準；等候時間為示意。</p></div>`,m=>{
     const goStore=n=>{closeModal();if(n!==HOME){setHome(n);toast("info",`已切換到${n}`,"",1800);fullRender()}};
     const bind=()=>{m.querySelectorAll(".slist>[data-home]").forEach(b=>b.onclick=()=>goStore(b.dataset.home))};
-    const re=()=>{const mv=view==="map"&&!q;m.querySelector(".sheet").classList.toggle("mapmode",mv);m.querySelector(".modal").classList.toggle("mapfull",mv);$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
+    const re=()=>{const mv=view==="map"&&!q;m.querySelector(".sheet").classList.toggle("mapmode",mv);m.querySelector(".modal").classList.toggle("mapfull",mv);setThemeColor(mv?"#17181D":null);$("#slist").innerHTML=mv?mapShellHTML(city):list();$("#slist").classList.toggle("asmap",mv);if(mv)bindStoreMap(m,city,goStore);m.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-selected",x.dataset.view===view));m.querySelectorAll("[data-city]").forEach(x=>x.setAttribute("aria-pressed",!q&&x.dataset.city===city));bind()};
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
     m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
-    $("#spClose").onclick=closeModal;$("#spX").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");m.querySelector(".modal").classList.add("mapfull");bindStoreMap(m,city,goStore)}
+    $("#spClose").onclick=closeModal;$("#spX").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");m.querySelector(".modal").classList.add("mapfull");setThemeColor("#17181D");bindStoreMap(m,city,goStore)}
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
 }

@@ -762,7 +762,7 @@ function openLiff(){
   $("#go").onclick=take;
 }
 /* 門市地圖：在 LINE 裡直接看（像 LINE 的位置訊息），要導航時才交給 Google 地圖 App */
-function openMap(n){const L=$("#liff");L.hidden=false;
+function openMap(n){const L=$("#liff");L.hidden=false;setTC("#17181D");
   const c0=GEO[n],near=c0?Object.keys(GEO).filter(k=>k!==n).sort((a,b)=>dd(GEO[a],c0)-dd(GEO[b],c0)).slice(0,8):[];
   const deck=[n].concat(near.filter(k=>storeMins(k)<10).sort((a,b)=>storeMins(a)-storeMins(b)).slice(0,4));let cur=n,mode="3d";
   const lowN=near.filter(k=>storeMins(k)<10).length;
@@ -783,7 +783,10 @@ function openMap(n){const L=$("#liff");L.hidden=false;
     $("#mtake").onclick=()=>{mapKill();closeLiff();if(state.store!==cur&&!active(mine())){state.store=cur;save()}menu("take")}};
   const sel=k=>{cur=k;panel();if(mode==="g")return g();if(MAP){document.querySelectorAll(".m3pin").forEach(e=>e.classList.toggle("sel",e.dataset.k===k));const c=GEO[k],o=GEO[n];fitPts(k===n?deck.slice(0,3):[n,k],1200)}};
   const fitPts=(ks,dur)=>{const P=ks.map(x=>GEO[x]).filter(Boolean),la=P.map(p=>p[0]),lo=P.map(p=>p[1]);
-    try{MAP.fitBounds([[Math.min(...lo)-.002,Math.min(...la)-.002],[Math.max(...lo)+.002,Math.max(...la)+.002]],{padding:pad(),pitch:55,bearing:-17,maxZoom:15,duration:dur,curve:1.5})}catch(e){MAP.flyTo({center:[P[0][1],P[0][0]],zoom:13.5,pitch:55,duration:dur})}};
+    const B=[[Math.min(...lo)-.002,Math.min(...la)-.002],[Math.max(...lo)+.002,Math.max(...la)+.002]],o={padding:pad(),pitch:55,bearing:-17,maxZoom:15};
+    try{MAP.resize();MAP.fitBounds(B,{...o,duration:dur,curve:1.5})}catch(e){MAP.flyTo({center:[P[0][1],P[0][0]],zoom:13.5,pitch:55,duration:dur})}
+    const M=MAP,want=cur,settle=cb=>M.once("moveend",()=>setTimeout(()=>M.isMoving()?settle(cb):cb(),200));if(dur>2000)settle(()=>{if(MAP!==M||cur!==want)return;const c=M.getContainer(),pd=o.padding,ok=P.every(p=>{const q=M.project([p[1],p[0]]);return q.x>15&&q.x<c.clientWidth-15&&q.y>pd.top-10&&q.y<c.clientHeight-pd.bottom+10});
+      if(!ok){try{M.fitBounds(B,{...o,duration:900})}catch(e){}}})};
   const pad=()=>({top:100,bottom:(($("#mpanel .mpanel")||{}).offsetHeight||220)+20,left:30,right:76});
   const box=$("#mapbox"),g=()=>{mapKill();mode="g";box.innerHTML=`<iframe title="${esc(cur)} 地圖" src="${mapEmbed(cur)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`;$("#mv").textContent="3D"};
   const d3=()=>{mode="3d";$("#mv").textContent="Google";map3d(box,cur,sel,intro=>intro===true?fitPts(cur===n?deck.slice(0,3):[n,cur],2400):pad()).catch(g)};
@@ -808,7 +811,7 @@ const LINE_STYLE={version:8,glyphs:"https://tiles.openfreemap.org/fonts/{fontsta
     {id:"place",type:"symbol",source:"omt","source-layer":"place",filter:["in",["get","class"],["literal",["suburb","quarter","neighbourhood"]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":12},paint:{"text-color":"#7A7E8B","text-halo-color":"#17181D","text-halo-width":1.2}},
     {id:"road-name",type:"symbol",source:"omt","source-layer":"transportation_name",minzoom:13,filter:["in",["get","class"],["literal",["primary","secondary","tertiary","trunk","motorway","minor"]]],layout:{"symbol-placement":"line","text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":["interpolate",["linear"],["zoom"],13,10,16,12.5],"text-letter-spacing":.05,"text-max-angle":30},paint:{"text-color":"#A3A7B4","text-halo-color":"#17181D","text-halo-width":1.6}},
     {id:"mrt",type:"symbol",source:"omt","source-layer":"poi",minzoom:12.5,filter:["any",["==",["get","subclass"],"subway"],["==",["get","class"],"railway"]],layout:{"text-field":["concat","Ⓜ ",["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]]],"text-font":["Noto Sans Regular"],"text-size":12,"text-anchor":"top","text-offset":[0,.4],"text-max-width":7},paint:{"text-color":"#F0A14A","text-halo-color":"#17181D","text-halo-width":1.8}},
-    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],14],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","shop","town_hall","theatre","library","hospital","place_of_worship","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
+    {id:"landmark",type:"symbol",source:"omt","source-layer":"poi",minzoom:13.5,filter:["all",["<=",["get","rank"],12],["in",["get","class"],["literal",["attraction","museum","stadium","park","college","school","town_hall","theatre","library","art_gallery","monument"]]]],layout:{"text-field":["coalesce",["get","name:zh-Hant"],["get","name:zh"],["get","name"]],"text-font":["Noto Sans Regular"],"text-size":11.5,"text-max-width":7,"text-padding":6},paint:{"text-color":"#B7B0DA","text-halo-color":"#17181D","text-halo-width":1.6}}]};
 let ML=null,MAP=null;
 function mapKill(){if(MAP){try{MAP.remove()}catch(e){}MAP=null}}
 function loadML(){if(window.maplibregl)return Promise.resolve(window.maplibregl);if(ML)return ML;
@@ -951,7 +954,8 @@ function storeDealsCard(){const n=myStore(),ids=["acc100","trade","case"];
   return `<div class="card reco deal"><div class="hd">${HI("bag")}${esc(n)}・本月優惠</div><div class="rcs">${ids.map(id=>{const d=QD[id];return `<div class="rc"><div class="rc-img dl"><span class="dchip">${QI(id)}</span></div><b>${esc(d.t)}</b><small>${esc(d.s)}</small><button data-card="take">取號領券</button></div>`}).join("")}</div><p class="dnote">你目前還沒有號碼，取號後就能預選、領券 🙂</p></div>`}
 function preparedHTML(t){const pk=tkPk(t),cp=tkCp(t);if(!pk.length&&!cp.length)return "";
   return `<p class="prep">${pk.length?`✅ 已備好：${pk.map(id=>esc((QD[id]||{}).prep||(QD[id]||{}).t||id)).join("、")}`:""}${pk.length&&cp.length?"<br>":""}${cp.length?`🎁 優惠：${cp.map(id=>esc((QC[id]||{}).t||id)).join("、")}`:""}</p>`}
-function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML=""}
+function setTC(c){const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=c}
+function closeLiff(){const L=$("#liff");L.hidden=true;L.innerHTML="";setTC("#f1e4d2")}
 function catWait(c,n,v){return isLive(n)?qMins(v):storeMins(n)}
 
 /* ---------- LIFF：服務滿意度調查（跟叫號說 App 同一份題目，結果寫回門市） ---------- */
