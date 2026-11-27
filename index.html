@@ -987,6 +987,30 @@ svg.qi{display:block}
 #mcard .mcard{grid-template-columns:minmax(0,1fr)}#mcard .mcard>*{min-width:0;max-width:100%}#mcard .mc-h span{min-width:0}#mcard .mc-h small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#mcard .mc-t{font-size:13px}
 @media (max-height:720px){#mcard .mc-deal,#mcard .mc-v{display:none}#mcard .mc-h b{font-size:15.5px}#mcard .mc-h em{font-size:18px!important}.sheet.storepick.mapmode h3{font-size:20px;margin:0}}
 .smap-leg .mprev{position:static!important;margin-left:auto;white-space:nowrap;font-size:11px!important;padding:2px 8px!important}
+
+/* 地圖精簡 v2：推薦改綠色（黃色留給「你在這」）、卡片縮小、地圖放大 */
+.storepick .slist #mcard .mc-rec{background:#fff;border:2px solid #2E8B57;color:#1F6B43;padding:3px 12px 3px 8px;font-size:13px;gap:6px;display:inline-flex;align-items:center}
+.mc-rec i{width:10px;height:10px;border-radius:50%;background:#4BA882;box-shadow:0 0 0 3px rgba(75,168,130,.25)}
+#mcard .mcard.hint{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 6px 6px 12px;font-size:12.5px;font-weight:700;color:#55558a;border-radius:999px}
+#mcard .mcard:not(.hint){padding:8px 10px;gap:5px;border-radius:14px}
+#mcard .mc-h b{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:16px}
+#mcard .mc-h small{font-size:11.5px}
+.mc-w{font-style:normal;font-size:12.5px;font-weight:900;color:#fff;background:var(--ink);border-radius:999px;padding:2px 9px}.mc-w.low{background:#2E8B57}
+#mcard .mc-t{font-size:12.5px;margin:0;color:#55558a}#mcard .mc-t b.ok{color:#2E8B57}#mcard .mc-t b.no{color:#9a4a0a}
+.storepick .slist #mcard .mc-a{gap:6px}.storepick .slist #mcard .mc-a .btn{padding:6px;font-size:14px;border-radius:10px;box-shadow:2px 2px 0 var(--ink)}
+.storepick .slist #mcard .mc-x{top:-9px;right:-5px;width:24px;height:24px}
+.sheet.storepick.mapmode{padding-top:12px}.sheet.storepick.mapmode h3{font-size:19px;margin:0}
+.sheet.mapmode .acts{display:none}
+.sp-x{display:none}.sheet.mapmode .sp-x{display:grid;place-items:center;position:absolute;right:14px;top:10px;width:32px;height:32px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:14px;color:var(--ink);cursor:pointer}
+.sheet.storepick{position:relative}
+.sheet.mapmode .vtog{margin-top:6px}.sheet.mapmode .vtog button{padding:5px}
+.mstage .smap-leg{top:6px;left:6px;right:6px;padding:3px 6px}
+
+.storepick .slist [hidden]{display:none!important}
+#mcard .mc-h em.mc-w{display:inline-block!important;font-family:var(--f)!important;font-size:12.5px!important;padding:2px 9px!important;line-height:1.4!important;border-radius:999px}
+#mcard .mcard.hint span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.storepick .slist #mcard .mc-rec{white-space:nowrap;flex:none}
+@media (max-width:380px){#mcard .mcard.hint span{display:none}#mcard .mcard.hint{justify-content:center;padding:5px}}
 </style>
 
 <div class="outer">
@@ -1422,13 +1446,11 @@ function tripOf(n){const g=GEO[n],h=GEO[HOME];if(!g||!h||n===HOME)return null;co
 function mpinHTML(n,sel){const w=storeWait(n);return `<button type="button" class="mpin ${w<10?"low":""} ${n===HOME?"me":""} ${n===sel?"sel":""}" data-sel="${n}" aria-label="${n}，現在約 ${w} 分"><i class="md"></i><span class="ml"><span class="mnm">${n===HOME?"你在這・":""}${n.replace(/^台北|門市$/g,"").replace(/^內湖(?=.)/,"")}</span><b>約 ${w} 分</b></span></button>`}
 function nearestTo(n,k){const h=GEO[n];if(!h)return [];return Object.keys(GEO).filter(x=>x!==n).sort((a,b)=>kmBetween(h,GEO[a])-kmBetween(h,GEO[b])).slice(0,k)}
 function bestAlt(){const c=n=>{const t=tripOf(n);return storeWait(n)+(t?(t.walk<=30?t.walk:t.ride):99)};return nearestTo(HOME,8).sort((a,b)=>c(a)-c(b))[0]}
-function mcardHTML(n){if(!n){const b=bestAlt();return `<div class="mcard hint"><span>點地圖上<b>發亮的門市</b>，看要等多久、怎麼過去</span>${b?`<button type="button" class="mc-rec" data-sel="${b}">推薦：${b.replace(/^台北|門市$/g,"")}・約 ${storeWait(b)} 分 ›</button>`:""}</div>`}
+function mcardHTML(n){if(!n){const b=bestAlt();return `<div class="mcard hint"><span>點發亮的門市看詳情</span>${b?`<button type="button" class="mc-rec" data-sel="${b}"><i></i>推薦 ${b.replace(/^台北|門市$/g,"")} 約 ${storeWait(b)} 分 ›</button>`:""}</div>`}
   const w=storeWait(n),t=tripOf(n),q=encodeURIComponent(n.includes("台灣大哥大")?n:"台灣大哥大 "+n+" "+(STORE_ADDR[n]||""));
-  return `<div class="mcard"><button type="button" class="mc-x" data-mcx aria-label="收起">✕</button><div class="mc-h"><span><b>${n}</b><small>${STORE_ADDR[n]||""}</small></span><em class="${wcol(w)}"><small>現在約</small>${w} 分<small>前面約 ${Math.max(0,Math.round(w/3.5))} 組</small></em></div>
+  return `<div class="mcard"><button type="button" class="mc-x" data-mcx aria-label="收起">✕</button><div class="mc-h"><span><b>${n.replace(/^台北(?=.{3,})/,"")}<em class="mc-w ${w<10?"low":""}">約 ${w} 分・前面 ${Math.max(0,Math.round(w/3.5))} 組</em></b><small>${STORE_ADDR[n]||""}</small></span></div>
     ${t?(()=>{const go=t.walk<=30?t.walk:t.ride,hn=esc(HOME.replace(/門市$/,"")),net=t.save-go;
-      return `<p class="mc-t">${t.walk<=30?`走路約 ${t.walk} 分`:`搭車約 ${t.ride} 分`}・${t.save>0?`比${hn}少等 ${t.save} 分`:t.save<0?`比${hn}多等 ${-t.save} 分`:"等候時間差不多"}</p>
-      <p class="mc-v ${net>0?"ok":"no"}">${net>0?`算上路程，<b>總共快 ${net} 分</b> 👍`:`算上路程不划算，留在${hn}等比較快`}</p>`})():`<p class="mc-t">你現在選的就是這家</p>`}
-    <button type="button" class="mc-deal" data-lazy="1">${QI("bag")}今天有：配件滿千折百・玻璃貼代貼 ›</button>
+      return `<p class="mc-t">${t.walk<=30?`走路 ${t.walk} 分`:`搭車 ${t.ride} 分`}・${t.save>0?`少等 ${t.save} 分`:t.save<0?`多等 ${-t.save} 分`:"等候差不多"}・<b class="${net>0?"ok":"no"}">${net>0?`總共快 ${net} 分`:`留在${hn}比較快`}</b></p>`})():`<p class="mc-t">你現在選的就是這家</p>`}
     <div class="mc-a"><button type="button" class="btn dark" data-home="${n}">${n===HOME?"就在這家取號":"選這家取號"}</button><button type="button" class="btn" data-gmap="${n}">帶我去</button></div></div>`}
 /* 帶我去：和 LINE 一樣，Google 地圖直接嵌在 App 裡；按「開始導航」才跳 Google 地圖 */
 const gQ=n=>STORE_ADDR[n]||("台灣大哥大 "+n);
@@ -1490,12 +1512,12 @@ function realMap(box,city,sel,onSel){return loadML().then(ml=>new Promise((res,r
     map.addLayer({id:"route-core",type:"line",source:"route",paint:{"line-color":"#E8893A","line-width":3,"line-dasharray":[1.4,1]},layout:{"line-cap":"round"}});
     names.forEach(n=>{const el=document.createElement("div");el.innerHTML=mpinHTML(n,sel);const b=el.firstChild;b.onclick=()=>onSel(n);mk[n]=new ml.Marker({element:b,anchor:"center"}).setLngLat([GEO[n][1],GEO[n][0]]).addTo(map)});
     const overview=()=>{const pts=[HOME].concat(nearestTo(HOME,8)).filter(x=>GEO[x]).map(x=>GEO[x]),la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);
-      map.fitBounds([[Math.min(...lo),Math.min(...la)],[Math.max(...lo),Math.max(...la)]],{padding:{top:70,bottom:150,left:40,right:40},pitch:50,bearing:-17,maxZoom:14.6,duration:700})};
+      map.fitBounds([[Math.min(...lo),Math.min(...la)],[Math.max(...lo),Math.max(...la)]],{padding:{top:50,bottom:70,left:30,right:30},pitch:50,bearing:-17,maxZoom:14.6,duration:700})};
     const api={map,select(n){names.forEach(x=>mk[x]&&mk[x].getElement().classList.toggle("sel",x===n));const h=GEO[HOME],g=n&&GEO[n];
       if(!n){map.getSource("route").setData({type:"FeatureCollection",features:[]});overview();return}
       map.getSource("route").setData({type:"FeatureCollection",features:h&&g&&n!==HOME?[{type:"Feature",geometry:{type:"LineString",coordinates:[[h[1],h[0]],[g[1],g[0]]]}}]:[]});
       if(g){const pts=h&&n!==HOME&&kmBetween(h,g)<6?[h,g]:[g],la=pts.map(p=>p[0]),lo=pts.map(p=>p[1]);   // 鏡頭飛過去；卡片蓋住下半部，所以下方多留空間
-        map.fitBounds([[Math.min(...lo)-.003,Math.min(...la)-.003],[Math.max(...lo)+.003,Math.max(...la)+.003]],{padding:{top:70,bottom:300,left:40,right:40},pitch:55,bearing:-17,maxZoom:15.6,duration:1100,curve:1.4})}}};
+        map.fitBounds([[Math.min(...lo)-.003,Math.min(...la)-.003],[Math.max(...lo)+.003,Math.max(...la)+.003]],{padding:{top:60,bottom:190,left:40,right:40},pitch:55,bearing:-17,maxZoom:15.6,duration:1100,curve:1.4})}}};
     api.select(sel);res(api)})}))}
 function bindStoreMap(m,city,onPick){const box=m.querySelector("#smap");if(!box)return;
   const names=(ALL_STORES[city]||[]).filter(n=>GEO[n]);const cost=n=>{const t=tripOf(n);return storeWait(n)+(t?(t.walk<=30?t.walk:t.ride):0)};let sel=null,api=null,mode=U.map3d===false?"flat":"real";
@@ -1515,7 +1537,7 @@ function openStorePick(asMap){
   let city=cityOf(HOME),q="",view=asMap===true?"map":"list";
   const list=()=>{const names=q?Object.values(ALL_STORES).flat().filter(n=>n.includes(q)||(STORE_ADDR[n]||"").includes(q)):ALL_STORES[city];
     return names.length?names.map(n=>`<button type="button" data-home="${n}" aria-pressed="${n===HOME}"><span>${n}${n===HOME?"・目前":""}<small class="addr">${STORE_ADDR[n]||""}</small></span><small>${q?cityOf(n)+"・":""}現在約 ${storeWait(n)} 分</small></button>`).join(""):`<p class="muted">找不到「${esc(q)}」，換個關鍵字試試。</p>`};
-  modal(`<div class="sheet storepick" aria-labelledby="sph"><h3 id="sph">選擇門市</h3>
+  modal(`<div class="sheet storepick" aria-labelledby="sph"><h3 id="sph">選擇門市</h3><button type="button" class="sp-x" id="spX" aria-label="關閉">✕</button>
     <div class="cities" role="group" aria-label="縣市">${Object.keys(ALL_STORES).map(c=>`<button type="button" data-city="${c}" aria-pressed="${c===city}">${c}</button>`).join("")}</div>
     <input type="search" id="spq" placeholder="或搜尋門市或地址，例如：內湖、中壢" aria-label="搜尋門市" style="margin-top:8px">
     <div class="vtog" role="tablist"><button type="button" data-view="list" aria-selected="${view==="list"}">清單</button><button type="button" data-view="map" aria-selected="${view==="map"}">${QI("pin")}地圖・看哪家人少</button></div>
@@ -1528,7 +1550,7 @@ function openStorePick(asMap){
     m.querySelectorAll("[data-city]").forEach(b=>b.onclick=()=>{city=b.dataset.city;q="";$("#spq").value="";re()});
     $("#spq").oninput=e=>{q=e.target.value.trim();re()};
     m.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{view=b.dataset.view;re()});
-    $("#spClose").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");bindStoreMap(m,city,goStore)}
+    $("#spClose").onclick=closeModal;$("#spX").onclick=closeModal;bind();if(view==="map"){$("#slist").classList.add("asmap");m.querySelector(".sheet").classList.add("mapmode");bindStoreMap(m,city,goStore)}
     const cur=m.querySelector('[data-city][aria-pressed="true"]');if(cur)cur.scrollIntoView({inline:"center",block:"nearest"});
     });
 }
